@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Top-level app menu -->
+    <menuitem id="menu_foupzi_github_root"
+              name="GitHub Modules"
+              web_icon="foupzi_github_deployer,static/description/icon.png"
+              sequence="90"/>
+
+    <menuitem id="menu_foupzi_github_modules"
+              name="Modules"
+              parent="menu_foupzi_github_root"
+              action="action_foupzi_github_module"
+              sequence="10"/>
+
+    <menuitem id="menu_foupzi_github_shell"
+              name="Run Command"
+              parent="menu_foupzi_github_root"
+              action="action_foupzi_shell_wizard"
+              sequence="20"/>
+
+    <!-- Sync button as a server action in the list toolbar -->
+    <record id="action_sync_github_modules" model="ir.actions.server">
+        <field name="name">Sync from GitHub</field>
+        <field name="model_id" ref="model_foupzi_github_module"/>
+        <field name="binding_model_id" ref="model_foupzi_github_module"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = model.action_sync_from_github()</field>
+    </record>
+
+</odoo>

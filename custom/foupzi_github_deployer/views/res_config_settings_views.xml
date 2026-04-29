@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_github" model="ir.ui.view">
+        <field name="name">res.config.settings.view.github</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.action_general_configuration"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="GitHub Module Deployer" name="foupzi_github_deployer">
+                    <block title="GitHub Connection">
+                        <setting string="GitHub Token" help="Personal Access Token with repo read access. Required for private repos.">
+                            <field name="github_token" password="True"/>
+                        </setting>
+                        <setting string="Repository Owner">
+                            <field name="github_owner"/>
+                        </setting>
+                        <setting string="Repository Name">
+                            <field name="github_repo"/>
+                        </setting>
+                        <setting string="Branch">
+                            <field name="github_branch"/>
+                        </setting>
+                    </block>
+                    <block title="Server">
+                        <setting string="Addons Path"
+                                 help="Absolute path on this server where modules will be deployed. Must be in Odoo's addons_path config.">
+                            <field name="github_addons_path"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
