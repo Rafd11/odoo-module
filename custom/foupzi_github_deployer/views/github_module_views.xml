@@ -79,9 +79,9 @@
                 <filter string="Available" name="available" domain="[('state','=','available')]"/>
                 <filter string="Deployed" name="deployed" domain="[('state','=','deployed')]"/>
                 <filter string="Installed" name="installed" domain="[('state','=','installed')]"/>
-                <group expand="1" string="Group By">
-                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
-                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                <group>
+                    <filter string="Category" name="group_category" domain="[]" context="{'group_by': 'category'}"/>
+                    <filter string="State" name="group_state" domain="[]" context="{'group_by': 'state'}"/>
                 </group>
             </search>
         </field>
