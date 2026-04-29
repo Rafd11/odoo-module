@@ -47,13 +47,24 @@ class FoupziGithubModule(models.Model):
         ('deployed', 'Deployed'),
         ('installed', 'Installed'),
     ], default='available', readonly=True)
-    is_odoo_installed = fields.Boolean(compute='_compute_odoo_state', store=False)
     deploy_log = fields.Text('Last Deploy Log', readonly=True)
+
+    # Boolean helpers used in kanban t-if (more reliable than comparing selection values in OWL)
+    is_available = fields.Boolean(compute='_compute_state_bools', store=False)
+    is_deployed = fields.Boolean(compute='_compute_state_bools', store=False)
+    is_installed = fields.Boolean(compute='_compute_state_bools', store=False)
 
     @api.depends('name')
     def _compute_display_name_custom(self):
         for rec in self:
             rec.display_name_custom = (rec.name or '').replace('_', ' ').title()
+
+    @api.depends('state')
+    def _compute_state_bools(self):
+        for rec in self:
+            rec.is_available = rec.state == 'available'
+            rec.is_deployed = rec.state == 'deployed'
+            rec.is_installed = rec.state == 'installed'
 
     @api.depends('category')
     def _compute_category_icon(self):
@@ -177,14 +188,26 @@ class FoupziGithubModule(models.Model):
         addons_path = self.env['ir.config_parameter'].sudo().get_param(
             'foupzi_github_deployer.addons_path', ''
         )
+        # Build a map of all odoo module states once for performance
+        odoo_states = {
+            m.name: m.state
+            for m in self.env['ir.module.module'].search([])
+        }
         for rec in self:
-            mod = self.env['ir.module.module'].search([('name', '=', rec.name)], limit=1)
-            if mod and mod.state in ('installed', 'to upgrade'):
+            odoo_state = odoo_states.get(rec.name, '')
+            if odoo_state in ('installed', 'to upgrade', 'to remove'):
                 rec.state = 'installed'
             elif addons_path and os.path.isdir(os.path.join(addons_path, rec.name)):
                 rec.state = 'deployed'
             else:
                 rec.state = 'available'
+
+    @api.model
+    def action_refresh_all_states(self):
+        """Refresh states for all tracked modules."""
+        all_modules = self.search([])
+        all_modules._refresh_deploy_states()
+        return self._notify('States refreshed for %d modules.' % len(all_modules))
 
     # ------------------------------------------------------------------
     # Deploy

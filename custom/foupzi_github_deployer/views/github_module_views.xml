@@ -8,49 +8,56 @@
         <field name="name">foupzi.github.module.kanban</field>
         <field name="model">foupzi.github.module</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_mobile" default_group_by="category">
+            <kanban default_group_by="category">
                 <field name="name"/>
                 <field name="display_name_custom"/>
                 <field name="category"/>
                 <field name="category_icon"/>
                 <field name="state"/>
                 <field name="repo_label"/>
-                <field name="is_odoo_installed"/>
+                <field name="is_available"/>
+                <field name="is_deployed"/>
+                <field name="is_installed"/>
                 <templates>
                     <t t-name="card">
-                        <div class="oe_kanban_card oe_kanban_global_click p-3"
-                             style="min-height:120px; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div class="p-3" style="min-height:130px; display:flex; flex-direction:column; justify-content:space-between;">
                             <div>
-                                <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
                                     <strong style="font-size:13px;" t-esc="record.display_name_custom.value"/>
-                                    <span t-if="record.state.value === 'installed'"
-                                          class="badge rounded-pill text-bg-success" style="font-size:10px;">Installed</span>
-                                    <span t-elif="record.state.value === 'deployed'"
-                                          class="badge rounded-pill text-bg-info" style="font-size:10px;">Deployed</span>
+                                    <!-- State badge -->
+                                    <span t-if="record.is_installed.value"
+                                          class="badge rounded-pill bg-success text-white" style="font-size:10px;">✓ Installed</span>
+                                    <span t-elif="record.is_deployed.value"
+                                          class="badge rounded-pill bg-info text-white" style="font-size:10px;">⬇ Deployed</span>
                                     <span t-else=""
-                                          class="badge rounded-pill text-bg-secondary" style="font-size:10px;">Available</span>
+                                          class="badge rounded-pill bg-secondary text-white" style="font-size:10px;">Available</span>
                                 </div>
-                                <div class="text-muted mt-1" style="font-size:11px;">
+                                <div class="text-muted" style="font-size:11px;">
                                     <i t-attf-class="fa #{record.category_icon.value} me-1"/>
                                     <t t-esc="record.category.value"/>
-                                    <span t-if="record.repo_label.value" class="ms-2 text-muted">
-                                        · <t t-esc="record.repo_label.value"/>
-                                    </span>
+                                    <span t-if="record.repo_label.value"> · <t t-esc="record.repo_label.value"/></span>
                                 </div>
                                 <div class="text-muted mt-1" style="font-size:10px; font-family:monospace;"
                                      t-esc="record.name.value"/>
                             </div>
                             <div class="mt-2 d-flex gap-1 flex-wrap">
-                                <button t-if="record.state.value === 'available'"
+                                <!-- Available: one-click install and activate -->
+                                <button t-if="record.is_available.value"
                                         name="action_deploy_and_install" type="object"
-                                        class="btn btn-primary btn-sm">Install</button>
-                                <button t-elif="record.state.value === 'deployed'"
+                                        class="btn btn-primary btn-sm">Install &amp; Activate</button>
+
+                                <!-- Deployed on server but not activated in Odoo -->
+                                <button t-if="record.is_deployed.value"
                                         name="action_deploy_and_install" type="object"
-                                        class="btn btn-primary btn-sm">Install</button>
-                                <button t-if="record.state.value === 'installed'"
+                                        class="btn btn-success btn-sm">Activate</button>
+
+                                <!-- Already installed: offer upgrade -->
+                                <button t-if="record.is_installed.value"
                                         name="action_upgrade" type="object"
                                         class="btn btn-warning btn-sm">Upgrade</button>
-                                <button t-if="record.state.value !== 'available'"
+
+                                <!-- Re-deploy from GitHub (non-available only) -->
+                                <button t-if="record.is_deployed.value or record.is_installed.value"
                                         name="action_deploy" type="object"
                                         class="btn btn-outline-secondary btn-sm">Re-deploy</button>
                             </div>
@@ -277,7 +284,7 @@
         <field name="target">new</field>
     </record>
 
-    <!-- Server actions bound to module list -->
+    <!-- Server actions bound to module list/kanban -->
     <record id="action_sync_github_modules" model="ir.actions.server">
         <field name="name">Sync from GitHub</field>
         <field name="model_id" ref="model_foupzi_github_module"/>
@@ -285,6 +292,15 @@
         <field name="binding_view_types">list,kanban</field>
         <field name="state">code</field>
         <field name="code">action = model.action_sync_all_repos()</field>
+    </record>
+
+    <record id="action_refresh_states" model="ir.actions.server">
+        <field name="name">Refresh Install States</field>
+        <field name="model_id" ref="model_foupzi_github_module"/>
+        <field name="binding_model_id" ref="model_foupzi_github_module"/>
+        <field name="binding_view_types">list,kanban</field>
+        <field name="state">code</field>
+        <field name="code">action = model.action_refresh_all_states()</field>
     </record>
 
 </odoo>
