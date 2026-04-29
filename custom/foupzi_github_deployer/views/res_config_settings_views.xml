@@ -2,67 +2,38 @@
 <odoo>
 
     <record id="res_config_settings_view_github" model="ir.ui.view">
-        <field name="name">res.config.settings.view.github</field>
+        <field name="name">res.config.settings.view.form.inherit.foupzi_github_deployer</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <div class="app_settings_block" data-string="GitHub Module Deployer"
-                     string="GitHub Module Deployer" data-key="foupzi_github_deployer">
+                <app data-string="GitHub Module Deployer" string="GitHub Module Deployer"
+                     name="foupzi_github_deployer">
 
-                    <h2>GitHub Connection</h2>
-                    <div class="row mt16 o_settings_container">
+                    <block title="GitHub Connection" name="github_connection">
+                        <setting string="GitHub Token"
+                                 help="Personal Access Token with repo read access. Required for private repos.">
+                            <field name="github_token" password="True" placeholder="ghp_..."/>
+                        </setting>
+                        <setting string="Repository Owner">
+                            <field name="github_owner"/>
+                        </setting>
+                        <setting string="Repository Name">
+                            <field name="github_repo"/>
+                        </setting>
+                        <setting string="Branch">
+                            <field name="github_branch"/>
+                        </setting>
+                    </block>
 
-                        <div class="col-xs-12 col-md-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <label for="github_token" string="GitHub Token"/>
-                                <div class="text-muted">Personal Access Token with repo read access. Required for private repos.</div>
-                                <field name="github_token" password="True" placeholder="ghp_..."/>
-                            </div>
-                        </div>
+                    <block title="Server" name="github_server">
+                        <setting string="Addons Path"
+                                 help="Absolute path on this server where modules will be deployed. Must be listed in odoo.conf addons_path.">
+                            <field name="github_addons_path" placeholder="/opt/odoo/addons19"/>
+                        </setting>
+                    </block>
 
-                        <div class="col-xs-12 col-md-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <label for="github_owner" string="Repository Owner"/>
-                                <field name="github_owner"/>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-md-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <label for="github_repo" string="Repository Name"/>
-                                <field name="github_repo"/>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-md-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <label for="github_branch" string="Branch"/>
-                                <field name="github_branch"/>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <h2>Server</h2>
-                    <div class="row mt16 o_settings_container">
-
-                        <div class="col-xs-12 col-md-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <label for="github_addons_path" string="Addons Path"/>
-                                <div class="text-muted">Absolute path on this server where modules will be deployed. Must be listed in odoo.conf addons_path.</div>
-                                <field name="github_addons_path" placeholder="/opt/odoo/addons19"/>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
+                </app>
             </xpath>
         </field>
     </record>
