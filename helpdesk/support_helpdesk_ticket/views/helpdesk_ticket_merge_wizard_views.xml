@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Merge Wizard Form View -->
+    <record id="view_helpdesk_ticket_merge_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.merge.wizard.form</field>
+        <field name="model">helpdesk.ticket.merge.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Merge Tickets">
+                <group>
+                    <field name="ticket_id" readonly="1"/>
+                </group>
+                
+                <group>
+                    <field name="ticket_ids" 
+                           domain="[('id', '!=', ticket_id), ('state', 'not in', ['closed', 'cancelled'])]"
+                           nolabel="1"
+                           widget="many2many_tags"
+                           options="{'no_create': True}"/>
+                </group>
+                
+                <notebook>
+                    <page string="Merge Options" name="options">
+                        <group>
+                            <group>
+                                <field name="merge_messages"/>
+                                <field name="merge_attachments"/>
+                                <field name="merge_activities"/>
+                            </group>
+                            <group>
+                                <field name="merge_links"/>
+                                <field name="close_merged_tickets"/>
+                            </group>
+                        </group>
+                    </page>
+                    
+                    <page string="Note" name="note">
+                        <group>
+                            <field name="note" placeholder="Enter optional note about the merge..."/>
+                        </group>
+                    </page>
+                </notebook>
+                
+                <footer>
+                    <button string="Merge Tickets" name="action_merge_tickets" type="object" 
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Merge Wizard Action -->
+    <record id="action_helpdesk_ticket_merge_wizard" model="ir.actions.act_window">
+        <field name="name">Merge Tickets</field>
+        <field name="res_model">helpdesk.ticket.merge.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

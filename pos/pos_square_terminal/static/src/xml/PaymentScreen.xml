@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- Extend payment screen: show Square status and Cancel when checkout is in progress -->
+    <t t-name="pos_square_terminal.PaymentScreenButtons" t-inherit="point_of_sale.PaymentScreenButtons" t-inherit-mode="extension">
+        <xpath expr="." position="inside">
+            <div t-if="isSquareCheckoutInProgress" class="alert alert-info d-flex align-items-center justify-content-between m-2" role="status">
+                <span class="square-terminal-status">
+                    <strong t-if="squareStatusMessage"><t t-esc="squareStatusMessage"/></strong>
+                    <strong t-else="">Square Terminal</strong>
+                </span>
+                <button type="button" class="btn btn-warning btn-sm" t-on-click="cancelSquareCheckout" title="Cancel checkout on terminal">
+                    Cancel
+                </button>
+            </div>
+        </xpath>
+    </t>
+</templates>

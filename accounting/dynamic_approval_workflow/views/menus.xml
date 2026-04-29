@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2026 Abdalrahman Shahrour
+     License LGPL-3.0 or later (https://www.linkedin.com/in/shahrour) -->
+<odoo>
+
+    <!-- ================================================================
+         Root menu  (appears in main app switcher)
+         ================================================================ -->
+    <menuitem id="menu_approval_root"
+              name="Approvals"
+              sequence="60"
+              web_icon="dynamic_approval_workflow,static/description/icon.png"/>
+
+    <!-- ================================================================
+         My Approvals  (first item — most used)
+         ================================================================ -->
+    <menuitem id="menu_my_approvals_dashboard"
+              name="My Approvals"
+              parent="menu_approval_root"
+              action="action_my_approvals_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_my_pending_approvals"
+              name="Pending My Action"
+              parent="menu_approval_root"
+              action="action_my_pending_approvals"
+              sequence="20"/>
+
+    <!-- ================================================================
+         All Requests
+         ================================================================ -->
+    <menuitem id="menu_approval_requests"
+              name="All Requests"
+              parent="menu_approval_root"
+              action="action_approval_request"
+              sequence="30"
+              groups="dynamic_approval_workflow.group_approval_manager"/>
+
+    <!-- ================================================================
+         Configuration  (Settings sub-menu)
+         ================================================================ -->
+    <menuitem id="menu_approval_configuration"
+              name="Configuration"
+              parent="menu_approval_root"
+              sequence="90"
+              groups="dynamic_approval_workflow.group_approval_manager"/>
+
+    <menuitem id="menu_approval_workflow_config"
+              name="Approval Workflows"
+              parent="menu_approval_configuration"
+              action="action_approval_workflow_config"
+              sequence="10"
+              groups="dynamic_approval_workflow.group_approval_manager"/>
+
+</odoo>

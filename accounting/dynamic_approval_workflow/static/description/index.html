@@ -1,0 +1,495 @@
+<div class="oe_container" style="margin-bottom:24px;">
+    <div style="padding:48px 36px; border-radius:18px; background-color:#1f2937; background-image:linear-gradient(135deg, #1f2937 0%, #111827 100%); overflow:hidden;">
+
+        <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+
+            <div style="flex:0 0 96px; text-align:center;">
+                <img src="icon.png"
+                     alt="Dynamic Approval Workflow icon"
+                     style="width:96px; height:96px; max-width:96px; display:block; margin:0 auto;"/>
+            </div>
+
+            <div style="flex:1 1 600px; min-width:280px;">
+                <h1 style="margin:0 0 14px 0; color:#ffffff; font-size:40px; font-weight:700; line-height:1.2;">
+                    Dynamic Approval Workflow Engine
+                </h1>
+
+                <p style="margin:0 0 20px 0; color:#e5e7eb; font-size:18px; line-height:1.7; max-width:900px;">
+                    A reusable, configurable multi-stage approval engine for any Odoo model.
+                    Configure once, enforce everywhere, and keep a full audit trail.
+                </p>
+
+                <div style="margin-top:6px;">
+
+                    <span style="display:inline-block; margin:4px 8px 4px 0; padding:8px 14px; border-radius:999px; background-color:#16a34a; color:#ffffff; border:1px solid #22c55e; font-size:13px; font-weight:600; line-height:1;">
+                        Odoo 19
+                    </span>
+
+                    <span style="display:inline-block; margin:4px 8px 4px 0; padding:8px 14px; border-radius:999px; background-color:#334155; color:#ffffff; border:1px solid #475569; font-size:13px; font-weight:600; line-height:1;">
+                        Community &amp; Enterprise
+                    </span>
+
+                    <span style="display:inline-block; margin:4px 8px 4px 0; padding:8px 14px; border-radius:999px; background-color:#1d4ed8; color:#ffffff; border:1px solid #2563eb; font-size:13px; font-weight:600; line-height:1;">
+                        No Per-Model Workflow Coding
+                    </span>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="oe_container" style="margin-top: 24px; margin-bottom: 12px;">
+    <div class="row">
+
+        <div class="col-md-3 col-sm-6" style="margin-bottom: 16px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:28px 20px; text-align:center; min-height:150px;">
+                <div style="font-size:44px; line-height:1; font-weight:700; color:#16a34a; margin-bottom:12px;">&#8734;</div>
+                <div style="font-size:16px; font-weight:600; color:#111827; margin-bottom:6px;">Models Supported</div>
+                <div style="font-size:13px; color:#6b7280; line-height:1.6;">Use the same approval engine across any supported Odoo model.</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" style="margin-bottom: 16px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:28px 20px; text-align:center; min-height:150px;">
+                <div style="font-size:44px; line-height:1; font-weight:700; color:#16a34a; margin-bottom:12px;">3</div>
+                <div style="font-size:16px; font-weight:600; color:#111827; margin-bottom:6px;">Approver Types</div>
+                <div style="font-size:13px; color:#6b7280; line-height:1.6;">Specific user, security group, or dynamic user field.</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" style="margin-bottom: 16px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:28px 20px; text-align:center; min-height:150px;">
+                <div style="font-size:44px; line-height:1; font-weight:700; color:#16a34a; margin-bottom:12px;">100%</div>
+                <div style="font-size:16px; font-weight:600; color:#111827; margin-bottom:6px;">Audit Covered</div>
+                <div style="font-size:13px; color:#6b7280; line-height:1.6;">Every approval decision is tracked with full history.</div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" style="margin-bottom: 16px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:28px 20px; text-align:center; min-height:150px;">
+                <div style="font-size:44px; line-height:1; font-weight:700; color:#16a34a; margin-bottom:12px;">0</div>
+                <div style="font-size:16px; font-weight:600; color:#111827; margin-bottom:6px;">Workflow Code Per Model</div>
+                <div style="font-size:13px; color:#6b7280; line-height:1.6;">Configure workflows from the UI without per-model approval logic.</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<section class="oe_container" style="margin-top: 36px; margin-bottom: 12px;">
+    <h2 class="oe_slogan" style="text-align:left; color:#111827; font-size:36px; font-weight:700; margin-bottom:12px;">
+        What This Module Does
+    </h2>
+
+    <p class="oe_slogan" style="text-align:left; max-width:900px; color:#4b5563; font-size:17px; line-height:1.8; margin-bottom:28px;">
+        Stop building approval logic one module at a time. Define your approval chains in the UI,
+        and let the engine handle submission, routing, stage progression, notifications, escalation,
+        and approval history automatically.
+    </p>
+
+    <div class="row">
+
+        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:24px; min-height:190px;">
+                <h4 style="margin:0 0 12px 0; color:#111827; font-size:20px; font-weight:700; line-height:1.4;">
+                    Multi-Stage Sequential Workflows
+                </h4>
+                <p style="margin:0; color:#6b7280; font-size:14px; line-height:1.8;">
+                    Configure unlimited stages per workflow. Stage 2 does not start until Stage 1 is completed.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:24px; min-height:190px;">
+                <h4 style="margin:0 0 12px 0; color:#111827; font-size:20px; font-weight:700; line-height:1.4;">
+                    Domain-Based Routing
+                </h4>
+                <p style="margin:0; color:#6b7280; font-size:14px; line-height:1.8;">
+                    Apply different workflows to different records of the same model using standard Odoo domains.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:24px; min-height:190px;">
+                <h4 style="margin:0 0 12px 0; color:#111827; font-size:20px; font-weight:700; line-height:1.4;">
+                    Three Flexible Approver Types
+                </h4>
+                <p style="margin:0; color:#6b7280; font-size:14px; line-height:1.8;">
+                    Use a specific user, a security group, or a dynamic user field directly from the document.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:24px; min-height:190px;">
+                <h4 style="margin:0 0 12px 0; color:#111827; font-size:20px; font-weight:700; line-height:1.4;">
+                    Immutable Audit Trail
+                </h4>
+                <p style="margin:0; color:#6b7280; font-size:14px; line-height:1.8;">
+                    Every approval, rejection, and return action is recorded with user, time, and reason.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:24px; min-height:190px;">
+                <h4 style="margin:0 0 12px 0; color:#111827; font-size:20px; font-weight:700; line-height:1.4;">
+                    Escalation and Deadlines
+                </h4>
+                <p style="margin:0; color:#6b7280; font-size:14px; line-height:1.8;">
+                    Flag overdue requests and notify escalation contacts through a scheduled cron job.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:24px; min-height:190px;">
+                <h4 style="margin:0 0 12px 0; color:#111827; font-size:20px; font-weight:700; line-height:1.4;">
+                    Live Dashboard
+                </h4>
+                <p style="margin:0; color:#6b7280; font-size:14px; line-height:1.8;">
+                    A dedicated dashboard gives requesters and approvers clear visibility into pending work.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="oe_container oe_gray" style="margin-top: 32px; padding: 32px; border-radius: 12px;">
+    <h2 class="oe_slogan" style="text-align: left;">How It Works</h2>
+    <div class="row" style="margin-top: 16px;">
+        <div class="col-md-3" style="margin-bottom: 16px;">
+            <div style="background: #ffffff; border-radius: 12px; padding: 20px; height: 100%; border: 1px solid #e5e7eb;">
+                <h4>1. Configure Workflow</h4>
+                <p>Select the target model, add an optional domain, and define escalation timing.</p>
+            </div>
+        </div>
+        <div class="col-md-3" style="margin-bottom: 16px;">
+            <div style="background: #ffffff; border-radius: 12px; padding: 20px; height: 100%; border: 1px solid #e5e7eb;">
+                <h4>2. Add Stages</h4>
+                <p>Define the sequence and approver type for each stage in the workflow.</p>
+            </div>
+        </div>
+        <div class="col-md-3" style="margin-bottom: 16px;">
+            <div style="background: #ffffff; border-radius: 12px; padding: 20px; height: 100%; border: 1px solid #e5e7eb;">
+                <h4>3. Submit Document</h4>
+                <p>The engine creates the approval request, activates the first stage, and sends notifications.</p>
+            </div>
+        </div>
+        <div class="col-md-3" style="margin-bottom: 16px;">
+            <div style="background: #ffffff; border-radius: 12px; padding: 20px; height: 100%; border: 1px solid #e5e7eb;">
+                <h4>4. Approve or Return</h4>
+                <p>Approvers act from the dashboard or request form, and the document advances automatically.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container" style="margin-top:36px; margin-bottom:12px;">
+    <h2 class="oe_slogan" style="text-align:left; color:#111827; font-size:36px; font-weight:700; margin-bottom:12px;">
+        Document State Lifecycle
+    </h2>
+
+    <p class="oe_slogan" style="text-align:left; max-width:900px; color:#4b5563; font-size:17px; line-height:1.8; margin-bottom:28px;">
+        Every document moves through a clear approval lifecycle, from initial submission to final decision.
+    </p>
+
+    <div class="row">
+
+        <div class="col-md-2 col-sm-4" style="margin-bottom:18px;">
+            <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:16px; padding:20px 14px; text-align:center; min-height:120px;">
+                <div style="font-size:14px; font-weight:700; color:#111827; margin-bottom:10px;">Draft</div>
+                <span style="display:inline-block; padding:8px 14px; border-radius:999px; background:#e5e7eb; color:#111827; font-size:13px; font-weight:600;">
+                    Initial State
+                </span>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4" style="margin-bottom:18px;">
+            <div style="background:#fffaf0; border:1px solid #fde68a; border-radius:16px; padding:20px 14px; text-align:center; min-height:120px;">
+                <div style="font-size:14px; font-weight:700; color:#111827; margin-bottom:10px;">Pending Approval</div>
+                <span style="display:inline-block; padding:8px 14px; border-radius:999px; background:#f59e0b; color:#111827; font-size:13px; font-weight:600;">
+                    Waiting
+                </span>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4" style="margin-bottom:18px;">
+            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:16px; padding:20px 14px; text-align:center; min-height:120px;">
+                <div style="font-size:14px; font-weight:700; color:#111827; margin-bottom:10px;">Approved</div>
+                <span style="display:inline-block; padding:8px 14px; border-radius:999px; background:#16a34a; color:#111827; font-size:13px; font-weight:600;">
+                    Completed
+                </span>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4" style="margin-bottom:18px;">
+            <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:16px; padding:20px 14px; text-align:center; min-height:120px;">
+                <div style="font-size:14px; font-weight:700; color:#111827; margin-bottom:10px;">Rejected</div>
+                <span style="display:inline-block; padding:8px 14px; border-radius:999px; background:#dc2626; color:#111827; font-size:13px; font-weight:600;">
+                    Blocked
+                </span>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4" style="margin-bottom:18px;">
+            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:16px; padding:20px 14px; text-align:center; min-height:120px;">
+                <div style="font-size:14px; font-weight:700; color:#111827; margin-bottom:10px;">Returned</div>
+                <span style="display:inline-block; padding:8px 14px; border-radius:999px; background:#2563eb; color:#111827; font-size:13px; font-weight:600;">
+                    Needs Update
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="margin-top:8px; padding:22px 24px; background:#16a34a; border:1px solid #e5e7eb; border-radius:16px;">
+        <p style="margin:0; color:#4b5563; font-size:15px; line-height:1.9;">
+            <strong style="color:#111827;">Draft</strong> documents can be submitted for approval.
+            <strong style="color:#111827;">Pending Approval</strong> blocks confirmation until approvers act.
+            <strong style="color:#111827;">Approved</strong> documents can proceed.
+            <strong style="color:#111827;">Rejected</strong> documents are blocked.
+            <strong style="color:#111827;">Returned</strong> documents can be edited and resubmitted.
+        </p>
+    </div>
+</section>
+
+
+<section class="oe_container oe_gray" style="margin-top: 32px; padding: 32px; border-radius: 12px;">
+    <h2 class="oe_slogan" style="text-align: left;">See It in Action</h2>
+    <p class="oe_slogan" style="text-align: left; max-width: 900px;">
+        Below is a complete walkthrough from configuration to approval using screenshots from an Odoo 19 environment.
+    </p>
+
+    <h3 style="margin-top: 24px;">Phase 1. Setup and Configuration</h3>
+    <div class="row" style="margin-top: 16px;">
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>1. Grant User Access Rights</h4>
+            <img src="images/Screenshot1-group-access.png" alt="User access rights" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">Assign Approval Manager or Approval User access before using the module.</p>
+        </div>
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>2. Open the Approvals App</h4>
+            <img src="images/Screenshot2-home-menu.png" alt="Approvals app on home screen" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">The app becomes available after installation for users with the proper role.</p>
+        </div>
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>3. Configure Approval Workflows</h4>
+            <img src="images/Screenshot3-config-the-approval-workflow.png" alt="Approval workflows list" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">Create workflows for any model without writing approval logic per model.</p>
+        </div>
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>4. Inspect Workflow Configuration</h4>
+            <img src="images/Screenshot4-sale-order-approval-config.png" alt="Sales order approval workflow configuration" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">Review model, domain, escalation days, and stage setup in one form.</p>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 24px;">Phase 2. Submitting a Document</h3>
+    <div class="row" style="margin-top: 16px;">
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>5. Submit the Sales Order for Approval</h4>
+            <img src="images/Screenshot5-submit-so-to-approval.png" alt="Submit sales order for approval" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">The Submit for Approval button appears while the document is still editable.</p>
+        </div>
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>6. Order is Now Pending Approval</h4>
+            <img src="images/Screenshot6-so-after-submit-to-approve.png" alt="Sales order pending approval" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">The status badge changes and a linked approval request is created automatically.</p>
+        </div>
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>7. Confirmation is Blocked Until Approved</h4>
+            <img src="images/Screenshot7-when-confirm-so-not-approved.png" alt="Confirmation blocked until approved" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">The engine prevents confirmation while the request is still waiting for approval.</p>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 24px;">Phase 3. Dashboard and Decision</h3>
+    <div class="row" style="margin-top: 16px;">
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>8. My Approvals Dashboard</h4>
+            <img src="images/Screenshot8-dashboard-screen.png" alt="Approvals dashboard" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">Approvers can filter, review, and act on pending requests from one place.</p>
+        </div>
+        <div class="col-md-6" style="margin-bottom: 24px;">
+            <h4>9. Review and Act on the Request</h4>
+            <img src="images/Screenshot10-approve-recourd-screen.png" alt="Approval request form" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">Approve, Reject, or Return to Requester with full context and audit history.</p>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 24px;">Phase 4. Full Audit Trail</h3>
+    <div class="row" style="margin-top: 16px;">
+        <div class="col-md-12" style="margin-bottom: 24px;">
+            <h4>10. All Approval Requests</h4>
+            <img src="images/Screenshot11-all-approval-requests.png" alt="All approval requests" class="img img-responsive img-thumbnail"/>
+            <p style="margin-top: 8px;">Managers can review the full lifecycle across all requests and statuses.</p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container" style="margin-top: 32px;">
+    <h2 class="oe_slogan" style="text-align: left;">Three Ways to Define Approvers</h2>
+    <div class="row" style="margin-top: 16px;">
+        <div class="col-md-4" style="margin-bottom: 16px;">
+            <div style="border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 12px; padding: 20px; height: 100%;">
+                <h4>Specific User</h4>
+                <p>Always route a stage to a fixed Odoo user.</p>
+                <p><strong>Example:</strong> CFO approval</p>
+            </div>
+        </div>
+        <div class="col-md-4" style="margin-bottom: 16px;">
+            <div style="border: 1px solid #bae6fd; background: #f0f9ff; border-radius: 12px; padding: 20px; height: 100%;">
+                <h4>Security Group</h4>
+                <p>Route a stage to a group, with support for any member or all members.</p>
+                <p><strong>Example:</strong> Sales Managers group</p>
+            </div>
+        </div>
+        <div class="col-md-4" style="margin-bottom: 16px;">
+            <div style="border: 1px solid #fed7aa; background: #fff7ed; border-radius: 12px; padding: 20px; height: 100%;">
+                <h4>Dynamic Field</h4>
+                <p>Resolve the approver from a user field on the document itself.</p>
+                <p><strong>Example:</strong> Assigned salesperson or direct manager</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_gray" style="margin-top: 32px; padding: 32px; border-radius: 12px;">
+    <h2 class="oe_slogan" style="text-align: left;">Complete Audit Trail</h2>
+    <p class="oe_slogan" style="text-align: left; max-width: 900px;">
+        Every decision is logged with the stage, approver, action, and reason.
+        This makes the module suitable for internal controls, compliance review, and dispute handling.
+    </p>
+    <div class="table-responsive" style="margin-top: 16px;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date and Time</th>
+                    <th>Stage</th>
+                    <th>Approver</th>
+                    <th>Action</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>2025-03-10 09:14</td><td>Sales Manager Approval</td><td>John Smith</td><td>Approved</td><td>-</td></tr>
+                <tr><td>2025-03-10 14:22</td><td>Finance Review</td><td>Jane Doe</td><td>Returned</td><td>Missing cost breakdown</td></tr>
+                <tr><td>2025-03-11 10:00</td><td>Sales Manager Approval</td><td>John Smith</td><td>Approved</td><td>-</td></tr>
+                <tr><td>2025-03-11 15:30</td><td>Finance Review</td><td>Jane Doe</td><td>Approved</td><td>-</td></tr>
+                <tr><td>2025-03-12 08:05</td><td>CEO Sign-off</td><td>Ahmad Al-Sharour</td><td>Approved</td><td>-</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="oe_container" style="margin-top: 32px;">
+    <h2 class="oe_slogan" style="text-align: left;">Built for Every Team</h2>
+    <div class="row" style="margin-top: 16px;">
+        <div class="col-md-6" style="margin-bottom: 16px;"><div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;"><h4>Sales Orders</h4><p>Prevent order confirmation until the correct approval chain is completed.</p></div></div>
+        <div class="col-md-6" style="margin-bottom: 16px;"><div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;"><h4>Purchase Orders</h4><p>Require manager and finance sign-off before confirming procurement documents.</p></div></div>
+        <div class="col-md-6" style="margin-bottom: 16px;"><div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;"><h4>Employee Expenses</h4><p>Route requests dynamically based on the employee and their reporting structure.</p></div></div>
+        <div class="col-md-6" style="margin-bottom: 16px;"><div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;"><h4>Leave Requests</h4><p>Use different approval policies by leave type, duration, or department.</p></div></div>
+        <div class="col-md-6" style="margin-bottom: 16px;"><div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;"><h4>Manufacturing Orders</h4><p>Require operational, quality, or safety approval before production starts.</p></div></div>
+        <div class="col-md-6" style="margin-bottom: 16px;"><div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;"><h4>Custom Models</h4><p>Enable approval flows on custom business objects with a reusable mixin.</p></div></div>
+    </div>
+</section>
+
+<section class="oe_container oe_gray" style="margin-top: 32px; padding: 32px; border-radius: 12px;">
+    <h2 class="oe_slogan" style="text-align: left;">Technical Specifications</h2>
+    <div class="table-responsive" style="margin-top: 16px;">
+        <table class="table table-bordered">
+            <tbody>
+                <tr><th>Odoo Version</th><td>19.0</td></tr>
+                <tr><th>Module Version</th><td>1.0.0</td></tr>
+                <tr><th>Edition</th><td>Community and Enterprise</td></tr>
+                <tr><th>License</th><td>LGPL-3</td></tr>
+                <tr><th>Dependencies</th><td>base, mail, base_automation, sale</td></tr>
+                <tr><th>Frontend</th><td>OWL</td></tr>
+                <tr><th>Multi-Company</th><td>Supported</td></tr>
+                <tr><th>Demo Data</th><td>Included</td></tr>
+                <tr><th>Author</th><td>Abdalrahman Shahrour</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="oe_container" style="margin-top: 32px;">
+    <h2 class="oe_slogan" style="text-align: left;">Developer Integration Guide</h2>
+    <p style="max-width: 900px;">
+        Any model can join the approval engine by inheriting the mixin, adding the dependency,
+        exposing the approval fields in the form, and creating an approval workflow configuration.
+    </p>
+
+    <h3 style="margin-top: 24px;">1. Add the mixin to your model</h3>
+    <pre style="background: #111827; color: #16a34a; padding: 16px; border-radius: 12px; overflow-x: auto;">
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
+
+class MyModel(models.Model):
+    _name = "my.model"
+    _description = "My Model"
+    _inherit = [
+        "approval.mixin",
+        "mail.thread",
+        "mail.activity.mixin",
+    ]</pre>
+
+    <h3 style="margin-top: 24px;">2. Add the dependency in the manifest</h3>
+    <pre style="background: #111827; color: #16a34a; padding: 16px; border-radius: 12px; overflow-x: auto;">{
+    "name": "My Module",
+    "version": "19.0.1.0.0",
+    "depends": [
+        "dynamic_approval_workflow",
+        "mail",
+    ],
+}</pre>
+
+    <h3 style="margin-top: 24px;">3. Add the submit button and status badge in the form view</h3>
+    <pre style="background: #111827; color: #16a34a; padding: 16px; border-radius: 12px; overflow-x: auto;">&lt;button name="action_submit_for_approval"
+        type="object"
+        string="Submit for Approval"
+        class="btn-secondary"
+        invisible="state != 'draft' or approval_state not in ('draft', 'returned')"/&gt;
+
+&lt;field name="approval_state"
+       readonly="1"
+       widget="badge"/&gt;</pre>
+
+    <h3 style="margin-top: 24px;">4. Gate the final confirmation action</h3>
+    <pre style="background: #111827; color: #16a34a; padding: 16px; border-radius: 12px; overflow-x: auto;">def action_confirm(self):
+    for record in self:
+        config = record._get_approval_config()
+        if not config:
+            continue
+        if record.approval_state == "approved":
+            continue
+        if record.approval_state in ("draft", "returned"):
+            raise UserError(_("Submit \"%s\" for approval before confirming.") % record.display_name)
+        if record.approval_state == "pending_approval":
+            raise UserError(_("\"%s\" is still awaiting approval.") % record.display_name)
+        if record.approval_state == "rejected":
+            raise UserError(_("\"%s\" was rejected. Return to draft and resubmit.") % record.display_name)
+    return super().action_confirm()</pre>
+</section>
+
+<section class="oe_container oe_dark" style="margin-top: 32px; padding: 40px 32px; border-radius: 16px; background-color: #16a34a; color: #ffffff; text-align: center;">
+    <h2 style="margin-top: 0; color: #ffffff;">Ready to Bring Order to Your Approvals?</h2>
+    <p style="font-size: 16px; color: #ecfdf5; max-width: 800px; margin: 0 auto 16px;">
+        Install once, configure in minutes, and use one approval engine across sales, purchasing,
+        HR, manufacturing, and custom models.
+    </p>
+    <p>
+        <span style="display:inline-block; margin:4px 6px; padding:6px 12px; border-radius:16px; background:rgba(255,255,255,0.18); color:#ffffff; border:1px solid rgba(255,255,255,0.28); font-size:13px; font-weight:600;">No per-model custom workflow logic</span>
+        <span style="display:inline-block; margin:4px 6px; padding:6px 12px; border-radius:16px; background:rgba(255,255,255,0.18); color:#ffffff; border:1px solid rgba(255,255,255,0.28); font-size:13px; font-weight:600;">Full audit trail</span>
+        <span style="display:inline-block; margin:4px 6px; padding:6px 12px; border-radius:16px; background:rgba(255,255,255,0.18); color:#ffffff; border:1px solid rgba(255,255,255,0.28); font-size:13px; font-weight:600;">Reusable on any supported model</span>
+        <span style="display:inline-block; margin:4px 6px; padding:6px 12px; border-radius:16px; background:rgba(255,255,255,0.18); color:#ffffff; border:1px solid rgba(255,255,255,0.28); font-size:13px; font-weight:600;">Multi-company ready</span>
+    </p>
+</section>
+
+<section class="oe_container" style="margin-top: 16px; margin-bottom: 24px; text-align: center;">
+    <p style="color: #374151; font-weight: 500;">Dynamic Approval Workflow v19.0.1.0.0 | LGPL-3 | Built by Abdalrahman Shahrour</p>
+</section>

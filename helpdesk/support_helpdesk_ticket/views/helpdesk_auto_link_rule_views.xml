@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Auto-Link Rule Tree View -->
+    <record id="view_helpdesk_auto_link_rule_tree" model="ir.ui.view">
+        <field name="name">helpdesk.auto.link.rule.tree</field>
+        <field name="model">helpdesk.auto.link.rule</field>
+        <field name="arch" type="xml">
+            <list string="Auto-Link Rules" decoration-muted="active == False" default_order="sequence, id">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="target_model"/>
+                <field name="model_display_name"/>
+                <field name="pattern_type"/>
+                <field name="pattern"/>
+                <field name="execution_count"/>
+                <field name="last_execution_date" widget="datetime"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Auto-Link Rule Form View -->
+    <record id="view_helpdesk_auto_link_rule_form" model="ir.ui.view">
+        <field name="name">helpdesk.auto.link.rule.form</field>
+        <field name="model">helpdesk.auto.link.rule</field>
+        <field name="arch" type="xml">
+            <form string="Auto-Link Rule">
+                <header>
+                    <button name="action_test_rule" string="Test Rule" type="object" 
+                            class="oe_highlight" icon="fa-flask"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" type="object" icon="fa-link" name="action_test_rule">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Links Created</span>
+                            <span class="o_stat_value">
+                                <field name="execution_count" widget="statinfo"/>
+                            </span>
+                        </div>
+                    </button>
+                </div>
+                
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter rule name..."/>
+                            <field name="sequence"/>
+                            <field name="target_model" placeholder="e.g., sale.order, account.move"/>
+                            <field name="model_display_name" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="execution_count" readonly="1"/>
+                            <field name="last_execution_date" readonly="1" widget="datetime"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="description" placeholder="Enter rule description..." nolabel="1"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Pattern Configuration" name="pattern">
+                            <group>
+                                <group>
+                                    <field name="pattern_type"/>
+                                    <field name="pattern" 
+                                           invisible="pattern_type == 'regex'"
+                                           placeholder="e.g., SO, INV, PO"/>
+                                    <field name="pattern_regex" 
+                                           invisible="pattern_type != 'regex'"
+                                           placeholder="e.g., (SO|SALE)[\s\-_]?([0-9]+)"
+                                           help="Use groups to capture the identifier. First group will be used as identifier."/>
+                                    <field name="case_sensitive"/>
+                                </group>
+                                <group>
+                                    <field name="search_field" placeholder="name"/>
+                                    <field name="search_domain" widget="text" 
+                                           placeholder="[('state', '!=', 'cancel')]"
+                                           help="Additional domain to filter search results"/>
+                                </group>
+                            </group>
+                            
+                            <group string="Pattern Examples">
+                                <div class="alert alert-info" role="alert">
+                                    <strong>Prefix Pattern:</strong> "SO" matches "SO001", "SO-123", "SO 456"<br/>
+                                    <strong>Suffix Pattern:</strong> "INV" matches "001INV", "123-INV"<br/>
+                                    <strong>Contains Pattern:</strong> "PO" matches "PO001", "123PO456"<br/>
+                                    <strong>Regex Pattern:</strong> "(SO|SALE)[\s\-_]?([0-9]+)" matches "SO001", "SALE-123"
+                                </div>
+                            </group>
+                        </page>
+                        
+                        <page string="Conditions" name="conditions">
+                            <group>
+                                <group>
+                                    <field name="priority_filter"/>
+                                    <field name="category_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                </group>
+                                <group>
+                                    <field name="condition_domain" widget="text" 
+                                           placeholder="[('team_id', '!=', False)]"
+                                           help="Domain expression to match tickets. Leave empty to match all tickets."/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Auto-Link Rule Search View -->
+    <record id="view_helpdesk_auto_link_rule_search" model="ir.ui.view">
+        <field name="name">helpdesk.auto.link.rule.search</field>
+        <field name="model">helpdesk.auto.link.rule</field>
+        <field name="arch" type="xml">
+            <search string="Auto-Link Rules">
+                <field name="name"/>
+                <field name="target_model"/>
+                <field name="pattern"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Target Model" name="group_model" context="{'group_by': 'target_model'}"/>
+                    <filter string="Pattern Type" name="group_type" context="{'group_by': 'pattern_type'}"/>
+                    <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Auto-Link Rule Action -->
+    <record id="action_helpdesk_auto_link_rule" model="ir.actions.act_window">
+        <field name="name">Auto-Link Rules</field>
+        <field name="res_model">helpdesk.auto.link.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_auto_link_rule_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first auto-link rule!
+            </p>
+            <p>
+                Auto-link rules automatically link related records (orders, invoices, etc.) to tickets based on text patterns.
+            </p>
+        </field>
+    </record>
+
+</odoo>

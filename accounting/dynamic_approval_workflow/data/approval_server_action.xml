@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2026 Abdalrahman Shahrour
+     License LGPL-3.0 or later (https://www.linkedin.com/in/shahrour) -->
+<!--
+    Template server action for automated-action integration.
+
+    Admins can duplicate this record from Settings > Technical > Actions >
+    Server Actions, then attach it to an Automated Action (ir.base.automation)
+    on any model to trigger approval workflow submission automatically on
+    specific events (e.g. when a sale order is confirmed).
+
+    The server action calls ApprovalRequest.action_server_submit_approval()
+    which reads active_model / active_ids from context.
+-->
+<odoo noupdate="1">
+
+    <record id="action_server_submit_for_approval" model="ir.actions.server">
+        <field name="name">Approval: Submit for Approval (template)</field>
+        <field name="model_id" ref="model_approval_request"/>
+        <field name="binding_model_id" eval="False"/>
+        <field name="state">code</field>
+        <field name="code">
+env['approval.request'].action_server_submit_approval()
+        </field>
+        <field name="group_ids" eval="[(4, ref('dynamic_approval_workflow.group_approval_manager'))]"/>
+    </record>
+
+</odoo>

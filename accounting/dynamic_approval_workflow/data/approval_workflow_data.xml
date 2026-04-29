@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2026 Abdalrahman Shahrour
+     License LGPL-3.0 or later (https://www.linkedin.com/in/shahrour) -->
+<odoo noupdate="1">
+
+    <!--
+        Seed workflow records.
+        Includes one active Sales Order workflow plus reusable templates.
+        Duplicate any template and retarget model/domain/stages as needed.
+    -->
+
+    <record id="approval_workflow_config_sale_order_default" model="approval.workflow.config">
+        <field name="name">Sales Order Approval</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="sequence">5</field>
+        <field name="domain">[]</field>
+        <field name="escalation_days">2</field>
+        <field name="active" eval="True"/>
+        <field name="note" type="html">
+            <p>Default workflow applied to Sales Orders.</p>
+            <p>Archive or edit this record to adjust approval behavior.</p>
+        </field>
+    </record>
+
+    <record id="approval_workflow_stage_sale_order_default_1" model="approval.workflow.stage">
+        <field name="config_id" ref="approval_workflow_config_sale_order_default"/>
+        <field name="sequence">10</field>
+        <field name="name">Sales Manager Approval</field>
+        <field name="approver_type">group</field>
+        <field name="group_id" ref="group_approval_manager"/>
+        <field name="require_all_group_members" eval="False"/>
+        <field name="escalation_user_id" ref="base.user_admin"/>
+    </record>
+
+    <record id="approval_workflow_config_template_single_user" model="approval.workflow.config">
+        <field name="name">Template: Single User Approval</field>
+        <field name="model_id" ref="model_approval_request"/>
+        <field name="sequence">10</field>
+        <field name="domain">[]</field>
+        <field name="escalation_days">3</field>
+        <field name="active" eval="True"/>
+        <field name="note" type="html">
+            <p>Simple one-stage template with a fixed approver user.</p>
+            <p>Duplicate this record and change Model, Domain, and stage approvers.</p>
+        </field>
+    </record>
+
+    <record id="approval_workflow_stage_template_single_user_1" model="approval.workflow.stage">
+        <field name="config_id" ref="approval_workflow_config_template_single_user"/>
+        <field name="sequence">10</field>
+        <field name="name">Manager Approval</field>
+        <field name="approver_type">user</field>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="escalation_user_id" ref="base.user_admin"/>
+    </record>
+
+    <record id="approval_workflow_config_template_group" model="approval.workflow.config">
+        <field name="name">Template: Group then Admin Approval</field>
+        <field name="model_id" ref="model_approval_request"/>
+        <field name="sequence">20</field>
+        <field name="domain">[]</field>
+        <field name="escalation_days">5</field>
+        <field name="active" eval="True"/>
+        <field name="note" type="html">
+            <p>Two-stage template using a group review followed by admin final approval.</p>
+        </field>
+    </record>
+
+    <record id="approval_workflow_stage_template_group_1" model="approval.workflow.stage">
+        <field name="config_id" ref="approval_workflow_config_template_group"/>
+        <field name="sequence">10</field>
+        <field name="name">Review by Approval Managers</field>
+        <field name="approver_type">group</field>
+        <field name="group_id" ref="group_approval_manager"/>
+        <field name="require_all_group_members" eval="False"/>
+        <field name="escalation_user_id" ref="base.user_admin"/>
+    </record>
+
+    <record id="approval_workflow_stage_template_group_2" model="approval.workflow.stage">
+        <field name="config_id" ref="approval_workflow_config_template_group"/>
+        <field name="sequence">20</field>
+        <field name="name">Final Admin Approval</field>
+        <field name="approver_type">user</field>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="escalation_user_id" ref="base.user_admin"/>
+    </record>
+
+    <record id="approval_workflow_config_template_dynamic_field" model="approval.workflow.config">
+        <field name="name">Template: Dynamic Field Approver</field>
+        <field name="model_id" ref="model_approval_request"/>
+        <field name="sequence">30</field>
+        <field name="domain">[]</field>
+        <field name="escalation_days">2</field>
+        <field name="active" eval="True"/>
+        <field name="note" type="html">
+            <p>Template using an approver resolved from a user field on the document.</p>
+            <p>Set the stage field_name to a Many2one(res.users) field on your target model.</p>
+        </field>
+    </record>
+
+    <record id="approval_workflow_stage_template_dynamic_field_1" model="approval.workflow.stage">
+        <field name="config_id" ref="approval_workflow_config_template_dynamic_field"/>
+        <field name="sequence">10</field>
+        <field name="name">Dynamic User from requester_id</field>
+        <field name="approver_type">field</field>
+        <field name="field_name">requester_id</field>
+        <field name="escalation_user_id" ref="base.user_admin"/>
+    </record>
+
+</odoo>

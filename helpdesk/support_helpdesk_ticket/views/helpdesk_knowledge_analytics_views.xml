@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== KB Analytics Pivot View ==================== -->
+    <record id="view_helpdesk_knowledge_analytics_pivot" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.analytics.pivot</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <pivot string="Knowledge Base Analytics">
+                <field name="category_id" type="row"/>
+                <field name="author_id" type="row"/>
+                <field name="is_faq" type="row"/>
+                <field name="state" type="row"/>
+                <field name="create_date" interval="month" type="col"/>
+                <field name="view_count" type="measure"/>
+                <field name="rating" type="measure"/>
+                <field name="rating_count" type="measure"/>
+                <field name="ticket_count" type="measure"/>
+                <field name="effectiveness_count" type="measure"/>
+                <field name="effectiveness_rate" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== KB Views Analytics Graph ==================== -->
+    <record id="view_helpdesk_knowledge_views_graph" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.views.graph</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <graph string="Article Views Analytics" type="bar">
+                <field name="category_id" type="row"/>
+                <field name="view_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== KB Rating Analytics Graph ==================== -->
+    <record id="view_helpdesk_knowledge_rating_graph" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.rating.graph</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <graph string="Article Rating Analytics" type="bar">
+                <field name="category_id" type="row"/>
+                <field name="rating" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== KB Effectiveness Graph ==================== -->
+    <record id="view_helpdesk_knowledge_effectiveness_graph" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.effectiveness.graph</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <graph string="Article Effectiveness Analytics" type="bar">
+                <field name="category_id" type="row"/>
+                <field name="effectiveness_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== KB Views Timeline Graph ==================== -->
+    <record id="view_helpdesk_knowledge_views_timeline_graph" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.views.timeline.graph</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <graph string="Article Views Timeline" type="line">
+                <field name="create_date" interval="day" type="row"/>
+                <field name="view_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== KB Top Articles Graph ==================== -->
+    <record id="view_helpdesk_knowledge_top_articles_graph" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.top.articles.graph</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <graph string="Top Articles by Views" type="pie">
+                <field name="name" type="row"/>
+                <field name="view_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== KB Analytics Dashboard Action ==================== -->
+    <record id="action_helpdesk_knowledge_analytics" model="ir.actions.act_window">
+        <field name="name">Knowledge Base Analytics</field>
+        <field name="res_model">helpdesk.knowledge.article</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="view_id" ref="view_helpdesk_knowledge_analytics_pivot"/>
+        <field name="domain">[('state', '=', 'published')]</field>
+        <field name="context">{'search_default_group_category': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Knowledge Base Analytics
+            </p>
+            <p>
+                Analyze article performance, views, ratings, and effectiveness.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== KB Views Analytics Action ==================== -->
+    <record id="action_helpdesk_knowledge_views_analytics" model="ir.actions.act_window">
+        <field name="name">Article Views Analytics</field>
+        <field name="res_model">helpdesk.knowledge.article</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_helpdesk_knowledge_views_graph"/>
+        <field name="domain">[('state', '=', 'published')]</field>
+        <field name="context">{'search_default_group_category': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No view data available.
+            </p>
+            <p>
+                Track article views and popularity metrics.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== KB Rating Analytics Action ==================== -->
+    <record id="action_helpdesk_knowledge_rating_analytics" model="ir.actions.act_window">
+        <field name="name">Article Rating Analytics</field>
+        <field name="res_model">helpdesk.knowledge.article</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_helpdesk_knowledge_rating_graph"/>
+        <field name="domain">[('state', '=', 'published'), ('rating_count', '>', 0)]</field>
+        <field name="context">{'search_default_group_category': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No rating data available.
+            </p>
+            <p>
+                Analyze article ratings and user feedback.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== KB Effectiveness Analytics Action ==================== -->
+    <record id="action_helpdesk_knowledge_effectiveness_analytics" model="ir.actions.act_window">
+        <field name="name">Article Effectiveness Analytics</field>
+        <field name="res_model">helpdesk.knowledge.article</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_helpdesk_knowledge_effectiveness_graph"/>
+        <field name="domain">[('state', '=', 'published'), ('ticket_count', '>', 0)]</field>
+        <field name="context">{'search_default_group_category': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No effectiveness data available.
+            </p>
+            <p>
+                Track article effectiveness in resolving tickets.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== KB Performance Report Tree ==================== -->
+    <record id="view_helpdesk_knowledge_performance_tree" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.performance.tree</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <list string="KB Performance Report" default_order="view_count desc">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="author_id"/>
+                <field name="state"/>
+                <field name="is_faq"/>
+                <field name="view_count"/>
+                <field name="rating"/>
+                <field name="rating_count"/>
+                <field name="ticket_count"/>
+                <field name="effectiveness_count"/>
+                <field name="effectiveness_rate" string="Effectiveness %"/>
+                <field name="create_date" widget="date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== KB Performance Report Action ==================== -->
+    <record id="action_helpdesk_knowledge_performance_report" model="ir.actions.act_window">
+        <field name="name">KB Performance Report</field>
+        <field name="res_model">helpdesk.knowledge.article</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="view_id" ref="view_helpdesk_knowledge_performance_tree"/>
+        <field name="domain">[('state', '=', 'published')]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                KB Performance Report
+            </p>
+            <p>
+                Comprehensive performance metrics for all published articles.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Square refund wizard -->
+    <record id="view_square_refund_wizard_form" model="ir.ui.view">
+        <field name="name">square.refund.wizard.form</field>
+        <field name="model">square.refund.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Refund Square payment">
+                <div class="alert alert-info mb-3" role="alert">
+                    <strong>Easy refund:</strong> From POS, after paying with Square Terminal, stay on the receipt screen and click <strong>Refund on Square</strong> to open this form in a new tab. Or go to <strong>Point of Sale → Square Terminal payments</strong>, find the payment, and click Refund.
+                </div>
+                <group>
+                    <field name="pos_payment_id" readonly="1"/>
+                    <field name="amount" help="Full or partial amount to refund on Square. Default is the full payment amount."/>
+                    <field name="currency_id" readonly="1"/>
+                    <field name="reason"/>
+                </group>
+                <footer>
+                    <button string="Refund" type="object" name="action_refund" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_square_device_code_wizard_form" model="ir.ui.view">
+        <field name="name">square.device.code.wizard.form</field>
+        <field name="model">square.device.code.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Pair Square Terminal">
+                <group>
+                    <p class="mb-2">
+                        On your Square Terminal: go to <strong>Sign in</strong> → <strong>Device code</strong>, then enter the code below.
+                        The code expires in about 5 minutes.
+                    </p>
+                    <label for="code" string="Device code"/>
+                    <h2 class="mb-3"><field name="code" readonly="1" class="font-weight-bold"/></h2>
+                    <label for="pair_by" string="Expires at"/>
+                    <field name="pair_by" readonly="1"/>
+                </group>
+                <footer>
+                    <button string="Close" class="btn-primary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="view_pos_payment_method_form_square" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.square</field>
+        <field name="model">pos.payment.method</field>
+        <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form"/>
+        <field name="priority" eval="5"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Square Terminal" invisible="not use_square_terminal">
+                    <field name="use_square_terminal"/>
+                    <field name="square_access_token" password="True" placeholder="Sandbox or production access token"/>
+                    <field name="square_device_id" placeholder="Terminal device ID (get it after pairing with device code below)"/>
+                    <button type="object" name="action_create_square_device_code"
+                            string="Create device code (pair new terminal)"
+                            class="btn btn-primary"
+                            title="Generate a code. On Terminal: Sign in → Device code → enter code"/>
+                    <field name="square_location_id" optional="hide" placeholder="Optional location ID"/>
+                    <button type="object" name="action_square_terminal_test_connection"
+                            string="Test connection"
+                            class="btn btn-secondary"
+                            title="Verify access token and device ID with Square API"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

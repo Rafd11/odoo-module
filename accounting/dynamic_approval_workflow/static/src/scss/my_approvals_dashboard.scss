@@ -1,0 +1,430 @@
+.o_approval_dashboard {
+    --o-ui-bg: #edf1f5;
+    --o-ui-panel: #ffffff;
+    --o-ui-border: #dde3ea;
+    --o-ui-ink: #222a37;
+    --o-ui-muted: #6d7787;
+    --o-ui-primary: #4f5cf6;
+    --o-ui-primary-soft: rgba(79, 92, 246, 0.14);
+    --o-ui-shadow: 0 14px 28px rgba(30, 43, 71, 0.08);
+    font-family: "Sora", "Manrope", "Poppins", sans-serif;
+    color: var(--o-ui-ink);
+    background: var(--o-ui-bg);
+    border-radius: 1rem;
+    min-height: calc(100vh - 2rem);
+    padding: 0.9rem;
+
+    .o_approval_main {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        min-height: calc(100vh - 4rem);
+    }
+
+    .o_approval_topbar {
+        background: var(--o-ui-panel);
+        border: 1px solid var(--o-ui-border);
+        border-radius: 0.9rem;
+        box-shadow: var(--o-ui-shadow);
+        padding: 0.72rem 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+
+        h2 {
+            margin: 0;
+            font-size: 1.95rem;
+            letter-spacing: -0.03em;
+            color: #26314a;
+            font-weight: 800;
+        }
+    }
+
+    .o_approval_topbar_controls {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .o_approval_search {
+        position: relative;
+
+        i {
+            position: absolute;
+            top: 50%;
+            left: 0.7rem;
+            transform: translateY(-50%);
+            color: #7e8aa0;
+            font-size: 0.82rem;
+        }
+
+        input {
+            min-width: 14rem;
+            border-radius: 0.6rem;
+            border: 1px solid var(--o-ui-border);
+            background: #f6f8fb;
+            padding-left: 2rem;
+            min-height: 2.1rem;
+            font-size: 0.86rem;
+        }
+    }
+
+    .o_approval_groupby select {
+        border-radius: 0.6rem;
+        border: 1px solid var(--o-ui-border);
+        background: #f6f8fb;
+        min-height: 2.1rem;
+        min-width: 8.4rem;
+        font-size: 0.84rem;
+    }
+
+    .o_approval_hero_card {
+        position: relative;
+        overflow: hidden;
+        background:
+            radial-gradient(12rem 12rem at 70% 0%, rgba(111, 212, 250, 0.35), transparent 70%),
+            linear-gradient(115deg, #e8f0ff 0%, #dce7ff 60%, #d7ddff 100%);
+        border: 1px solid #d2daf3;
+        border-radius: 0.95rem;
+        box-shadow: var(--o-ui-shadow);
+        padding: 1.1rem;
+    }
+
+    .o_approval_hero_card::after {
+        content: "";
+        position: absolute;
+        right: -2rem;
+        bottom: -3rem;
+        width: 31rem;
+        height: 17rem;
+        background:
+            radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.3) 0%, transparent 48%),
+            repeating-radial-gradient(circle at center, rgba(82, 97, 244, 0.2) 0 2px, transparent 3px 10px);
+        opacity: 0.55;
+        transform: rotate(-7deg);
+        pointer-events: none;
+    }
+
+    .o_approval_hero_heading {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 0.8rem;
+
+        h3 {
+            margin: 0;
+            color: #233250;
+            font-size: 1.28rem;
+            font-weight: 800;
+        }
+
+        p {
+            margin: 0.15rem 0 0;
+            color: #60708a;
+            font-size: 0.86rem;
+        }
+    }
+
+    .o_approval_kpi_grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.65rem;
+    }
+
+    .o_approval_kpi {
+        border: 1px solid #d8def4;
+        border-radius: 0.78rem;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.72rem 0.8rem;
+        text-align: left;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 7px 16px rgba(32, 44, 70, 0.06);
+        cursor: pointer;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(32, 44, 70, 0.13);
+        }
+    }
+
+    .o_kpi_value {
+        display: block;
+        font-size: 1.72rem;
+        font-weight: 800;
+        color: #202b44;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+    }
+
+    .o_kpi_head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.55rem;
+    }
+
+    .o_kpi_icon {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.6rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.92rem;
+        flex: 0 0 auto;
+    }
+
+    .o_kpi_label {
+        display: block;
+        margin-top: 0.15rem;
+        color: #6d7890;
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+
+    .o_kpi_pending .o_kpi_icon {
+        color: #996d00;
+        background: rgba(247, 183, 49, 0.2);
+    }
+
+    .o_kpi_approved .o_kpi_icon {
+        color: #1f8f4f;
+        background: rgba(52, 199, 89, 0.2);
+    }
+
+    .o_kpi_rejected .o_kpi_icon {
+        color: #c53a3a;
+        background: rgba(234, 93, 93, 0.2);
+    }
+
+    .o_kpi_returned .o_kpi_icon {
+        color: #4f5cf6;
+        background: rgba(79, 92, 246, 0.16);
+    }
+
+    .o_approval_report {
+        background: var(--o-ui-panel);
+        border: 1px solid var(--o-ui-border);
+        border-radius: 0.95rem;
+        box-shadow: var(--o-ui-shadow);
+        overflow: hidden;
+    }
+
+    .o_approval_report_head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.7rem;
+        padding: 0.82rem 0.96rem;
+        border-bottom: 1px solid var(--o-ui-border);
+        flex-wrap: wrap;
+
+        h5 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: #273246;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+    }
+
+    .o_approval_chip_total {
+        min-width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 999px;
+        background: var(--o-ui-primary-soft);
+        color: #4957ee;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.77rem;
+        font-weight: 700;
+        padding: 0 0.5rem;
+    }
+
+    .o_approval_report_actions {
+        display: flex;
+        gap: 0.45rem;
+    }
+
+    .o_approval_btn {
+        border-radius: 0.58rem;
+        border: 1px solid transparent;
+        font-weight: 700;
+        font-size: 0.83rem;
+        transition: all 0.2s ease;
+    }
+
+    .o_approval_btn_primary {
+        color: #fff;
+        background: linear-gradient(120deg, #5f6af8, #4b93ff);
+        border-color: transparent;
+
+        &:hover {
+            filter: brightness(1.05);
+        }
+    }
+
+    .o_approval_btn_ghost {
+        color: #4f5b72;
+        background: #f6f8fb;
+        border-color: var(--o-ui-border);
+    }
+
+    .o_approval_btn_sm {
+        padding: 0.27rem 0.62rem;
+        font-size: 0.79rem;
+    }
+
+    .o_approval_table {
+        margin: 0;
+
+        thead {
+            background: #f8fafd;
+        }
+
+        th {
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #75839a;
+            border-color: #e3e8ef;
+            padding-top: 0.72rem;
+            padding-bottom: 0.72rem;
+        }
+
+        td {
+            border-color: #eef2f7;
+            padding-top: 0.76rem;
+            padding-bottom: 0.76rem;
+            color: #37485f;
+        }
+    }
+
+    .o_approval_group_row td {
+        background: #f4f7fd;
+        border-top: 1px solid #dde4ef;
+        border-bottom: 1px solid #dde4ef;
+        padding-top: 0.45rem;
+        padding-bottom: 0.45rem;
+    }
+
+    .o_approval_group_label {
+        text-transform: uppercase;
+        font-size: 0.73rem;
+        letter-spacing: 0.07em;
+        font-weight: 800;
+        color: #455772;
+    }
+
+    .o_approval_group_count {
+        margin-left: 0.38rem;
+        min-width: 1.34rem;
+        height: 1.34rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #4f5cf6;
+        background: rgba(79, 92, 246, 0.14);
+        padding: 0 0.4rem;
+    }
+
+    .o_approval_link_ref,
+    .o_approval_link_doc {
+        color: #415c86;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .o_approval_link_doc {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-weight: 600;
+    }
+
+    .o_approval_workflow_name {
+        color: #60708a;
+        font-size: 0.81rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .o_approval_stage_badge {
+        display: inline-flex;
+        border-radius: 999px;
+        background: #ecf0f6;
+        color: #4b5c76;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.18rem 0.56rem;
+    }
+
+    .o_approval_overdue {
+        color: #c04338;
+        font-weight: 700;
+    }
+
+    .o_approval_due_soon {
+        color: #bf7f00;
+        font-weight: 700;
+    }
+
+    .o_approval_empty,
+    .o_approval_loading_state {
+        text-align: center;
+        padding: 2.3rem 1rem;
+    }
+
+    .o_approval_empty_icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        margin: 0 auto 0.7rem;
+        background: #eef2f8;
+        color: #6d7890;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .o_approval_empty p,
+    .o_approval_loading_state p {
+        margin: 0;
+        color: var(--o-ui-muted);
+        font-size: 0.92rem;
+    }
+
+    @media (max-width: 1100px) {
+        .o_approval_kpi_grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 640px) {
+        padding: 0.6rem;
+
+        .o_approval_topbar {
+            h2 {
+                font-size: 1.45rem;
+            }
+        }
+
+        .o_approval_search input {
+            min-width: 10rem;
+        }
+
+        .o_approval_kpi_grid {
+            grid-template-columns: 1fr;
+        }
+    }
+}

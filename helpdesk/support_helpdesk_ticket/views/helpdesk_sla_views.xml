@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SLA Policy Tree View -->
+    <record id="view_helpdesk_sla_policy_tree" model="ir.ui.view">
+        <field name="name">helpdesk.sla.policy.tree</field>
+        <field name="model">helpdesk.sla.policy</field>
+        <field name="arch" type="xml">
+            <list string="SLA Policies" decoration-muted="active == False">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="priority_selection" widget="priority" string="Priority"/>
+                <field name="category_ids" widget="many2many_tags" string="Categories"/>
+                <field name="ticket_type_ids" widget="many2many_tags" string="Types"/>
+                <field name="response_time" string="Response (Hrs)"/>
+                <field name="resolution_time" string="Resolution (Hrs)"/>
+                <field name="ticket_count" string="Tickets"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- SLA Policy Form View -->
+    <record id="view_helpdesk_sla_policy_form" model="ir.ui.view">
+        <field name="name">helpdesk.sla.policy.form</field>
+        <field name="model">helpdesk.sla.policy</field>
+        <field name="arch" type="xml">
+            <form string="SLA Policy">
+                <header>
+                    <button name="action_view_tickets" string="View Tickets" type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object" class="oe_stat_button" icon="fa-ticket">
+                            <field name="ticket_count" widget="statinfo" string="Tickets"/>
+                        </button>
+                        <button name="action_view_active_tickets" type="object" class="oe_stat_button" icon="fa-clock-o">
+                            <field name="active_ticket_count" widget="statinfo" string="Active"/>
+                        </button>
+                        <button name="action_view_tickets" type="object" class="oe_stat_button" icon="fa-check-circle">
+                            <field name="met_count" widget="statinfo" string="SLA Met"/>
+                        </button>
+                        <button name="action_view_tickets" type="object" class="oe_stat_button" icon="fa-exclamation-triangle">
+                            <field name="breached_count" widget="statinfo" string="Breached"/>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter SLA policy name..." required="1"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="description" placeholder="Enter description..."/>
+                        </group>
+                        <group>
+                            <field name="response_time" string="Response Time (Hours)" required="1"/>
+                            <field name="resolution_time" string="Resolution Time (Hours)" required="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Assignment Rules">
+                            <group>
+                                <group string="Priority Rules">
+                                    <field name="priority_all" widget="boolean_toggle"/>
+                                    <field name="priority_selection" widget="priority" 
+                                           invisible="priority_all == True"/>
+                                </group>
+                                <group string="Category Rules">
+                                    <field name="category_all" widget="boolean_toggle"/>
+                                    <field name="category_ids" widget="many2many_tags" 
+                                           invisible="category_all == True"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Ticket Type Rules">
+                                    <field name="ticket_type_all" widget="boolean_toggle"/>
+                                    <field name="ticket_type_ids" widget="many2many_tags" 
+                                           invisible="ticket_type_all == True"/>
+                                </group>
+                                <group string="Team Rules">
+                                    <field name="team_all" widget="boolean_toggle"/>
+                                    <field name="team_ids" widget="many2many_tags" 
+                                           invisible="team_all == True"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Time Configuration">
+                            <group>
+                                <group string="Response Time Thresholds">
+                                    <field name="response_warning_threshold" string="Warning at (%)"/>
+                                    <field name="response_escalation_threshold" string="Escalate at (%)"/>
+                                </group>
+                                <group string="Resolution Time Thresholds">
+                                    <field name="resolution_warning_threshold" string="Warning at (%)"/>
+                                    <field name="resolution_escalation_threshold" string="Escalate at (%)"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Working Hours" name="working_hours">
+                            <group>
+                                <group>
+                                    <field name="working_hours" widget="boolean_toggle"/>
+                                    <field name="working_hours_id" 
+                                           required="working_hours == True"
+                                           invisible="working_hours == False"/>
+                                    <field name="timezone"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Escalation Rules" name="escalation">
+                            <group>
+                                <field name="auto_escalate" widget="boolean_toggle"/>
+                                <field name="escalation_team_id" 
+                                       invisible="auto_escalate == False"/>
+                                <field name="escalation_user_id" 
+                                       invisible="auto_escalate == False"/>
+                            </group>
+                            <group class="oe_no_column" colspan="2">
+                                <field name="escalation_rule_ids" nolabel="1">
+                                    <list>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name"/>
+                                        <field name="trigger_type" widget="badge"/>
+                                        <field name="trigger_percentage" string="Trigger (%)"/>
+                                        <field name="action_type" widget="badge"/>
+                                        <field name="active" widget="boolean_toggle"/>
+                                    </list>
+                                    <form>
+                                        <sheet>
+                                            <group>
+                                                <group>
+                                                    <field name="name" required="1"/>
+                                                    <field name="sequence"/>
+                                                    <field name="active"/>
+                                                    <field name="trigger_type" required="1"/>
+                                                    <field name="trigger_percentage" required="1"/>
+                                                    <field name="trigger_hours"/>
+                                                </group>
+                                                <group>
+                                                    <field name="action_type" required="1"/>
+                                                    <field name="notify_user_ids" 
+                                                           invisible="action_type != 'notify'"/>
+                                                    <field name="notify_team_id" 
+                                                           invisible="action_type != 'notify'"/>
+                                                    <field name="email_template_id" 
+                                                           invisible="action_type != 'notify'"/>
+                                                    <field name="assign_team_id" 
+                                                           invisible="action_type != 'assign'"/>
+                                                    <field name="assign_user_id" 
+                                                           invisible="action_type != 'assign'"/>
+                                                    <field name="new_priority" widget="priority" 
+                                                           invisible="action_type != 'priority_upgrade'"/>
+                                                    <field name="escalate_to_team_id" 
+                                                           invisible="action_type != 'team_escalate'"/>
+                                                </group>
+                                            </group>
+                                            <group string="Repeat Settings">
+                                                <field name="repeat_escalation" widget="boolean_toggle"/>
+                                                <field name="repeat_interval" 
+                                                       invisible="repeat_escalation == False"/>
+                                                <field name="max_repeats" 
+                                                       invisible="repeat_escalation == False"/>
+                                            </group>
+                                            <group string="Custom Action" 
+                                                   invisible="action_type != 'custom'">
+                                                <field name="custom_action_code" widget="text" 
+                                                       placeholder="Python code to execute..."/>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- SLA Policy Search View -->
+    <record id="view_helpdesk_sla_policy_search" model="ir.ui.view">
+        <field name="name">helpdesk.sla.policy.search</field>
+        <field name="model">helpdesk.sla.policy</field>
+        <field name="arch" type="xml">
+            <search string="SLA Policies">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="priority_selection" string="Priority"/>
+                <field name="category_ids" string="Categories"/>
+                <field name="ticket_type_ids" string="Ticket Types"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <filter string="With Working Hours" name="with_working_hours" domain="[('working_hours', '=', True)]"/>
+                <filter string="With Escalation Rules" name="with_escalation" domain="[('escalation_rule_ids', '!=', False)]"/>
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Priority" name="group_priority" context="{'group_by': 'priority_selection'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_ids'}"/>
+                    <filter string="Ticket Type" name="group_ticket_type" context="{'group_by': 'ticket_type_ids'}"/>
+                    <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- SLA Policy Action -->
+    <record id="action_helpdesk_sla_policy" model="ir.actions.act_window">
+        <field name="name">SLA Policies</field>
+        <field name="res_model">helpdesk.sla.policy</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_sla_policy_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first SLA policy!
+            </p>
+            <p>
+                SLA policies define response and resolution time targets.
+            </p>
+        </field>
+    </record>
+
+</odoo>

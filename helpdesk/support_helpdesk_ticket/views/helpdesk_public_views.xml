@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Public Ticket Submission Form ==================== -->
+    <template id="public_create_ticket" name="Submit Support Ticket">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Submit Support Ticket</t>
+            <div class="o_portal_wrap">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h1 class="card-title">Submit a Support Ticket</h1>
+                                    <p class="text-muted">Fill out the form below and we'll get back to you as soon as possible.</p>
+                                    <t t-set="support_email" t-value="request.env['ir.config_parameter'].sudo().get_param('helpdesk.support_email', '')"/>
+                                    <t t-set="support_phone" t-value="request.env['ir.config_parameter'].sudo().get_param('helpdesk.support_phone', '')"/>
+                                    <t t-if="support_email or support_phone">
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                <t t-if="support_email">
+                                                    <i class="fa fa-envelope"/> <a t-attf-href="mailto:#{support_email}"><t t-esc="support_email"/></a>
+                                                </t>
+                                                <t t-if="support_email and support_phone"> | </t>
+                                                <t t-if="support_phone">
+                                                    <i class="fa fa-phone"/> <a t-attf-href="tel:#{support_phone}"><t t-esc="support_phone"/></a>
+                                                </t>
+                                            </small>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="card-body">
+                                    <t t-if="error and error.get('_general')">
+                                        <div class="alert alert-danger" role="alert">
+                                            <t t-esc="error.get('_general')"/>
+                                        </div>
+                                    </t>
+                                    
+                                    <form t-attf-action="/support/ticket/submit" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        
+                                        <!-- Honeypot CAPTCHA field (hidden) -->
+                                        <input type="text" name="website" style="display: none;" tabindex="-1" autocomplete="off"/>
+                                        
+                                        <!-- Customer Information -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="customer_name">Your Name <span class="text-danger">*</span></label>
+                                                    <input type="text" 
+                                                           name="customer_name" 
+                                                           id="customer_name" 
+                                                           class="form-control" 
+                                                           required="required"
+                                                           t-att-value="default_values.get('customer_name', '')"
+                                                           placeholder="Enter your full name"/>
+                                                    <t t-if="error and error.get('customer_name')">
+                                                        <small class="text-danger"><t t-esc="error.get('customer_name')"/></small>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="customer_email">Email Address <span class="text-danger">*</span></label>
+                                                    <input type="email" 
+                                                           name="customer_email" 
+                                                           id="customer_email" 
+                                                           class="form-control" 
+                                                           required="required"
+                                                           t-att-value="default_values.get('customer_email', '')"
+                                                           placeholder="your.email@example.com"/>
+                                                    <t t-if="error and error.get('customer_email')">
+                                                        <small class="text-danger"><t t-esc="error.get('customer_email')"/></small>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Ticket Information -->
+                                        <div class="form-group mb-3">
+                                            <label for="name">Subject <span class="text-danger">*</span></label>
+                                            <input type="text" 
+                                                   name="name" 
+                                                   id="name" 
+                                                   class="form-control" 
+                                                   required="required"
+                                                   t-att-value="default_values.get('name', '')"
+                                                   placeholder="Brief description of your issue"/>
+                                            <t t-if="error and error.get('name')">
+                                                <small class="text-danger"><t t-esc="error.get('name')"/></small>
+                                            </t>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="description">Description <span class="text-danger">*</span></label>
+                                            <textarea name="description" 
+                                                      id="description" 
+                                                      class="form-control" 
+                                                      rows="6" 
+                                                      required="required"
+                                                      placeholder="Please provide detailed information about your issue..."><t t-esc="default_values.get('description', '')"/></textarea>
+                                            <t t-if="error and error.get('description')">
+                                                <small class="text-danger"><t t-esc="error.get('description')"/></small>
+                                            </t>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="category_id">Category</label>
+                                                    <select name="category_id" id="category_id" class="form-control">
+                                                        <option value="">-- Select Category (Optional) --</option>
+                                                        <t t-foreach="categories" t-as="category">
+                                                            <option t-att-value="category.id" 
+                                                                    t-att-selected="default_values.get('category_id') == str(category.id)">
+                                                                <t t-esc="category.name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="priority">Priority</label>
+                                                    <select name="priority" id="priority" class="form-control">
+                                                        <t t-foreach="priorities" t-as="priority_item">
+                                                            <option t-att-value="priority_item[0]" 
+                                                                    t-att-selected="default_values.get('priority') == priority_item[0]">
+                                                                <t t-esc="priority_item[1]"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- File Upload -->
+                                        <div class="form-group mb-3">
+                                            <label for="attachment">Attach Files (Optional)</label>
+                                            <input type="file" 
+                                                   name="attachment" 
+                                                   id="attachment" 
+                                                   class="form-control" 
+                                                   multiple="multiple"/>
+                                            <small class="form-text text-muted">You can attach multiple files (max 10MB per file)</small>
+                                        </div>
+                                        
+                                        <!-- Submit Button -->
+                                        <div class="form-group mb-3">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fa fa-paper-plane"/> Submit Ticket
+                                            </button>
+                                            <a href="/" class="btn btn-secondary btn-lg ml-2">Cancel</a>
+                                        </div>
+                                        
+                                        <div class="alert alert-info" role="alert">
+                                            <i class="fa fa-info-circle"/> 
+                                            <strong>Note:</strong> After submitting, you will receive a confirmation email with your ticket number. 
+                                            You can use this number to track your ticket status.
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ==================== Public Ticket Confirmation Page ==================== -->
+    <template id="public_ticket_confirm" name="Ticket Submission Confirmation">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Ticket Submitted Successfully</t>
+            <div class="o_portal_wrap">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <div class="mb-4">
+                                        <i class="fa fa-check-circle fa-5x text-success"></i>
+                                    </div>
+                                    <h1 class="card-title">Thank You!</h1>
+                                    <p class="lead">Your support ticket has been submitted successfully.</p>
+                                    
+                                    <t t-if="ticket">
+                                        <div class="alert alert-success" role="alert">
+                                            <h4>Your Ticket Number:</h4>
+                                            <h2 class="mb-0"><strong><t t-esc="ticket.ticket_number"/></strong></h2>
+                                        </div>
+                                        
+                                        <div class="card mb-3">
+                                            <div class="card-body text-left">
+                                                <h5>Ticket Details:</h5>
+                                                <table class="table table-borderless">
+                                                    <tr>
+                                                        <td><strong>Subject:</strong></td>
+                                                        <td><t t-esc="ticket.name"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Status:</strong></td>
+                                                        <td>
+                                                            <span class="badge badge-info">
+                                                                <t t-esc="dict(ticket._fields['state'].selection).get(ticket.state, ticket.state)"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Created:</strong></td>
+                                                        <td><t t-esc="ticket.create_date.strftime('%Y-%m-%d %H:%M')"/></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        
+                                        <p>We have sent a confirmation email to <strong><t t-esc="ticket.partner_id.email"/></strong> with your ticket details.</p>
+                                        
+                                        <p class="text-muted">
+                                            Please save your ticket number (<strong><t t-esc="ticket.ticket_number"/></strong>) for future reference.
+                                        </p>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="alert alert-warning" role="alert">
+                                            <p>Ticket number: <strong><t t-esc="ticket_number"/></strong></p>
+                                        </div>
+                                    </t>
+                                    
+                                    <div class="mt-4">
+                                        <a href="/support/ticket" class="btn btn-primary">Submit Another Ticket</a>
+                                        <a href="/" class="btn btn-secondary ml-2">Return to Home</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

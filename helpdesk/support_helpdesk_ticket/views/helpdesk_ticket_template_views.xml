@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template Tree View -->
+    <record id="view_helpdesk_ticket_template_tree" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.template.tree</field>
+        <field name="model">helpdesk.ticket.template</field>
+        <field name="arch" type="xml">
+            <list string="Templates" decoration-muted="active == False">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="model_display_name" string="Model"/>
+                <field name="ticket_type_id"/>
+                <field name="category_id"/>
+                <field name="priority" widget="priority"/>
+                <field name="team_id"/>
+                <field name="usage_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Template Form View -->
+    <record id="view_helpdesk_ticket_template_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.template.form</field>
+        <field name="model">helpdesk.ticket.template</field>
+        <field name="arch" type="xml">
+            <form string="Ticket Template">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_apply_template" type="object" 
+                                class="oe_stat_button" icon="fa-ticket">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Used</span>
+                                <span class="o_stat_value">
+                                    <field name="usage_count" widget="statinfo" string="Times"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter template name..."/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="model_name" placeholder="e.g., product.product, sale.order (optional)"/>
+                            <field name="model_display_name" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Enter template description..."/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Template Content" name="content">
+                            <group>
+                                <group>
+                                    <field name="subject" placeholder="Default subject..."/>
+                                    <field name="description_template" placeholder="Default description template..."/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Default Values" name="defaults">
+                            <group>
+                                <group>
+                                    <field name="ticket_type_id" options="{'no_create': True}"/>
+                                    <field name="category_id" options="{'no_create': True}"/>
+                                    <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                    <field name="priority" widget="priority"/>
+                                </group>
+                                <group>
+                                    <field name="team_id" options="{'no_create': True}"/>
+                                    <field name="user_id" options="{'no_create': True}"/>
+                                    <field name="channel_id"/>
+                                    <field name="sla_policy_id" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Template Search View -->
+    <record id="view_helpdesk_ticket_template_search" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.template.search</field>
+        <field name="model">helpdesk.ticket.template</field>
+        <field name="arch" type="xml">
+            <search string="Templates">
+                <field name="name"/>
+                <field name="model_name"/>
+                <field name="ticket_type_id"/>
+                <field name="category_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <filter string="General Templates" name="general" domain="[('model_name', '=', False)]"/>
+                <filter string="Model-Specific" name="model_specific" domain="[('model_name', '!=', False)]"/>
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Model" name="group_model" context="{'group_by': 'model_name'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'ticket_type_id'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Template Action -->
+    <record id="action_helpdesk_ticket_template" model="ir.actions.act_window">
+        <field name="name">Ticket Templates</field>
+        <field name="res_model">helpdesk.ticket.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_ticket_template_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first template!
+            </p>
+            <p>
+                Templates help quickly create tickets with pre-filled values.
+            </p>
+        </field>
+    </record>
+
+    <!-- Template Apply Wizard Form View -->
+    <record id="view_helpdesk_ticket_template_apply_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.template.apply.wizard.form</field>
+        <field name="model">helpdesk.ticket.template.apply.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Apply Template">
+                <group>
+                    <field name="ticket_id" readonly="1"/>
+                    <field name="model_name" readonly="1" invisible="model_name == False"/>
+                </group>
+                
+                <group>
+                    <field name="template_id" 
+                           domain="[('id', 'in', available_templates)]"
+                           options="{'no_create': True}"/>
+                    <field name="overwrite_existing"/>
+                </group>
+                
+                <group invisible="available_templates == []">
+                    <field name="available_templates" widget="many2many_tags" readonly="1" nolabel="1"/>
+                </group>
+                
+                <footer>
+                    <button string="Apply Template" name="action_apply_template" type="object" 
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Template Apply Wizard Action -->
+    <record id="action_helpdesk_ticket_template_apply_wizard" model="ir.actions.act_window">
+        <field name="name">Apply Template</field>
+        <field name="res_model">helpdesk.ticket.template.apply.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

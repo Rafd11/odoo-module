@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List view for pos.payment: show Square payment ID and actions (Refund / Print receipt). Odoo 18 uses list not tree. -->
+    <record id="view_pos_payment_tree_square" model="ir.ui.view">
+        <field name="name">pos.payment.list.square</field>
+        <field name="model">pos.payment</field>
+        <field name="arch" type="xml">
+            <list string="Payments" create="false" delete="false" decoration-muted="not square_payment_id">
+                <field name="pos_order_id"/>
+                <field name="payment_method_id"/>
+                <field name="amount"/>
+                <field name="currency_id"/>
+                <field name="payment_date"/>
+                <field name="square_payment_id" optional="show"/>
+                <button name="action_refund_square" type="object" string="Refund" icon="fa-undo"
+                        invisible="not square_payment_id" title="Refund this payment on Square"/>
+                <button name="action_print_receipt_square" type="object" string="Print receipt" icon="fa-print"
+                        invisible="not square_payment_id" title="Print receipt on Square Terminal"/>
+            </list>
+        </field>
+    </record>
+    <!-- Standalone search so we don't depend on point_of_sale.view_pos_payment_search -->
+    <record id="view_pos_payment_search_square" model="ir.ui.view">
+        <field name="name">pos.payment.search.square</field>
+        <field name="model">pos.payment</field>
+        <field name="arch" type="xml">
+            <search string="POS Payments">
+                <field name="pos_order_id"/>
+                <field name="payment_method_id"/>
+                <field name="square_payment_id"/>
+                <filter name="square" string="Square Terminal" domain="[('square_payment_id', '!=', False)]"/>
+            </search>
+        </field>
+    </record>
+    <!-- Action to open Square Terminal payments (for refund / print receipt) -->
+    <record id="action_pos_payment_square" model="ir.actions.act_window">
+        <field name="name">Square Terminal payments</field>
+        <field name="res_model">pos.payment</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_pos_payment_tree_square"/>
+        <field name="search_view_id" ref="view_pos_payment_search_square"/>
+        <field name="context">{'search_default_square': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No Square Terminal payments</p>
+            <p>Payments made with Square Terminal show a Square Payment ID. Use Refund or Print receipt on each line.</p>
+        </field>
+    </record>
+    <!-- Menu: Point of Sale > Square Terminal payments -->
+    <record id="menu_pos_payment_square" model="ir.ui.menu">
+        <field name="name">Square Terminal payments</field>
+        <field name="action" ref="action_pos_payment_square"/>
+        <field name="parent_id" ref="point_of_sale.menu_point_of_sale_root"/>
+        <field name="sequence" type="int">50</field>
+    </record>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Status Change Wizard Form View -->
+    <record id="view_helpdesk_ticket_status_change_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.status.change.wizard.form</field>
+        <field name="model">helpdesk.ticket.status.change.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Change Ticket Status">
+                <group>
+                    <group>
+                        <field name="ticket_id" readonly="1"/>
+                        <field name="old_state" readonly="1" widget="badge"
+                               decoration-info="old_state == 'new'"
+                               decoration-warning="old_state == 'in_progress'"
+                               decoration-success="old_state == 'resolved'"
+                               decoration-muted="old_state == 'closed' or old_state == 'cancelled'"/>
+                    </group>
+                    <group>
+                        <field name="new_state" required="1"/>
+                    </group>
+                </group>
+                
+                <group>
+                    <field name="note" placeholder="Enter optional note about the status change..."/>
+                </group>
+                
+                <group>
+                    <field name="send_notification" string="Send Email Notification to Customer"/>
+                    <field name="notify_team" string="Notify Team Members"/>
+                </group>
+                
+                <footer>
+                    <button string="Change Status" name="action_change_status" type="object" 
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Status Change Wizard -->
+    <record id="action_helpdesk_ticket_status_change_wizard" model="ir.actions.act_window">
+        <field name="name">Change Status</field>
+        <field name="res_model">helpdesk.ticket.status.change.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

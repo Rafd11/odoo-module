@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="dynamic_approval_workflow.MyApprovalsDashboard">
+        <div class="o_approval_dashboard o_action">
+            <main class="o_approval_main">
+                    <header class="o_approval_topbar">
+                        <h2>Dashboard</h2>
+                        <div class="o_approval_topbar_controls">
+                            <div class="o_approval_search">
+                                <i class="fa fa-search"/>
+                                <input type="search"
+                                       class="form-control"
+                                       placeholder="Search"
+                                       t-att-value="state.searchQuery"
+                                       t-on-input="onSearchInput"/>
+                            </div>
+
+                            <div class="o_approval_groupby">
+                                <select class="form-select"
+                                        t-att-value="state.groupBy"
+                                        t-on-change="onGroupByChange">
+                                    <option value="none">No Group</option>
+                                    <option value="workflow">Workflow</option>
+                                    <option value="stage">Stage</option>
+                                    <option value="requester">Requester</option>
+                                    <option value="deadline">Deadline</option>
+                                </select>
+                            </div>
+
+                            <button class="btn o_approval_btn o_approval_btn_ghost"
+                                    t-on-click="refreshData"
+                                    t-att-disabled="state.isLoading">
+                                <i t-att-class="'fa ' + (state.isLoading ? 'fa-spinner fa-spin' : 'fa-refresh')"/>
+                            </button>
+                        </div>
+                    </header>
+
+                    <section class="o_approval_hero_card">
+                        <div class="o_approval_hero_heading">
+                            <h3>Approvals Distribution</h3>
+                            <p>This is all approval activity generated across your requests.</p>
+                        </div>
+
+                        <div class="o_approval_kpi_grid">
+                            <button type="button"
+                                    class="o_approval_kpi o_kpi_pending"
+                                    t-on-click="() => this.openByState('pending_approval')">
+                                <div class="o_kpi_head">
+                                    <span class="o_kpi_value">
+                                        <t t-esc="state.countByState.pending_approval"/>
+                                    </span>
+                                    <span class="o_kpi_icon" title="Pending">
+                                        <i class="fa fa-hourglass-half"/>
+                                    </span>
+                                </div>
+                                <span class="o_kpi_label">Pending</span>
+                            </button>
+
+                            <button type="button"
+                                    class="o_approval_kpi o_kpi_approved"
+                                    t-on-click="() => this.openByState('approved')">
+                                <div class="o_kpi_head">
+                                    <span class="o_kpi_value">
+                                        <t t-esc="state.countByState.approved"/>
+                                    </span>
+                                    <span class="o_kpi_icon" title="Approved">
+                                        <i class="fa fa-check-circle"/>
+                                    </span>
+                                </div>
+                                <span class="o_kpi_label">Approved</span>
+                            </button>
+
+                            <button type="button"
+                                    class="o_approval_kpi o_kpi_rejected"
+                                    t-on-click="() => this.openByState('rejected')">
+                                <div class="o_kpi_head">
+                                    <span class="o_kpi_value">
+                                        <t t-esc="state.countByState.rejected"/>
+                                    </span>
+                                    <span class="o_kpi_icon" title="Rejected">
+                                        <i class="fa fa-times-circle"/>
+                                    </span>
+                                </div>
+                                <span class="o_kpi_label">Rejected</span>
+                            </button>
+
+                            <button type="button"
+                                    class="o_approval_kpi o_kpi_returned"
+                                    t-on-click="() => this.openByState('returned')">
+                                <div class="o_kpi_head">
+                                    <span class="o_kpi_value">
+                                        <t t-esc="state.countByState.returned"/>
+                                    </span>
+                                    <span class="o_kpi_icon" title="Returned">
+                                        <i class="fa fa-reply"/>
+                                    </span>
+                                </div>
+                                <span class="o_kpi_label">Returned</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="o_approval_report">
+                        <header class="o_approval_report_head">
+                            <h5>
+                                Pending My Approval
+                                <span class="o_approval_chip_total">
+                                    <t t-esc="filteredPendingCount"/>
+                                </span>
+                            </h5>
+
+                            <div class="o_approval_report_actions">
+                                <button class="btn o_approval_btn o_approval_btn_primary"
+                                        t-on-click="openAllPending">
+                                    View All
+                                </button>
+                                <button t-if="hasActiveFilters"
+                                        class="btn o_approval_btn o_approval_btn_ghost"
+                                        t-on-click="clearFilters">
+                                    Reset
+                                </button>
+                            </div>
+                        </header>
+
+                        <t t-if="state.isLoading and state.pendingRequests.length === 0">
+                            <div class="o_approval_loading_state">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading…</span>
+                                </div>
+                                <p>Loading your approvals...</p>
+                            </div>
+                        </t>
+
+                        <t t-elif="filteredPendingCount === 0">
+                            <div class="o_approval_empty">
+                                <div class="o_approval_empty_icon">
+                                    <i class="fa fa-search"/>
+                                </div>
+                                <p t-if="hasActiveFilters">
+                                    No requests match your current search/group.
+                                </p>
+                                <p t-else="">
+                                    You have no pending approvals right now.
+                                </p>
+                            </div>
+                        </t>
+
+                        <t t-else="">
+                            <div class="table-responsive">
+                                <table class="table o_approval_table align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Reference</th>
+                                            <th>Document</th>
+                                            <th>Workflow / Stage</th>
+                                            <th>Submitted By</th>
+                                            <th>Deadline</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="groupedPendingRequests"
+                                           t-as="group"
+                                           t-key="group.key">
+                                            <tr t-if="state.groupBy !== 'none' and group.requests.length"
+                                                class="o_approval_group_row">
+                                                <td colspan="6">
+                                                    <span class="o_approval_group_label">
+                                                        <t t-esc="group.label"/>
+                                                    </span>
+                                                    <span class="o_approval_group_count">
+                                                        <t t-esc="group.requests.length"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+
+                                            <t t-foreach="group.requests"
+                                               t-as="req"
+                                               t-key="req.id">
+                                                <tr>
+                                                    <td>
+                                                        <a href="#"
+                                                           class="o_approval_link_ref"
+                                                           t-on-click.prevent="() => this.openRequest(req.id)">
+                                                            <t t-esc="req.name"/>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="#"
+                                                           class="o_approval_link_doc"
+                                                           t-on-click.prevent="() => this.openDocument(req.res_model, req.res_id)">
+                                                            <i class="fa fa-file-text-o"/>
+                                                            <t t-esc="req.res_name or '(unnamed)'"/>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <div class="o_approval_workflow_name">
+                                                            <t t-esc="req.config_id and req.config_id[1] or '-'"/>
+                                                        </div>
+                                                        <span class="o_approval_stage_badge">
+                                                            <t t-esc="req.current_stage_id and req.current_stage_id[1] or '-'"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="req.requester_id and req.requester_id[1] or '-'"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-att-class="getDeadlineClass(req.deadline)"
+                                                              t-att-title="req.deadline or ''">
+                                                            <t t-esc="formatDeadline(req.deadline)"/>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <button class="btn o_approval_btn o_approval_btn_primary o_approval_btn_sm"
+                                                                t-on-click="() => this.openRequest(req.id)">
+                                                            Review
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                    </section>
+            </main>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- API Documentation Template -->
+    <template id="api_documentation_page" name="REST API Documentation">
+        <t t-call="web.layout">
+            <t t-set="title">REST API Documentation - Helpdesk</t>
+            <div class="container-fluid" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+                <div class="row">
+                    <div class="col-12">
+                        <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 3px solid #0087cb; padding-bottom: 15px;">
+                                <h1 style="color: #0087cb; margin: 0;">
+                                    <i class="fa fa-code" style="margin-right: 10px;"></i>
+                                    Helpdesk REST API Documentation
+                                </h1>
+                                <a href="/web#home" class="btn btn-primary" style="background: #0087cb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: background 0.3s;">
+                                    <i class="fa fa-home" style="margin-right: 5px;"></i>
+                                    Home
+                                </a>
+                            </div>
+                            
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #0087cb;">
+                                <p style="margin: 0; font-size: 16px;">
+                                    <strong>Base URL:</strong> <code><t t-esc="base_url"/>api/helpdesk/ticket/&lt;ticket_id&gt;/messages</code>
+                                </p>
+                                <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">
+                                    <strong>Authentication:</strong> Cookie-based session authentication (Odoo standard)
+                                </p>
+                            </div>
+                            
+                            <!-- How to Get Session ID Section -->
+                            <div style="background: #fff3cd; padding: 20px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                                <h3 style="color: #856404; margin-top: 0; margin-bottom: 15px;">
+                                    <i class="fa fa-key" style="margin-right: 8px;"></i>How to Get Session ID
+                                </h3>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="color: #856404; margin-bottom: 10px;">Method 1: From Browser (Easiest)</h4>
+                                    <ol style="padding-left: 25px; margin-bottom: 15px;">
+                                        <li>Login to Odoo in your web browser</li>
+                                        <li>Open Developer Tools (F12 or Right-click → Inspect)</li>
+                                        <li>Go to <strong>Application</strong> tab → <strong>Cookies</strong></li>
+                                        <li>Find <code>session_id</code> cookie and copy its value</li>
+                                    </ol>
+                                    <p style="margin-bottom: 10px;"><strong>Or use Browser Console:</strong></p>
+                                    <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; overflow-x: auto;"><code>document.cookie.split(';').find(c => c.trim().startsWith('session_id=')).split('=')[1]</code></pre>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="color: #856404; margin-bottom: 10px;">Method 2: Login via API (curl)</h4>
+                                    <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; overflow-x: auto;"><code>curl -X POST "<t t-esc="base_url"/>web/session/authenticate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "params": {
+      "db": "your_database_name",
+      "login": "your_username",
+      "password": "your_password"
+    }
+  }' \
+  -c cookies.txt
+
+# Extract session_id from cookies.txt or Set-Cookie header</code></pre>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <h4 style="color: #856404; margin-bottom: 10px;">Method 3: Using Python</h4>
+                                    <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; overflow-x: auto;"><code>import requests
+
+# Login
+login_url = "<t t-esc="base_url"/>web/session/authenticate"
+response = requests.post(login_url, json={
+    "jsonrpc": "2.0",
+    "params": {
+        "db": "your_database_name",
+        "login": "your_username",
+        "password": "your_password"
+    }
+})
+
+# Get session_id from cookies
+session_id = response.cookies.get('session_id')
+
+# Use in API calls
+headers = {'Cookie': f'session_id={session_id}'}
+response = requests.get(
+    "<t t-esc="base_url"/>api/helpdesk/ticket/1/messages",
+    headers=headers
+)</code></pre>
+                                </div>
+                                
+                                <div style="background: #d1ecf1; padding: 12px; border-radius: 4px; margin-top: 15px;">
+                                    <p style="margin: 0; font-size: 13px; color: #0c5460;">
+                                        <strong>Note:</strong> Session IDs expire after inactivity. If you get 403 Forbidden errors, re-authenticate to get a new session_id.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div style="line-height: 1.8; color: #333;">
+                                <t t-raw="content"/>
+                            </div>
+                            
+                            <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                                <h3 style="color: #0087cb;">Quick Reference</h3>
+                                <table class="table table-bordered" style="width: 100%; margin-top: 15px;">
+                                    <thead style="background: #0087cb; color: white;">
+                                        <tr>
+                                            <th style="padding: 10px;">Method</th>
+                                            <th style="padding: 10px;">Endpoint</th>
+                                            <th style="padding: 10px;">Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>GET</code></td>
+                                            <td><code>/api/helpdesk/ticket/{id}/messages</code></td>
+                                            <td>Get all messages for a ticket</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>POST</code></td>
+                                            <td><code>/api/helpdesk/ticket/{id}/messages</code></td>
+                                            <td>Create a new message</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>GET</code></td>
+                                            <td><code>/api/helpdesk/ticket/{id}/messages/{msg_id}</code></td>
+                                            <td>Get a specific message</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>PUT</code></td>
+                                            <td><code>/api/helpdesk/ticket/{id}/messages/{msg_id}</code></td>
+                                            <td>Update a message</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>DELETE</code></td>
+                                            <td><code>/api/helpdesk/ticket/{id}/messages/{msg_id}</code></td>
+                                            <td>Delete a message</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>POST</code></td>
+                                            <td><code>/api/helpdesk/ticket/{id}/messages/upload</code></td>
+                                            <td>Upload attachment</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                code {
+                    background: #f4f4f4;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 14px;
+                    color: #c7254e;
+                    display: inline-block;
+                }
+                pre {
+                    background: #f8f8f8;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    padding: 15px;
+                    overflow-x: auto;
+                    margin: 15px 0;
+                    font-family: 'Courier New', monospace;
+                    font-size: 13px;
+                    line-height: 1.5;
+                }
+                pre code {
+                    background: transparent;
+                    padding: 0;
+                    color: #333;
+                    display: block;
+                    white-space: pre;
+                }
+                p {
+                    margin: 10px 0;
+                    line-height: 1.6;
+                }
+                p code {
+                    margin: 0 2px;
+                }
+                table {
+                    border-collapse: collapse;
+                    margin: 15px 0;
+                }
+                table td, table th {
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                }
+                table thead th {
+                    background: #0087cb;
+                    color: white;
+                }
+                ul, ol {
+                    padding-left: 30px;
+                    margin: 15px 0;
+                }
+                li {
+                    margin-bottom: 8px;
+                    line-height: 1.6;
+                }
+                h1 {
+                    color: #0087cb;
+                    margin-top: 0;
+                    margin-bottom: 20px;
+                }
+                h2 {
+                    color: #0087cb;
+                    margin-top: 30px;
+                    margin-bottom: 15px;
+                    font-size: 24px;
+                }
+                h3 {
+                    color: #0087cb;
+                    margin-top: 25px;
+                    margin-bottom: 12px;
+                    font-size: 20px;
+                }
+                h4 {
+                    color: #0087cb;
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                }
+                hr {
+                    border: none;
+                    border-top: 2px solid #e0e0e0;
+                    margin: 30px 0;
+                }
+                /* Ensure code blocks are not wrapped in p tags */
+                p:has(pre) {
+                    margin: 0;
+                    padding: 0;
+                }
+                /* Better spacing around code blocks */
+                pre + p, p + pre {
+                    margin-top: 15px;
+                }
+                /* Home button hover effect */
+                a.btn-primary:hover {
+                    background: #006ba3 !important;
+                    color: white !important;
+                    text-decoration: none;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Action for API Documentation -->
+    <record id="action_helpdesk_api_documentation" model="ir.actions.act_url">
+        <field name="name">REST API Documentation</field>
+        <field name="url">/helpdesk/api/documentation</field>
+        <field name="target">self</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="pos_custom_receipt_ssm.OrderWidget">
+        <t t-if="props.lines?.length">
+            <div class="d-flex flex-column flex-grow-1 rounded-3 bg-white overflow-hidden">
+                <!-- Header Row -->
+                <div style="padding: 8px 12px 4px 12px;">
+                    <div class="d-flex fw-bolder" style="font-size: 13px; gap: 10px;">
+                        <div style="width:50px;">No</div>
+                        <div style="width:220px;">Item</div>
+                        <div style="width:80px; text-align:center;">Qty</div>
+                        <div style="width:100px; text-align:right;">MRP</div>
+                        <div style="width:100px; text-align:right;">Disc</div>
+                        <div style="width:100px; text-align:center;">Net</div>
+                    </div>
+                    <!-- Separator line after header -->
+                    <div style="border-bottom: 1px solid #ccc; margin-top: 4px;"></div>
+                </div>
+                <div t-ref="scrollable" t-att-style="props.style" t-att-class="props.class" class="order-container d-flex flex-column flex-grow-1 overflow-y-auto text-start">
+                    <t t-foreach="props.lines" t-as="line" t-key="line.uuid || line.id || line_index">
+                        <t t-if="props.slots?.default" t-slot="default" line="line" line_index="line_index"/>
+                        <!-- Enrich with default_code and pass actual array index -->
+                        <Orderline t-else=""
+                            line="(() => { const l = line; const d = l.getDisplayData ? l.getDisplayData() : l; const p = (l.get_product &amp;&amp; l.get_product()) || l.product || (l.product_id &amp;&amp; l.product_id.raw) || {}; const code = p.default_code || ''; const mrp = (typeof p.x_mrp === 'number' &amp;&amp; !Number.isNaN(p.x_mrp)) ? p.x_mrp : ((typeof p.lst_price === 'number' &amp;&amp; !Number.isNaN(p.lst_price)) ? p.lst_price : ((typeof p.list_price === 'number' &amp;&amp; !Number.isNaN(p.list_price)) ? p.list_price : 0)); return Object.assign({}, d, { default_code: code, _mrp: mrp }); })()"
+                            index="__value.index" />
+                    </t>
+                    <div class="mt-1 bg-opacity-75" t-attf-class="{{ props.screenName == 'ReceiptScreen' ? 'p-0' : 'p-2 border-bottom border-top border-opacity-75'}}" t-if="props.generalNote">
+                        <b class="fw-bolder">General Note</b>
+                        <t t-foreach="props.generalNote.split('\n')" t-as="subNote" t-key="subNote_index">
+                            <br/>• <t t-esc="subNote"/>
+                        </t>
+                    </div>
+                </div>
+                <t t-set="taxTotals" t-value="props.taxTotals"/>
+                <div t-if="taxTotals" class="order-summary d-flex flex-column gap-1 px-3 py-2 border-top fw-bolder lh-sm">
+                    <div t-if="taxTotals.has_tax_groups" class="tax-info subentry d-flex justify-content-between w-100 fs-6 text-muted">
+                        Taxes
+                        <div id="order-widget-taxes">
+                            <span t-esc="formatMonetary(taxTotals.order_sign * taxTotals.tax_amount_currency, {currencyId: taxTotals.currency_id})" class="tax"/>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between w-100 fs-2">
+                        Total
+                        <span t-esc="formatMonetary(taxTotals.order_sign * taxTotals.order_total, {currencyId: taxTotals.currency_id})" class="total"/>
+                    </div>
+                </div>
+            </div>
+            <t t-slot="details"/>
+        </t>
+        <t t-else="">
+            <div t-if="!props.slots?.emptyCart" class="d-flex flex-column align-items-center justify-content-center flex-grow-1 bg-100 rounded-3 gap-3">
+                <CenteredIcon icon="'fa-shopping-cart fa-4x'" text="emptyCartText()" class="'h-unset'"/>
+                <t t-slot="details"/>
+            </div>
+            <t t-else="" t-slot="emptyCart" />
+        </t>
+    </t>
+</templates>

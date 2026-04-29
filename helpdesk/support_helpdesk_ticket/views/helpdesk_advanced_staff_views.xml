@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Team Dashboard View ==================== -->
+    <record id="view_helpdesk_team_dashboard_kanban" model="ir.ui.view">
+        <field name="name">helpdesk.team.dashboard.kanban</field>
+        <field name="model">helpdesk.team</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard" default_group_by="active" create="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="team_leader_id"/>
+                <field name="member_ids"/>
+                <field name="ticket_count"/>
+                <field name="open_ticket_count"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click helpdesk_professional_card helpdesk_team_card">
+                            <div class="helpdesk_card_header primary">
+                                <div class="helpdesk_card_title">
+                                    <i class="fa fa-users" style="font-size: 14px;" title="Team"/>
+                                    <field name="name"/>
+                                </div>
+                                <div class="helpdesk_card_subtitle">
+                                    <i class="fa fa-user-circle" style="margin-right: 6px;" title="Team Leader"/>
+                                    <field name="team_leader_id"/>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_body">
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-users" title="Team Members"/>
+                                    <span class="helpdesk_info_label">Members:</span>
+                                    <span class="helpdesk_info_value">
+                                        <field name="member_ids" widget="many2many_tags"/>
+                                    </span>
+                                </div>
+                                
+                                <div class="helpdesk_stats_container">
+                                    <div class="helpdesk_stat_item">
+                                        <span class="helpdesk_stat_value"><field name="ticket_count"/></span>
+                                        <span class="helpdesk_stat_label">Total Tickets</span>
+                                    </div>
+                                    <div class="helpdesk_stat_item">
+                                        <span class="helpdesk_stat_value" style="color: #ffc107;"><field name="open_ticket_count"/></span>
+                                        <span class="helpdesk_stat_label">Open Tickets</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_footer">
+                                <div>
+                                    <i class="fa fa-check-circle" style="margin-right: 6px;" title="Team Status"/>
+                                    <span t-if="record.active.raw_value">Active Team</span>
+                                    <span t-if="record.active.raw_value == False" style="color: #6c757d;">Inactive Team</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Team Dashboard Form View -->
+    <record id="view_helpdesk_team_dashboard_form" model="ir.ui.view">
+        <field name="name">helpdesk.team.dashboard.form</field>
+        <field name="model">helpdesk.team.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Team Dashboard" create="false" edit="false" delete="false">
+                <sheet class="oe_form_sheet_full_width">
+                    <div class="oe_view_nocontent"/>
+                    <div class="helpdesk-dashboard-page">
+                        <!-- Header Section -->
+                        <div class="dashboard-header">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h1 class="dashboard-title">
+                                        <i class="fa fa-users" title="Team Dashboard"/> Team Analytics Dashboard
+                                    </h1>
+                                    <p class="dashboard-subtitle">Monitor team performance, workload distribution, and ticket metrics across all teams</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compact Filters Section -->
+                        <div class="row filters-section">
+                            <div class="col-12">
+                                <div class="dashboard-filters card shadow-sm">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-end">
+                                            <div class="col-md-2">
+                                                <div class="filter-label">
+                                                    <i class="fa fa-calendar" title="Date From"></i> Date From
+                                                </div>
+                                                <input type="date" id="team-filter-date-from" class="form-control form-control-sm"/>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="filter-label">
+                                                    <i class="fa fa-calendar-o" title="Date To"></i> Date To
+                                                </div>
+                                                <input type="date" id="team-filter-date-to" class="form-control form-control-sm"/>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="filter-label">
+                                                    <i class="fa fa-users" title="Team"></i> Team
+                                                </div>
+                                                <select id="team-filter-team" class="form-control form-control-sm">
+                                                    <option value="">All Teams</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 d-flex gap-2">
+                                                <button id="btn-apply-team-filters" class="btn" name="dummy" type="object">
+                                                    <i class="fa fa-filter" title="Apply Filters"></i> Apply Filters
+                                                </button>
+                                                <button id="btn-reset-team-filters" class="btn" name="dummy" type="object">
+                                                    <i class="fa fa-times" title="Reset Filters"></i> Reset
+                                                </button>
+                                                <button id="btn-refresh-team-dashboard" class="btn" name="dummy" type="object">
+                                                    <i class="fa fa-refresh" title="Refresh Dashboard"></i> Refresh
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KPI Cards Section -->
+                        <div class="kpi-section">
+                            <h3 class="section-title"><i class="fa fa-tachometer-alt" title="KPIs"/> Key Performance Indicators</h3>
+                            <div class="row" id="team-kpi-cards">
+                                <!-- Primary KPIs -->
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="kpi-card-modern card shadow-sm kpi-primary">
+                                        <div class="card-body">
+                                            <div class="kpi-icon-wrapper">
+                                                <i class="fa fa-users" title="Total Teams"></i>
+                                            </div>
+                                            <div class="kpi-content">
+                                                <h3 class="kpi-value" id="total-teams">0</h3>
+                                                <p class="kpi-label">Total Teams</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="kpi-card-modern card shadow-sm kpi-success">
+                                        <div class="card-body">
+                                            <div class="kpi-icon-wrapper">
+                                                <i class="fa fa-check-circle" title="Active Teams"></i>
+                                            </div>
+                                            <div class="kpi-content">
+                                                <h3 class="kpi-value" id="active-teams">0</h3>
+                                                <p class="kpi-label">Active Teams</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="kpi-card-modern card shadow-sm kpi-info">
+                                        <div class="card-body">
+                                            <div class="kpi-icon-wrapper">
+                                                <i class="fa fa-ticket" title="Team Tickets"></i>
+                                            </div>
+                                            <div class="kpi-content">
+                                                <h3 class="kpi-value" id="total-team-tickets">0</h3>
+                                                <p class="kpi-label">Team Tickets</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="kpi-card-modern card shadow-sm kpi-warning">
+                                        <div class="card-body">
+                                            <div class="kpi-icon-wrapper">
+                                                <i class="fa fa-folder-open" title="Open Team Tickets"></i>
+                                            </div>
+                                            <div class="kpi-content">
+                                                <h3 class="kpi-value" id="open-team-tickets">0</h3>
+                                                <p class="kpi-label">Open Team Tickets</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Secondary KPIs -->
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="kpi-card-modern card shadow-sm kpi-info-light">
+                                        <div class="card-body">
+                                            <div class="kpi-icon-wrapper">
+                                                <i class="fa fa-calendar" title="Today's Team Tickets"></i>
+                                            </div>
+                                            <div class="kpi-content">
+                                                <h3 class="kpi-value" id="today-team-tickets">0</h3>
+                                                <p class="kpi-label">Today's Team Tickets</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <div class="kpi-card-modern card shadow-sm kpi-danger">
+                                        <div class="card-body">
+                                            <div class="kpi-icon-wrapper">
+                                                <i class="fa fa-exclamation-triangle" title="Team SLA At Risk"></i>
+                                            </div>
+                                            <div class="kpi-content">
+                                                <h3 class="kpi-value" id="team-sla-at-risk">0</h3>
+                                                <p class="kpi-label">Team SLA At Risk</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Team Performance Table -->
+                        <div class="charts-section">
+                            <h3 class="section-title"><i class="fa fa-table" title="Team Performance"/> Team Performance Overview</h3>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="chart-card-modern card shadow-sm">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover" id="team-performance-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Team Name</th>
+                                                            <th>Team Leader</th>
+                                                            <th>Members</th>
+                                                            <th>Total Tickets</th>
+                                                            <th>Open Tickets</th>
+                                                            <th>Resolved Tickets</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="team-performance-tbody">
+                                                        <tr>
+                                                            <td colspan="6" class="text-center">Loading team data...</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading Overlay -->
+                        <div id="team-loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                            <div class="loading-spinner text-center" style="padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);">
+                                <div style="width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                                <div style="font-size: 16px; font-weight: 500; color: #495057;">Loading team dashboard data...</div>
+                                <style>
+                                    @keyframes spin {
+                                        0% { transform: rotate(0deg); }
+                                        100% { transform: rotate(360deg); }
+                                    }
+                                </style>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+
+                <!-- Load Team Dashboard JavaScript -->
+                <script type="text/javascript" src="/support_helpdesk_ticket/static/src/js/helpdesk_team_dashboard.js"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Team Dashboard Action -->
+    <record id="action_helpdesk_team_dashboard" model="ir.actions.act_window">
+        <field name="name">Team Dashboard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">helpdesk.team.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_helpdesk_team_dashboard_form"/>
+        <field name="target">main</field>
+        <field name="context">{'create': True}</field>
+    </record>
+
+    <!-- ==================== Workload View (Tickets per Agent) ==================== -->
+    <record id="view_helpdesk_workload_tree" model="ir.ui.view">
+        <field name="name">helpdesk.workload.tree</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <list string="Agent Workload" default_order="user_id">
+                <field name="user_id" string="Agent"/>
+                <field name="team_id" string="Team"/>
+                <field name="ticket_type_id" string="Type"/>
+                <field name="workload_count" string="Total Tickets" sum="Total"/>
+                <field name="new_count" string="New" sum="New"/>
+                <field name="assigned_count" string="Assigned" sum="Assigned"/>
+                <field name="in_progress_count" string="In Progress" sum="In Progress"/>
+                <field name="resolved_count" string="Resolved" sum="Resolved"/>
+                <field name="overdue_count" string="Overdue" sum="Overdue"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_workload" model="ir.actions.act_window">
+        <field name="name">Agent Workload</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">list,graph,pivot</field>
+        <field name="view_id" ref="view_helpdesk_workload_tree"/>
+        <field name="context">{'group_by': 'user_id'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tickets assigned yet.
+            </p>
+            <p>
+                This view shows ticket distribution across agents.
+            </p>
+        </field>
+    </record>
+
+    <!-- Workload Graph View -->
+    <record id="view_helpdesk_workload_graph" model="ir.ui.view">
+        <field name="name">helpdesk.workload.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Agent Workload" type="bar" stacked="True">
+                <field name="user_id" type="row"/>
+                <field name="ticket_type_id" type="row"/>
+                <field name="state" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- Workload Pivot View -->
+    <record id="view_helpdesk_workload_pivot" model="ir.ui.view">
+        <field name="name">helpdesk.workload.pivot</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="Agent Workload">
+                <field name="user_id" type="row"/>
+                <field name="state" type="col"/>
+<!--                <field name="id" type="measure" string="Ticket Count" operator="count"/>-->
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Monitoring View ==================== -->
+    <record id="view_helpdesk_sla_monitoring_tree" model="ir.ui.view">
+        <field name="name">helpdesk.sla.monitoring.tree</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <list string="SLA Monitoring" 
+                  decoration-success="sla_response_status == 'met' and sla_resolution_status == 'met'"
+                  decoration-warning="sla_response_status == 'at_risk' or sla_resolution_status == 'at_risk'"
+                  decoration-danger="sla_response_status == 'breached' or sla_resolution_status == 'breached'"
+                  default_order="sla_response_deadline asc">
+                <field name="ticket_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="team_id"/>
+                <field name="priority" widget="priority"/>
+                <field name="state"/>
+                <field name="sla_policy_id"/>
+                <field name="sla_response_deadline" widget="datetime"/>
+                <field name="sla_response_status" widget="badge"
+                       decoration-success="sla_response_status == 'met'"
+                       decoration-warning="sla_response_status == 'at_risk'"
+                       decoration-danger="sla_response_status == 'breached'"/>
+                <field name="sla_response_time_remaining" string="Response Time Remaining (h)"/>
+                <field name="sla_resolution_deadline" widget="datetime"/>
+                <field name="sla_resolution_status" widget="badge"
+                       decoration-success="sla_resolution_status == 'met'"
+                       decoration-warning="sla_resolution_status == 'at_risk'"
+                       decoration-danger="sla_resolution_status == 'breached'"/>
+                <field name="sla_resolution_time_remaining" string="Resolution Time Remaining (h)"/>
+                <field name="is_overdue" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_sla_monitoring" model="ir.actions.act_window">
+        <field name="name">SLA Monitoring</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">list,form,kanban,graph</field>
+        <field name="view_id" ref="view_helpdesk_sla_monitoring_tree"/>
+        <field name="domain">[('sla_policy_id', '!=', False)]</field>
+        <field name="context">{'search_default_sla_at_risk': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tickets with SLA policies.
+            </p>
+            <p>
+                This view monitors SLA compliance for all tickets.
+            </p>
+        </field>
+    </record>
+
+    <!-- SLA Monitoring Graph View -->
+    <record id="view_helpdesk_sla_monitoring_graph" model="ir.ui.view">
+        <field name="name">helpdesk.sla.monitoring.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="SLA Status Distribution" type="pie">
+                <field name="sla_response_status" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== Ticket Queue Management View ==================== -->
+    <record id="view_helpdesk_queue_kanban" model="ir.ui.view">
+        <field name="name">helpdesk.queue.kanban</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="user_id" create="0" class="o_kanban_small_column">
+                <field name="id"/>
+                <field name="ticket_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="team_id"/>
+                <field name="priority"/>
+                <field name="state"/>
+                <field name="create_date"/>
+                <field name="sla_response_deadline"/>
+                <field name="is_overdue"/>
+                <progressbar field="state" colors='{"new": "info", "assigned": "warning", "in_progress": "primary", "resolved": "success", "closed": "muted"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click helpdesk_professional_card" t-att-data-id="record.id.raw_value">
+                            <div class="helpdesk_card_header" t-att-class="record.state.raw_value == 'new' ? 'info' : (record.state.raw_value == 'resolved' ? 'success' : 'warning')">
+                                <div class="helpdesk_card_title">
+                                    <i class="fa fa-ticket" style="font-size: 14px;" title="Ticket"/>
+                                    <field name="ticket_number"/>
+                                    <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+                                        <field name="priority" widget="priority"/>
+                                        <span t-if="record.is_overdue.raw_value" class="helpdesk_badge overdue">Overdue</span>
+                                    </div>
+                                </div>
+                                <div class="helpdesk_card_subtitle">
+                                    <field name="name"/>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_body">
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-user"/>
+                                    <span class="helpdesk_info_label">Customer:</span>
+                                    <span class="helpdesk_info_value"><field name="partner_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.team_id.raw_value">
+                                    <i class="fa fa-users"/>
+                                    <span class="helpdesk_info_label">Team:</span>
+                                    <span class="helpdesk_info_value"><field name="team_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-calendar"/>
+                                    <span class="helpdesk_info_label">Created:</span>
+                                    <span class="helpdesk_info_value"><field name="create_date" widget="datetime"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.sla_response_deadline.raw_value">
+                                    <i class="fa fa-clock-o" style="color: #007bff;"/>
+                                    <span class="helpdesk_info_label">SLA Deadline:</span>
+                                    <span class="helpdesk_info_value"><field name="sla_response_deadline" widget="datetime"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.is_overdue.raw_value">
+                                    <i class="fa fa-exclamation-circle" style="color: #dc3545;"/>
+                                    <span class="helpdesk_badge overdue">This ticket is overdue</span>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_footer">
+                                <div>
+                                    <i class="fa fa-info-circle" style="margin-right: 6px;" title="Status"/>
+                                    <field name="state" widget="badge"/>
+                                </div>
+                                <div t-if="record.user_id.raw_value">
+                                    <i class="fa fa-user-circle" style="margin-right: 6px;" title="Assigned To"/>
+                                    <field name="user_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_queue_management" model="ir.actions.act_window">
+        <field name="name">Ticket Queue Management</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_helpdesk_queue_kanban"/>
+        <field name="domain">[('state', 'not in', ['closed', 'cancelled'])]</field>
+        <field name="context">{'search_default_unassigned': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tickets in queue.
+            </p>
+            <p>
+                Drag and drop tickets to assign them to agents.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== Drag-and-Drop Assignment View ==================== -->
+    <record id="view_helpdesk_assignment_kanban" model="ir.ui.view">
+        <field name="name">helpdesk.assignment.kanban</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="user_id" create="0" class="o_kanban_small_column" 
+                    quick_create="0" js_class="helpdesk_ticket_kanban">
+                <field name="id"/>
+                <field name="ticket_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="team_id"/>
+                <field name="priority"/>
+                <field name="state"/>
+                <field name="create_date"/>
+                <field name="category_id"/>
+                <progressbar field="state" colors='{"new": "info", "assigned": "warning", "in_progress": "primary", "resolved": "success"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click helpdesk_professional_card" 
+                             t-att-data-id="record.id.raw_value"
+                             t-att-data-user-id="record.user_id.raw_value ? record.user_id.raw_value[0] : false">
+                            <div class="helpdesk_card_header" t-att-class="record.state.raw_value == 'new' ? 'info' : (record.state.raw_value == 'resolved' ? 'success' : 'warning')">
+                                <div class="helpdesk_card_title">
+                                    <i class="fa fa-ticket" style="font-size: 14px;" title="Ticket"/>
+                                    <field name="ticket_number"/>
+                                    <div style="margin-left: auto;">
+                                        <field name="priority" widget="priority"/>
+                                    </div>
+                                </div>
+                                <div class="helpdesk_card_subtitle">
+                                    <field name="name"/>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_body">
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-user"/>
+                                    <span class="helpdesk_info_label">Customer:</span>
+                                    <span class="helpdesk_info_value"><field name="partner_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.category_id.raw_value">
+                                    <i class="fa fa-tag"/>
+                                    <span class="helpdesk_info_label">Category:</span>
+                                    <span class="helpdesk_info_value"><field name="category_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.team_id.raw_value">
+                                    <i class="fa fa-users"/>
+                                    <span class="helpdesk_info_label">Team:</span>
+                                    <span class="helpdesk_info_value"><field name="team_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-calendar"/>
+                                    <span class="helpdesk_info_label">Created:</span>
+                                    <span class="helpdesk_info_value"><field name="create_date" widget="date"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-info-circle" title="Status"/>
+                                    <span class="helpdesk_info_label">Status:</span>
+                                    <span class="helpdesk_info_value">
+                                        <field name="state" widget="badge"/>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_footer">
+                                <div>
+                                    <i class="fa fa-hand-pointer-o" style="margin-right: 6px;"/>
+                                    <span>Drag to assign</span>
+                                </div>
+                                <div t-if="record.user_id.raw_value">
+                                    <i class="fa fa-user-circle" style="margin-right: 6px;" title="Assigned To"/>
+                                    <field name="user_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_assignment" model="ir.actions.act_window">
+        <field name="name">Ticket Assignment</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_helpdesk_assignment_kanban"/>
+        <field name="domain">[('state', 'not in', ['closed', 'cancelled'])]</field>
+        <field name="context">{'search_default_unassigned': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tickets to assign.
+            </p>
+            <p>
+                Drag tickets between columns to assign them to agents.
+            </p>
+        </field>
+    </record>
+
+</odoo>

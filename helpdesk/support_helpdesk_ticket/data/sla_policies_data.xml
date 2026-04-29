@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default SLA Policies -->
+        <record id="sla_policy_standard" model="helpdesk.sla.policy">
+            <field name="name">Standard Support SLA</field>
+            <field name="description">Standard response and resolution times for normal priority tickets</field>
+            <field name="active">True</field>
+            <field name="response_time">24.0</field>
+            <field name="resolution_time">72.0</field>
+            <field name="priority_selection">1</field>
+            <field name="auto_escalate">True</field>
+            <field name="working_hours">False</field>
+        </record>
+
+        <record id="sla_policy_priority" model="helpdesk.sla.policy">
+            <field name="name">Priority Support SLA</field>
+            <field name="description">Faster response and resolution times for high priority tickets</field>
+            <field name="active">True</field>
+            <field name="response_time">4.0</field>
+            <field name="resolution_time">24.0</field>
+            <field name="priority_selection">2</field>
+            <field name="auto_escalate">True</field>
+            <field name="working_hours">False</field>
+        </record>
+
+        <record id="sla_policy_urgent" model="helpdesk.sla.policy">
+            <field name="name">Urgent Support SLA</field>
+            <field name="description">Immediate response and fast resolution for urgent/critical tickets</field>
+            <field name="active">True</field>
+            <field name="response_time">1.0</field>
+            <field name="resolution_time">8.0</field>
+            <field name="priority_selection">3</field>
+            <field name="auto_escalate">True</field>
+            <field name="working_hours">False</field>
+        </record>
+
+        <record id="sla_policy_all_priorities" model="helpdesk.sla.policy">
+            <field name="name">Universal Support SLA</field>
+            <field name="description">Default SLA for all priorities when no specific SLA matches</field>
+            <field name="active">True</field>
+            <field name="response_time">48.0</field>
+            <field name="resolution_time">120.0</field>
+            <field name="priority_all">True</field>
+            <field name="auto_escalate">True</field>
+            <field name="working_hours">False</field>
+        </record>
+
+    </data>
+</odoo>

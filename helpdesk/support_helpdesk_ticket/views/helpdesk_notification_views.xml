@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Notification Template Tree View -->
+    <record id="view_helpdesk_notification_template_tree" model="ir.ui.view">
+        <field name="name">helpdesk.notification.template.tree</field>
+        <field name="model">helpdesk.notification.template</field>
+        <field name="arch" type="xml">
+            <list string="Notification Templates" decoration-muted="active == False">
+                <field name="name"/>
+                <field name="notification_type"/>
+                <field name="notification_channel"/>
+                <field name="recipient_type"/>
+                <field name="usage_count"/>
+                <field name="last_used_date" widget="datetime"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Notification Template Form View -->
+    <record id="view_helpdesk_notification_template_form" model="ir.ui.view">
+        <field name="name">helpdesk.notification.template.form</field>
+        <field name="model">helpdesk.notification.template</field>
+        <field name="arch" type="xml">
+            <form string="Notification Template">
+                <header>
+                    <button name="action_test_template" string="Test Template" type="object" 
+                            class="oe_highlight" icon="fa-flask"/>
+                    <button name="action_view_history" string="History" type="object" 
+                            icon="fa-list"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" icon="fa-list" name="action_view_history">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Sent</span>
+                                <span class="o_stat_value">
+                                    <field name="usage_count" widget="statinfo"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter template name..."/>
+                            <field name="notification_type"/>
+                            <field name="notification_channel"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="usage_count" readonly="1"/>
+                            <field name="last_used_date" readonly="1" widget="datetime"/>
+                        </group>
+                    </group>
+                    
+                    <group class="oe_no_column">
+                        <field name="description" placeholder="Enter template description..." nolabel="1"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Content" name="content">
+                            <group>
+                                <group string="Email Configuration" invisible="notification_channel == 'in_app'">
+                                    <field name="email_template_id"/>
+                                    <field name="subject" invisible="email_template_id"/>
+                                    <field name="body_html" invisible="email_template_id" nolabel="1"/>
+                                </group>
+                                <group string="In-App Configuration" class="oe_no_column" invisible="notification_channel == 'email'">
+                                    <field name="in_app_message" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Recipients" name="recipients">
+                            <group>
+                                <group>
+                                    <field name="recipient_type"/>
+                                    <field name="recipient_user_ids" widget="many2many_tags" 
+                                           invisible="recipient_type != 'custom_users'"
+                                           options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Conditions" name="conditions">
+                            <group>
+                                <group string="Domain Condition">
+                                    <field name="condition_domain" widget="text" 
+                                           placeholder="[('priority', '=', '3'), ('category_id', '!=', False)]"
+                                           help="Domain expression to match tickets. Leave empty to match all tickets."/>
+                                </group>
+                                <group string="Filters">
+                                    <field name="priority_filter"/>
+                                    <field name="category_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Scheduling" name="scheduling">
+                            <group>
+                                <group>
+                                    <field name="send_immediately"/>
+                                    <field name="delay_hours" invisible="send_immediately"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Notification Template Search View -->
+    <record id="view_helpdesk_notification_template_search" model="ir.ui.view">
+        <field name="name">helpdesk.notification.template.search</field>
+        <field name="model">helpdesk.notification.template</field>
+        <field name="arch" type="xml">
+            <search string="Notification Templates">
+                <field name="name"/>
+                <field name="notification_type"/>
+                <field name="notification_channel"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <filter string="Email" name="email" domain="[('notification_channel', 'in', ['email', 'both'])]"/>
+                <filter string="In-App" name="in_app" domain="[('notification_channel', 'in', ['in_app', 'both'])]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Notification Type" name="group_type" context="{'group_by': 'notification_type'}"/>
+                    <filter string="Channel" name="group_channel" context="{'group_by': 'notification_channel'}"/>
+                    <filter string="Recipient Type" name="group_recipient" context="{'group_by': 'recipient_type'}"/>
+                    <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Notification Template Action -->
+    <record id="action_helpdesk_notification_template" model="ir.actions.act_window">
+        <field name="name">Notification Templates</field>
+        <field name="res_model">helpdesk.notification.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_notification_template_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first notification template!
+            </p>
+            <p>
+                Notification templates automate sending emails and in-app notifications for ticket events.
+            </p>
+        </field>
+    </record>
+
+    <!-- Notification History Tree View -->
+    <record id="view_helpdesk_notification_history_tree" model="ir.ui.view">
+        <field name="name">helpdesk.notification.history.tree</field>
+        <field name="model">helpdesk.notification.history</field>
+        <field name="arch" type="xml">
+            <list string="Notification History" decoration-success="status == 'sent'" 
+                  decoration-danger="status == 'failed'">
+                <field name="sent_date" widget="datetime"/>
+                <field name="template_id"/>
+                <field name="ticket_id"/>
+                <field name="notification_type"/>
+                <field name="notification_channel"/>
+                <field name="recipient_count"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Notification History Form View -->
+    <record id="view_helpdesk_notification_history_form" model="ir.ui.view">
+        <field name="name">helpdesk.notification.history.form</field>
+        <field name="model">helpdesk.notification.history</field>
+        <field name="arch" type="xml">
+            <form string="Notification History">
+                <header>
+                    <button name="action_view_ticket" string="View Ticket" type="object" 
+                            class="oe_highlight" icon="fa-ticket"/>
+                    <button name="action_view_template" string="View Template" type="object" 
+                            icon="fa-file-text-o" invisible="not template_id"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="template_id"/>
+                            <field name="ticket_id"/>
+                            <field name="notification_type"/>
+                            <field name="notification_channel"/>
+                        </group>
+                        <group>
+                            <field name="sent_date" widget="datetime"/>
+                            <field name="recipient_count"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                    <group string="Error Details" invisible="status != 'failed'">
+                        <field name="error_message" nolabel="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Notification History Search View -->
+    <record id="view_helpdesk_notification_history_search" model="ir.ui.view">
+        <field name="name">helpdesk.notification.history.search</field>
+        <field name="model">helpdesk.notification.history</field>
+        <field name="arch" type="xml">
+            <search string="Notification History">
+                <field name="template_id"/>
+                <field name="ticket_id"/>
+                <field name="notification_type"/>
+                <field name="notification_channel"/>
+                
+                <filter string="Sent" name="sent" domain="[('status', '=', 'sent')]"/>
+                <filter string="Failed" name="failed" domain="[('status', '=', 'failed')]"/>
+                <filter string="Today" name="today" domain="[('sent_date', '>=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Template" name="group_template" context="{'group_by': 'template_id'}"/>
+                    <filter string="Notification Type" name="group_type" context="{'group_by': 'notification_type'}"/>
+                    <filter string="Channel" name="group_channel" context="{'group_by': 'notification_channel'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'sent_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Notification History Action -->
+    <record id="action_helpdesk_notification_history" model="ir.actions.act_window">
+        <field name="name">Notification History</field>
+        <field name="res_model">helpdesk.notification.history</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_notification_history_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No notification history yet!
+            </p>
+            <p>
+                Notification history tracks all notifications sent through the notification template system.
+            </p>
+        </field>
+    </record>
+
+    <!-- Notification Preference Tree View -->
+    <record id="view_helpdesk_notification_preference_tree" model="ir.ui.view">
+        <field name="name">helpdesk.notification.preference.tree</field>
+        <field name="model">helpdesk.notification.preference</field>
+        <field name="arch" type="xml">
+            <list string="Notification Preferences">
+                <field name="user_id"/>
+                <field name="notification_type"/>
+                <field name="email_enabled" widget="boolean_toggle"/>
+                <field name="in_app_enabled" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Notification Preference Form View -->
+    <record id="view_helpdesk_notification_preference_form" model="ir.ui.view">
+        <field name="name">helpdesk.notification.preference.form</field>
+        <field name="model">helpdesk.notification.preference</field>
+        <field name="arch" type="xml">
+            <form string="Notification Preference">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="notification_type"/>
+                        </group>
+                        <group>
+                            <field name="email_enabled"/>
+                            <field name="in_app_enabled"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Notification Preference Search View -->
+    <record id="view_helpdesk_notification_preference_search" model="ir.ui.view">
+        <field name="name">helpdesk.notification.preference.search</field>
+        <field name="model">helpdesk.notification.preference</field>
+        <field name="arch" type="xml">
+            <search string="Notification Preferences">
+                <field name="user_id"/>
+                <field name="notification_type"/>
+                
+                <filter string="Email Enabled" name="email_enabled" domain="[('email_enabled', '=', True)]"/>
+                <filter string="In-App Enabled" name="in_app_enabled" domain="[('in_app_enabled', '=', True)]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Notification Type" name="group_type" context="{'group_by': 'notification_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Notification Preference Action -->
+    <record id="action_helpdesk_notification_preference" model="ir.actions.act_window">
+        <field name="name">Notification Preferences</field>
+        <field name="res_model">helpdesk.notification.preference</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_notification_preference_search"/>
+        <field name="context">{'search_default_user_id': uid, 'default_user_id': uid}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No notification preferences set!
+            </p>
+            <p>
+                Notification preferences control which notifications you receive and through which channels.
+            </p>
+        </field>
+    </record>
+
+    <!-- Notification Schedule Tree View -->
+    <record id="view_helpdesk_notification_schedule_tree" model="ir.ui.view">
+        <field name="name">helpdesk.notification.schedule.tree</field>
+        <field name="model">helpdesk.notification.schedule</field>
+        <field name="arch" type="xml">
+            <list string="Scheduled Notifications" decoration-success="status == 'sent'" 
+                  decoration-danger="status == 'failed'" decoration-muted="status == 'cancelled'">
+                <field name="scheduled_date" widget="datetime"/>
+                <field name="template_id"/>
+                <field name="ticket_id"/>
+                <field name="status"/>
+                <field name="sent_date" widget="datetime" invisible="status != 'sent'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Notification Schedule Form View -->
+    <record id="view_helpdesk_notification_schedule_form" model="ir.ui.view">
+        <field name="name">helpdesk.notification.schedule.form</field>
+        <field name="model">helpdesk.notification.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Scheduled Notification">
+                <header>
+                    <button name="action_send_now" string="Send Now" type="object" 
+                            class="oe_highlight" icon="fa-paper-plane" invisible="status != 'pending'"/>
+                    <button name="action_cancel" string="Cancel" type="object" 
+                            icon="fa-times" invisible="status != 'pending'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="template_id"/>
+                            <field name="ticket_id"/>
+                            <field name="status"/>
+                        </group>
+                        <group>
+                            <field name="scheduled_date" widget="datetime"/>
+                            <field name="sent_date" widget="datetime" invisible="status != 'sent'"/>
+                        </group>
+                    </group>
+                    <group string="Error Details" invisible="status != 'failed'">
+                        <field name="error_message" nolabel="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Notification Schedule Search View -->
+    <record id="view_helpdesk_notification_schedule_search" model="ir.ui.view">
+        <field name="name">helpdesk.notification.schedule.search</field>
+        <field name="model">helpdesk.notification.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Scheduled Notifications">
+                <field name="template_id"/>
+                <field name="ticket_id"/>
+                <field name="status"/>
+                
+                <filter string="Pending" name="pending" domain="[('status', '=', 'pending')]"/>
+                <filter string="Sent" name="sent" domain="[('status', '=', 'sent')]"/>
+                <filter string="Failed" name="failed" domain="[('status', '=', 'failed')]"/>
+                <filter string="Due" name="due" domain="[('status', '=', 'pending'), ('scheduled_date', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Template" name="group_template" context="{'group_by': 'template_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'scheduled_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Notification Schedule Action -->
+    <record id="action_helpdesk_notification_schedule" model="ir.actions.act_window">
+        <field name="name">Scheduled Notifications</field>
+        <field name="res_model">helpdesk.notification.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_notification_schedule_search"/>
+        <field name="context">{'search_default_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No scheduled notifications!
+            </p>
+            <p>
+                Scheduled notifications are sent at a specified time in the future.
+            </p>
+        </field>
+    </record>
+
+</odoo>

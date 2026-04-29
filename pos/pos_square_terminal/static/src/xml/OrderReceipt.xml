@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- At the end of receipt: Servi par, Commande; then QR if website -->
+    <t t-name="pos_square_terminal.OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="." position="inside">
+            <!-- Last: Servi par and Commande (as requested at end of receipt) -->
+            <div t-if="data &amp;&amp; (data.receipt_served_by || data.receipt_order_ref)" class="mt-2 pt-2 border-top">
+                <t t-if="data.receipt_served_by">Servi par <t t-esc="data.receipt_served_by"/></t>
+                <t t-if="data.receipt_served_by and data.receipt_order_ref"><br/></t>
+                <t t-if="data.receipt_order_ref">Commande <t t-esc="data.receipt_order_ref"/></t>
+            </div>
+            <!-- QR code to website -->
+            <div t-if="data &amp;&amp; data.company_website" class="text-center mt-2 mb-2">
+                <img t-att-src="'https://api.qrserver.com/v1/create-qr-code/?size=100x100&amp;data=' + encodeURIComponent(data.company_website || '')"
+                    alt="QR Code"
+                    style="width: 80px; height: 80px; display: block; margin: 0 auto;"/>
+                <span class="small">Scan for website</span>
+            </div>
+        </xpath>
+    </t>
+</templates>

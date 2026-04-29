@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POS Custom Receipt</title>
+
+    <!-- CSS: Vendors -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+
+    <!-- Styles -->
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --bg-white: #fff;
+            --text-color: #121212;
+            --text-color-light: #64728f;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .code-box {
+            background: #f4f4f4;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- overview -->
+    <div class="container">
+        <div class="my-5">
+            <!-- Supports / Availability -->
+            <div class="supports my-5 py-3" style="border-bottom: 1px solid #e7e7e7">
+                <div class="row justify-content-between">
+                    <div class="col-4"></div>
+                    <div class="col-6">
+                        <div class="row" style="margin-top: 10px">
+                            <div class="my-3 d-flex align-items-center justify-content-end">
+                                <span class="me-3"><b>Supports: </b></span>
+                                <div class="text-center" style="
+                      background-color: #017e84 !important;
+                      font-size: 0.8rem !important;
+                      color: #fff !important;
+                      font-weight: 500 !important;
+                      padding: 4px !important;
+                      margin: 0 3px !important;
+                      border-radius: 50px !important;
+                      min-width: 120px !important;
+                    ">
+                                    Community
+                                </div>
+                                <div class="text-center" style="
+                      background-color: #017e84 !important;
+                      font-size: 0.8rem !important;
+                      color: #fff !important;
+                      font-weight: 500 !important;
+                      padding: 4px !important;
+                      margin: 0 3px !important;
+                      border-radius: 50px !important;
+                      min-width: 120px !important;
+                    ">
+                                    Enterprise
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 10px">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <span class="me-3"><b>Availability: </b></span>
+                                <div class="text-center col" style="
+                      font-size: 0.8rem !important;
+                      color: #017e84 !important;
+                      border: 1px solid #017e84;
+                      font-weight: 500 !important;
+                      padding: 4px !important;
+                      margin: 0 3px !important;
+                      border-radius: 20px !important;
+                      min-width: 120px !important;
+                    ">
+                                    <i class="fa fa-check" style="color: green"></i> On Premise
+                                </div>
+                                <div class="text-center col" style="
+                      border: 1px solid #017e84;
+                      font-size: 0.8rem !important;
+                      color: #017e84 !important;
+                      font-weight: 500 !important;
+                      padding: 4px !important;
+                      margin: 0 3px !important;
+                      border-radius: 20px !important;
+                      min-width: 120px !important;
+                    ">
+                                    <i class="fa fa-check" style="color: green"></i> Odoo.sh
+                                </div>
+                                <div class="text-center col" style="
+                      border: 1px solid #017e84;
+                      font-size: 0.8rem !important;
+                      color: #017e84 !important;
+                      font-weight: 500 !important;
+                      padding: 4px !important;
+                      margin: 0 3px !important;
+                      border-radius: 20px !important;
+                      min-width: 120px !important;
+                    ">
+                                    <i class="fa fa-times" style="color: red"></i> Odoo Online
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Introduction -->
+            <section class="Introduction">
+                <div class="tab-content" id="myTabContent">
+                    <!-- description -->
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="position-relative" style="
+                  background-color: #f5f5f7;
+                  border-radius: 16px;
+                  padding: 60px 20px;
+                  margin-bottom: 10px;
+                ">
+                            <div class="row" style="padding: 2rem 0 0 !important">
+                                <div class="col-lg-8 mx-auto gap-4 d-flex flex-column align-items-center">
+                                    <p class="my-1 text-center" style="
+                        letter-spacing: 1px !important;
+                        font-weight: bold;
+                        color: #0d60dd !important;
+                        text-align: center;
+                        font-size: 14px;
+                        font-weight: 600;
+                        line-height: 15.96px;
+                        text-transform: uppercase;
+                        opacity: 0.9;
+                      ">
+                                        Professional Receipt Customization for Odoo POS
+                                    </p>
+
+                                    <h1 class="text-center text-uppercase my-0"
+                                        style="font-size: 46px; font-weight: 700; line-height: normal">
+                                        POS Custom Receipt
+                                    </h1>
+                                </div>
+
+                                <div class="col-lg-10 mx-auto my-3">
+                                    <p class="text-center" style="
+                        font-size: 18px;
+                        line-height: 28px;
+                        opacity: 0.95;
+                      ">
+                                        Transform your Odoo Point of Sale receipts with a professional, customizable
+                                        layout featuring enhanced order lines, detailed calculations, and modern
+                                        styling. Perfect for retail businesses seeking professional, detailed receipts.
+                                    </p>
+                                </div>
+
+                                <div class="col-lg-12 d-flex justify-content-center align-items-center my-5"
+                                    style="width: 70%; height: 70%; padding-left: 350px">
+                                    <a href="https://processdrive.com/odoo" target="_blank">
+                                        <img src="./assets/screenshots/PD logo.png" style="width: 90%; height: 50%" class="img-fluid"
+                                            alt="Processdrive" />
+                                    </a>
+                                </div>
+
+                                <div class="col-md-12 text-center">
+                                    <a
+                      href="mailto:odoo@processdrive.com?subject=Inquiry&body=Hello%20Team%20ProcessDrive%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services."
+                      target="_blank"
+                      class="mx-1 mb-2 deep-1 deep_hover"
+                      style="
+                        background-color: transparent;
+                        border-radius: 35px;
+                        font-family: Sans-serif;
+                        display: inline-block;
+                        padding: 7px 33px;
+                        border: 1px solid #1653d6;
+                        color: #1653d6;
+                        text-decoration: none;
+                        width: 271px;
+                      "
+                    >
+                      <i
+                        class="fa fa-paper-plane"
+                        style="color: #1653d6"
+                        aria-hidden="true"
+                      ></i>
+                      <span
+                        class="pl-2"
+                        style="font-size: 16px; vertical-align: middle"
+                        >odoo@processdrive.com</span
+                      >
+                    </a>
+                    <a href="https://wa.me/919944180573" target="_blank"
+                        style="background-color: #ffffff;font-family: Montserrat;display: inline-block;color: #1653d6;padding: 7px 33px;border: 1px solid #25D366;border-radius: 35px;text-decoration: none;width: 271px;"
+                        class="mx-1 mb-2 deep-1 deep_hover">
+                        <img class="img" style="width: 24px"
+                            src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                            alt="WhatsApp" />
+                        <span style="color: #000000; font-size: 15px; vertical-align: middle">+91
+                            9944180573</span>
+                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features -->
+            <section class="Features" style="padding: 40px 0; width: 100%; background: #f5f5f7">
+                <div style="
+              width: 100%;
+              margin: 0;
+              box-shadow: 0px 5px 20px -11px rgba(0, 0, 0, 0.25);
+            ">
+                    <div class="row">
+                        <div class="col-lg-12 d-flex flex-column justify-content-center align-items-center">
+                            <h2 style="
+                    color: #121212;
+                    text-align: center;
+                    font-size: 40px;
+                    font-weight: 700;
+                    padding-bottom: 50px;
+                  ">
+                                Features
+                            </h2>
+                        </div>
+
+                        <!-- Feature cards -->
+                        <div class="col-lg-4">
+                            <a href="https://processdrive.com/odoo" target="_blank"
+                                style="text-decoration: none; color: inherit">
+                                <div class="mb-4 d-flex flex-row align-items-center gap-3" style="
+                      border-radius: 12px;
+                      border: 1px solid #b6bccd;
+                      background: #fff;
+                      padding: 15px;
+                    ">
+                                    <div class="d-flex justify-content-center align-items-center" style="
+                        background-color: #667eea;
+                        border-radius: 4px;
+                        height: 20px;
+                        width: 20px;
+                      ">
+                                        <i class="fa fa-receipt" style="color: white; font-size: 10px"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                    <h5 class="m-0" style="color: #000; font-size: 15px; font-weight: bold">
+                                        Enhanced Receipt Header with Date & Time
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <a href="https://processdrive.com/odoo" target="_blank"
+                                style="text-decoration: none; color: inherit">
+                                <div class="mb-4 d-flex flex-row align-items-center gap-3" style="
+                      border-radius: 12px;
+                      border: 1px solid #b6bccd;
+                      background: #fff;
+                      padding: 15px;
+                    ">
+                                    <div class="d-flex justify-content-center align-items-center" style="
+                        background-color: #667eea;
+                        border-radius: 4px;
+                        height: 20px;
+                        width: 20px;
+                      ">
+                                        <i class="fa fa-table" style="color: white; font-size: 10px"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                    <h5 class="m-0" style="color: #000; font-size: 15px; font-weight: bold">
+                                        Tabular Order Lines (No | Item | Qty | MRP | Disc | Net)
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <a href="https://processdrive.com/odoo" target="_blank"
+                                style="text-decoration: none; color: inherit">
+                                <div class="mb-4 d-flex flex-row align-items-center gap-3" style="
+                      border-radius: 12px;
+                      border: 1px solid #b6bccd;
+                      background: #fff;
+                      padding: 15px;
+                    ">
+                                    <div class="d-flex justify-content-center align-items-center" style="
+                        background-color: #667eea;
+                        border-radius: 4px;
+                        height: 20px;
+                        width: 20px;
+                      ">
+                                        <i class="fa fa-calculator" style="color: white; font-size: 10px"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                    <h5 class="m-0" style="color: #000; font-size: 15px; font-weight: bold">
+                                        Detailed Subtotal & Discount Calculations
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <a href="https://processdrive.com/odoo" target="_blank"
+                                style="text-decoration: none; color: inherit">
+                                <div class="mb-4 d-flex flex-row align-items-center gap-3" style="
+                      border-radius: 12px;
+                      border: 1px solid #b6bccd;
+                      background: #fff;
+                      padding: 15px;
+                    ">
+                                    <div class="d-flex justify-content-center align-items-center" style="
+                        background-color: #667eea;
+                        border-radius: 4px;
+                        height: 20px;
+                        width: 20px;
+                      ">
+                                        <i class="fa fa-list-ol" style="color: white; font-size: 10px"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                    <h5 class="m-0" style="color: #000; font-size: 15px; font-weight: bold">
+                                        Total Item Count Summary
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <a href="https://processdrive.com/odoo" target="_blank"
+                                style="text-decoration: none; color: inherit">
+                                <div class="mb-4 d-flex flex-row align-items-center gap-3" style="
+                      border-radius: 12px;
+                      border: 1px solid #b6bccd;
+                      background: #fff;
+                      padding: 15px;
+                    ">
+                                    <div class="d-flex justify-content-center align-items-center" style="
+                        background-color: #667eea;
+                        border-radius: 4px;
+                        height: 20px;
+                        width: 20px;
+                      ">
+                                        <i class="fa fa-credit-card" style="color: white; font-size: 10px"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                    <h5 class="m-0" style="color: #000; font-size: 15px; font-weight: bold">
+                                        Clear Payment Details & Change Display
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <a href="https://processdrive.com/odoo" target="_blank"
+                                style="text-decoration: none; color: inherit">
+                                <div class="mb-4 d-flex flex-row align-items-center gap-3" style="
+                      border-radius: 12px;
+                      border: 1px solid #b6bccd;
+                      background: #fff;
+                      padding: 15px;
+                    ">
+                                    <div class="d-flex justify-content-center align-items-center" style="
+                        background-color: #667eea;
+                        border-radius: 4px;
+                        height: 20px;
+                        width: 20px;
+                      ">
+                                        <i class="fa fa-user" style="color: white; font-size: 10px"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                    <h5 class="m-0" style="color: #000; font-size: 15px; font-weight: bold">
+                                        Phone Number Validation in Partner Form
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+
+
+                        <div class="col-lg-4">
+                            <a href="https://processdrive.com/odoo" target="_blank"
+                                style="text-decoration: none; color: inherit">
+                                <div class="mb-4 d-flex flex-row align-items-center gap-3" style="
+                      border-radius: 12px;
+                      border: 1px solid #b6bccd;
+                      background: #fff;
+                      padding: 15px;
+                    ">
+                                    <div class="d-flex justify-content-center align-items-center" style="
+                        background-color: #667eea;
+                        border-radius: 4px;
+                        height: 20px;
+                        width: 20px;
+                      ">
+                                        <i class="fa fa-cogs" style="color: white; font-size: 10px"
+                                            aria-hidden="true"></i>
+                                    </div>
+                                    <h5 class="m-0" style="color: #000; font-size: 15px; font-weight: bold">
+                                        No Configuration Required
+                                    </h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works -->
+            <section class="one-app" style="
+            border-radius: 20px;
+            box-shadow: #b6bccd;
+            padding: 40px 20px;
+            background: #f5f5f7;
+            width: 100%;
+          ">
+                <div class="container">
+                    <div class="mb-4 d-flex flex-column justify-content-center gap-150" style="
+                border-radius: 16px;
+                border: 1px solid #b6bccd;
+                background: #fff;
+                padding: 40px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+              ">
+                        <h2 class="text-center"
+                            style="color: #000; font-weight: bold; margin-top: 15px; margin-bottom: 15px; font-size: 40px;">
+                            How It Works
+                        </h2>
+
+                        <p class="text-center" style="
+                  font-size: 1rem;
+                  color: #272b33;
+                  font-weight: 400;
+                  margin-top: 8px;
+                ">
+                            This module uses Odoo's template inheritance system to replace the standard POS receipt
+                            templates with customized versions. It includes JavaScript patches for helper methods,
+                            custom XML templates for receipt rendering, and SCSS stylesheets for professional
+                            appearance—all following Odoo best practices for maintainability.
+                        </p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-column gap-4">
+
+                                <!-- Receipt Customizations -->
+                                <div style="
+                      border: 2px solid #764ba2;
+                      border-radius: 12px;
+                      padding: 25px;
+                      background: #fff;
+                      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+                    ">
+                                    <h3 style="color: #764ba2; font-weight: bold; margin-bottom: 20px">
+                                        🧾 Receipt Customizations
+                                    </h3>
+
+                                    <!-- Point 1 -->
+                                    <h5 style="color: #121212; font-weight: 600">
+                                        Enhanced Header Section
+                                    </h5>
+                                    <p style="color: #64728f">
+                                        Displays current date and time prominently at the top-right of receipts,
+                                        providing clear transaction timestamps.
+                                    </p>
+
+                                    <!-- Point 2 -->
+                                    <h5 style="color: #121212; font-weight: 600; margin-top: 30px;">
+                                        Tabular Order Lines
+                                    </h5>
+                                    <p style="color: #64728f">
+                                        Clean, organized layout with columns for Serial Number, Item Name, Quantity, MRP
+                                        (Maximum Retail Price), Discount, and Net Amount.
+                                    </p>
+
+                                    <!-- Point 3 -->
+                                    <h5 style="color: #121212; font-weight: 600; margin-top: 30px;">
+                                        Calculation Breakdown
+                                    </h5>
+                                    <p style="color: #64728f">
+                                        Shows detailed subtotal (sum of MRP × Qty), discount amount (difference between
+                                        MRP and selling price), and final total with clear formatting.
+                                    </p>
+
+                                    <!-- Point 4 -->
+                                    <h5 style="color: #121212; font-weight: 600; margin-top: 30px;">
+                                        Payment Information
+                                    </h5>
+                                    <p style="color: #64728f">
+                                        Displays payment methods used, amounts paid, and change given with professional
+                                        formatting and alignment.
+                                    </p>
+
+                                    <!-- Point 5 -->
+                                    <h5 style="color: #121212; font-weight: 600; margin-top: 30px;">
+                                        Phone Number Validation
+                                    </h5>
+                                    <p style="color: #64728f">
+                                        Ensure each partner phone number is unique. This prevents duplicate customers
+                                        and keeps the loyalty points system accurate.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installation -->
+            <section class="one-app" style="
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px 20px;
+            background: #f5f5f7;
+            width: 100%;
+            margin-bottom: 20px;
+          ">
+                <div class="container">
+                    <div class="col-lg-12 text-center mb-5">
+                        <h2 style="
+                  color: #121212;
+                  font-size: 40px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                ">
+                            Installation
+                        </h2>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="d-flex flex-column gap-4">
+                                <!-- Step 1 -->
+                                <div style="
+                      border: 1px solid #e0e6ef;
+                      border-radius: 12px;
+                      padding: 20px;
+                      background: #fff;
+                      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                    ">
+                                    <h5 style="color: #667eea; font-weight: bold">
+                                        📁 Step 1: Copy Module
+                                    </h5>
+                                    <p style="color: #64728f; font-size: 16px; font-weight: 400">
+                                        Download and extract the <strong>pos_custom_receipt</strong> module
+                                        into your Odoo custom addons directory.
+                                    </p>
+                                    <div class="code-box">
+                                        /opt/odoo/custom/addons/pos_custom_receipt
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div style="
+                      border: 1px solid #e0e6ef;
+                      border-radius: 12px;
+                      padding: 20px;
+                      background: #fff;
+                      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                    ">
+                                    <h5 style="color: #667eea; font-weight: bold">
+                                        🔄 Step 2: Update Apps List
+                                    </h5>
+                                    <p style="color: #64728f; font-size: 16px; font-weight: 400">
+                                        Activate Developer Mode → Go to <strong>Apps</strong> menu →
+                                        Click <strong>Update Apps List</strong>.
+                                    </p>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div style="
+                      border: 1px solid #e0e6ef;
+                      border-radius: 12px;
+                      padding: 20px;
+                      background: #fff;
+                      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                    ">
+                                    <h5 style="color: #667eea; font-weight: bold">
+                                        ⚙️ Step 3: Install Module
+                                    </h5>
+                                    <p style="color: #64728f; font-size: 16px; font-weight: 400">
+                                        Search for <strong>"POS Custom Receipt"</strong> in the Apps menu
+                                        and click <strong>Install</strong>.
+                                    </p>
+                                </div>
+
+                                <!-- Step 4 -->
+                                <div style="
+                      border: 1px solid #e0e6ef;
+                      border-radius: 12px;
+                      padding: 20px;
+                      background: #fff;
+                      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                    ">
+                                    <h5 style="color: #667eea; font-weight: bold">
+                                        ✅ Step 4: Start Using
+                                    </h5>
+                                    <p style="color: #64728f; font-size: 16px; font-weight: 400">
+                                        No configuration needed! The custom receipt layout will automatically
+                                        apply to all POS sessions. Open your POS and print a receipt to see
+                                        the enhanced layout.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Details -->
+            <section class="one-app" style="
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px 20px;
+            background: #f5f5f7;
+            width: 100%;
+            margin-bottom: 20px;
+          ">
+                <div class="container">
+                    <div class="col-lg-12 text-center mb-5">
+                        <h2 style="
+                  color: #121212;
+                  font-size: 40px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                ">
+                            Technical Details
+                        </h2>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div style="
+                    border: 1px solid #e0e6ef;
+                    border-radius: 12px;
+                    padding: 20px;
+                    background: #fff;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                    margin-bottom: 20px;
+                  ">
+                                <h5 style="color: #667eea; font-weight: bold">
+                                    📦 Module Information
+                                </h5>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>Module Name:</strong> pos_custom_receipt
+                                </p>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>Version:</strong> 19.0.1.0.0
+                                </p>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>Category:</strong> Point of Sale
+                                </p>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>License:</strong> LGPL-3
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div style="
+                    border: 1px solid #e0e6ef;
+                    border-radius: 12px;
+                    padding: 20px;
+                    background: #fff;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                    margin-bottom: 20px;
+                  ">
+                                <h5 style="color: #667eea; font-weight: bold">
+                                    🔧 Compatibility
+                                </h5>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>Odoo Version:</strong> 19.0
+                                </p>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>Edition:</strong> Community & Enterprise
+                                </p>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>Dependencies:</strong> point_of_sale (base module)
+                                </p>
+                                <p style="color: #64728f; margin-bottom: 5px;">
+                                    <strong>External Dependencies:</strong> None
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- License -->
+            <section class="one-app" style="
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 20px 10px;
+            background: #f5f5f7;
+            width: 100%;
+            margin-bottom: 20px;
+          ">
+                <div class="container">
+                    <div class="col-lg-12 text-center mb-5">
+                        <h2 style="
+                  color: #121212;
+                  font-size: 40px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                ">
+                            License
+                        </h2>
+                    </div>
+
+                    <div class="d-flex flex-column gap-4">
+                        <div style="
+                  border: 1px solid #e0e6ef;
+                  border-radius: 12px;
+                  padding: 20px;
+                  background: #fff;
+                  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                ">
+                            <p style="color: #64728f; font-size: 16px; font-weight: 400">
+                                This module is released under the
+                                <strong>GNU Lesser General Public License v3 (LGPL-3)</strong>.
+                                You are free to use, modify, and distribute this module under the terms
+                                of the LGPL-3 license.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Author -->
+            <section class="one-app" style="
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 20px 10px;
+            background: #f5f5f7;
+            width: 100%;
+            margin-bottom: 20px;
+          ">
+                <div class="container">
+                    <div class="col-lg-12 text-center mb-5">
+                        <h2 style="
+                  color: #121212;
+                  font-size: 40px;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                ">
+                            Author
+                        </h2>
+                    </div>
+
+                    <div class="d-flex flex-column gap-4">
+                        <div style="
+                  border: 1px solid #e0e6ef;
+                  border-radius: 12px;
+                  padding: 20px;
+                  background: #fff;
+                  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+                ">
+                            <p style="color: #64728f; font-size: 16px; font-weight: 400; text-align: center;">
+                                <strong style="font-size: 20px;">ProcessDrive</strong><br />
+                                <a href="https://www.processdrive.com" target="_blank"
+                                    style="color: #667eea; font-weight: bold; text-decoration: none">www.processdrive.com</a><br />
+                                <a href="mailto:odoo@processdrive.com"
+                                    style="color: #667eea; text-decoration: none">odoo@processdrive.com</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services -->
+            <section id="services" class="mt-5" style="
+            border-radius: 16px;
+            border: 1px solid #ebeef2;
+            background: var(--Neutral-N0, #fff);
+            padding: 60px 40px;
+            box-shadow: 0px 5px 20px -11px rgba(0, 0, 0, 0.25);
+            width: 100%;
+          ">
+                <div class="text-center mt-4">
+                    <h3 class="mb-0" style="
+                color: #000;
+                text-align: center;
+                font-family: Montserrat;
+                font-size: 40px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: normal;
+                text-transform: uppercase;
+                padding-bottom: 30px;
+              ">
+                        Our Odoo Services
+                    </h3>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-lg-3 col-sm-12 mb-3">
+                        <a href="https://processdrive.com/odoo" style="text-decoration: none">
+                            <div class="btn-lg btn-block p-4 mb-2 d-flex flex-column justify-content-center align-items-center"
+                                style="
+                    font-size: 25px;
+                    font-weight: bold;
+                    background-color: #ffe2e5;
+                    margin: auto;
+                    gap: 16px;
+                    border-radius: 8px;
+                  ">
+                                <div class="d-flex justify-content-center align-items-center" style="
+                      background-color: #fa5a7d;
+                      border-radius: 50%;
+                      height: 56px;
+                      width: 56px;
+                    ">
+                                    <i class="fa fa-cogs" style="color: white" aria-hidden="true"></i>
+                                </div>
+                                <span
+                                    style="font-size: 18px; color: var(--text-color); font-weight: 600">Customization</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-sm-12 mb-3">
+                        <a href="https://processdrive.com/odoo" style="text-decoration: none">
+                            <div class="btn-lg btn-block p-4 mb-2 d-flex flex-column justify-content-center align-items-center"
+                                style="
+                    font-size: 25px;
+                    font-weight: bold;
+                    background-color: #fff4de;
+                    margin: auto;
+                    gap: 16px;
+                    border-radius: 8px;
+                  ">
+                                <div class="d-flex justify-content-center align-items-center" style="
+                      background-color: #ff947a;
+                      border-radius: 50%;
+                      height: 56px;
+                      width: 56px;
+                    ">
+                                    <i class="fa fa-wrench" style="color: white" aria-hidden="true"></i>
+                                </div>
+                                <span
+                                    style="font-size: 18px; color: var(--text-color); font-weight: 600">Implementation</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-sm-12 mb-3">
+                        <a href="https://processdrive.com/odoo" style="text-decoration: none">
+                            <div class="btn-lg btn-block p-4 mb-2 d-flex flex-column justify-content-center align-items-center"
+                                style="
+                    font-size: 25px;
+                    font-weight: bold;
+                    background-color: #dcfce7;
+                    margin: auto;
+                    gap: 16px;
+                    border-radius: 8px;
+                  ">
+                                <div class="d-flex justify-content-center align-items-center" style="
+                      background-color: #3cd856;
+                      border-radius: 50%;
+                      height: 56px;
+                      width: 56px;
+                    ">
+                                    <i class="fa fa-users" style="color: white" aria-hidden="true"></i>
+                                </div>
+                                <span style="font-size: 18px; color: var(--text-color); font-weight: 600">Support</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-lg-3 col-sm-12 mb-3">
+                        <a href="https://processdrive.com/odoo" style="text-decoration: none">
+                            <div class="btn-lg btn-block p-4 mb-2 d-flex flex-column justify-content-center align-items-center"
+                                style="
+                    font-size: 25px;
+                    font-weight: bold;
+                    background-color: #f1f9ff;
+                    margin: auto;
+                    gap: 16px;
+                    border-radius: 8px;
+                  ">
+                                <div class="d-flex justify-content-center align-items-center" style="
+                      background-color: #01649c;
+                      border-radius: 50%;
+                      height: 56px;
+                      width: 56px;
+                    ">
+                                    <i class="fa fa-building" style="color: white" aria-hidden="true"></i>
+                                </div>
+                                <span
+                                    style="font-size: 18px; color: var(--text-color); font-weight: 600">Integration</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            <!-- /Services -->
+        </div>
+    </div>
+
+    <!-- JS: Vendors -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>

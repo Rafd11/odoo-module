@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Category Tree View -->
+    <record id="view_helpdesk_category_tree" model="ir.ui.view">
+        <field name="name">helpdesk.category.tree</field>
+        <field name="model">helpdesk.category</field>
+        <field name="arch" type="xml">
+            <list string="Categories" decoration-muted="active == False">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+                <field name="default_team_id"/>
+                <field name="default_user_id"/>
+                <field name="default_priority" widget="priority"/>
+                <field name="ticket_count"/>
+                <field name="open_ticket_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Category Form View -->
+    <record id="view_helpdesk_category_form" model="ir.ui.view">
+        <field name="name">helpdesk.category.form</field>
+        <field name="model">helpdesk.category</field>
+        <field name="arch" type="xml">
+            <form string="Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object" 
+                                class="oe_stat_button" icon="fa-ticket">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Tickets</span>
+                                <span class="o_stat_value">
+                                    <field name="ticket_count" widget="statinfo" string="Total"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_tickets" type="object" 
+                                class="oe_stat_button" icon="fa-clock-o">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Open</span>
+                                <span class="o_stat_value">
+                                    <field name="open_ticket_count" widget="statinfo" string="Open"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter category name..."/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Enter category description..."/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Routing Configuration" name="routing">
+                            <group>
+                                <group>
+                                    <field name="default_team_id" options="{'no_create': True}"/>
+                                    <field name="default_user_id" options="{'no_create': True}"/>
+                                </group>
+                                <group>
+                                    <field name="default_priority" widget="priority"/>
+                                    <field name="default_sla_policy_id" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                            <group>
+                                <div class="alert alert-info" role="alert">
+                                    <strong>Note:</strong> These settings will be automatically applied when a ticket is assigned to this category.
+                                </div>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Category Search View -->
+    <record id="view_helpdesk_category_search" model="ir.ui.view">
+        <field name="name">helpdesk.category.search</field>
+        <field name="model">helpdesk.category</field>
+        <field name="arch" type="xml">
+            <search string="Categories">
+                <field name="name"/>
+                <field name="default_team_id"/>
+                <field name="default_user_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Team" name="group_team" context="{'group_by': 'default_team_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Category Action -->
+    <record id="action_helpdesk_category" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="res_model">helpdesk.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_category_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first category!
+            </p>
+            <p>
+                Categories help organize tickets and enable automatic routing.
+            </p>
+        </field>
+    </record>
+
+</odoo>

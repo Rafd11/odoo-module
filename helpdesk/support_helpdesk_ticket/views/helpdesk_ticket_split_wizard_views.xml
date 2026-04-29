@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Split Wizard Form View -->
+    <record id="view_helpdesk_ticket_split_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.split.wizard.form</field>
+        <field name="model">helpdesk.ticket.split.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Split Ticket">
+                <group>
+                    <field name="ticket_id" readonly="1"/>
+                </group>
+                
+                <group>
+                    <group>
+                        <field name="new_ticket_name" placeholder="Enter subject for new ticket..." required="1"/>
+                        <field name="new_ticket_description" placeholder="Enter description for new ticket..."/>
+                    </group>
+                </group>
+                
+                <notebook>
+                    <page string="Content to Include" name="content">
+                        <group>
+                            <group>
+                                <field name="message_ids" 
+                                       domain="[('model', '=', 'helpdesk.ticket'), ('res_id', '=', ticket_id)]"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="attachment_ids" 
+                                       domain="[('res_model', '=', 'helpdesk.ticket'), ('res_id', '=', ticket_id)]"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                    </page>
+                    
+                    <page string="Copy Options" name="copy">
+                        <group>
+                            <group>
+                                <field name="copy_assignee"/>
+                                <field name="copy_team"/>
+                                <field name="copy_category"/>
+                            </group>
+                            <group>
+                                <field name="copy_tags"/>
+                                <field name="copy_priority"/>
+                                <field name="copy_sla"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="link_to_parent"/>
+                        </group>
+                    </page>
+                    
+                    <page string="Note" name="note">
+                        <group>
+                            <field name="note" placeholder="Enter optional note about the split..."/>
+                        </group>
+                    </page>
+                </notebook>
+                
+                <footer>
+                    <button string="Split Ticket" name="action_split_ticket" type="object" 
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Split Wizard Action -->
+    <record id="action_helpdesk_ticket_split_wizard" model="ir.actions.act_window">
+        <field name="name">Split Ticket</field>
+        <field name="res_model">helpdesk.ticket.split.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

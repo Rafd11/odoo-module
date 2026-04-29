@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Customer Satisfaction Pivot View ==================== -->
+    <record id="view_helpdesk_customer_satisfaction_pivot" model="ir.ui.view">
+        <field name="name">helpdesk.customer.satisfaction.pivot</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="Customer Satisfaction Report">
+                <field name="ticket_type_id" type="row"/>
+                <field name="team_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="priority" type="row"/>
+                <field name="rating" type="row"/>
+                <field name="create_date" interval="month" type="col"/>
+<!--                <field name="id" type="measure" string="Ticket Count" operator="count"/>-->
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== Rating Distribution Graph (Bar) ==================== -->
+    <record id="view_helpdesk_customer_rating_distribution_graph" model="ir.ui.view">
+        <field name="name">helpdesk.customer.rating.distribution.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Rating Distribution" type="bar">
+                <field name="rating" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== Rating Distribution Graph (Pie) ==================== -->
+    <record id="view_helpdesk_customer_rating_pie_graph" model="ir.ui.view">
+        <field name="name">helpdesk.customer.rating.pie.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Rating Share" type="pie">
+                <field name="rating" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== Satisfaction Trend Graph ==================== -->
+    <record id="view_helpdesk_customer_satisfaction_trend_graph" model="ir.ui.view">
+        <field name="name">helpdesk.customer.satisfaction.trend.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Satisfaction Trend Over Time" type="line">
+                <field name="create_date" interval="month" type="row"/>
+                <field name="rating" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== Feedback Analysis Tree ==================== -->
+    <record id="view_helpdesk_customer_feedback_tree" model="ir.ui.view">
+        <field name="name">helpdesk.customer.feedback.tree</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <list string="Customer Feedback" default_order="feedback_date desc">
+                <field name="ticket_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="ticket_type_id" string="Ticket Type"/>
+                <field name="tag_ids" string="Tags" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="channel_id" string="Channel"/>
+                <field name="team_id"
+                       groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                <field name="user_id"
+                       groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                <field name="rating"
+                       groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                <field name="feedback_date" widget="datetime"
+                       groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                <field name="feedback"
+                       groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== Customer Satisfaction Report Action ==================== -->
+    <record id="action_helpdesk_customer_satisfaction_report" model="ir.actions.act_window">
+        <field name="name">Customer Satisfaction Report</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="view_id" ref="view_helpdesk_customer_feedback_tree"/>
+        <field name="domain">[('rating', '!=', False)]</field>
+        <field name="search_view_id" ref="view_helpdesk_ticket_search"/>
+        <field name="context">
+            {
+                'search_default_group_team': 1,
+                'search_default_group_user': 1
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Customer Satisfaction Report
+            </p>
+            <p>
+                Analyze customer ratings and feedback, view rating distributions, and track satisfaction trends over time.
+            </p>
+        </field>
+    </record>
+
+</odoo>
+

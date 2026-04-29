@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Helpdesk User Group -->
+        <record id="group_helpdesk_user" model="res.groups">
+            <field name="name">Helpdesk User</field>
+            <field name="comment">Can create and manage assigned tickets</field>
+        </record>
+
+        <!-- Helpdesk Agent Group -->
+        <record id="group_helpdesk_agent" model="res.groups">
+            <field name="name">Helpdesk Agent</field>
+            <field name="comment">Can manage tickets assigned to their team</field>
+            <field name="implied_ids" eval="[(4, ref('group_helpdesk_user'))]"/>
+        </record>
+
+        <!-- Helpdesk Manager Group -->
+        <record id="group_helpdesk_manager" model="res.groups">
+            <field name="name">Helpdesk Manager</field>
+            <field name="comment">Full access to all helpdesk features and configuration</field>
+            <field name="implied_ids" eval="[(4, ref('group_helpdesk_agent'))]"/>
+        </record>
+
+        <!-- Helpdesk Ticket Creator Group -->
+        <record id="group_helpdesk_ticket_creator" model="res.groups">
+            <field name="name">Ticket Creator</field>
+            <field name="comment">Can only create tickets, cannot update or edit existing tickets</field>
+        </record>
+    </data>
+</odoo>

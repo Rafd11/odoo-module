@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Channels Demo Data -->
+        
+        <record id="channel_email" model="helpdesk.channel">
+            <field name="name">Email</field>
+            <field name="code">email</field>
+            <field name="description">Tickets created via email integration</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-envelope</field>
+            <field name="color">1</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="channel_web" model="helpdesk.channel">
+            <field name="name">Web Portal</field>
+            <field name="code">web</field>
+            <field name="description">Tickets created through the web portal or public form</field>
+            <field name="sequence">20</field>
+            <field name="icon">fa-globe</field>
+            <field name="color">2</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="channel_phone" model="helpdesk.channel">
+            <field name="name">Phone</field>
+            <field name="code">phone</field>
+            <field name="description">Tickets created from phone calls or call logs</field>
+            <field name="sequence">30</field>
+            <field name="icon">fa-phone</field>
+            <field name="color">3</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="channel_social_media" model="helpdesk.channel">
+            <field name="name">Social Media</field>
+            <field name="code">social_media</field>
+            <field name="description">Tickets created from social media platforms (Facebook, Twitter, etc.)</field>
+            <field name="sequence">40</field>
+            <field name="icon">fa-share-alt</field>
+            <field name="color">4</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="channel_chat" model="helpdesk.channel">
+            <field name="name">Live Chat</field>
+            <field name="code">chat</field>
+            <field name="description">Tickets created from live chat sessions</field>
+            <field name="sequence">50</field>
+            <field name="icon">fa-comments</field>
+            <field name="color">5</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="channel_api" model="helpdesk.channel">
+            <field name="name">API</field>
+            <field name="code">api</field>
+            <field name="description">Tickets created via REST API or third-party integrations</field>
+            <field name="sequence">60</field>
+            <field name="icon">fa-code</field>
+            <field name="color">6</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="channel_walk_in" model="helpdesk.channel">
+            <field name="name">Walk-in</field>
+            <field name="code">walk_in</field>
+            <field name="description">Tickets created for in-person visits or walk-in customers</field>
+            <field name="sequence">70</field>
+            <field name="icon">fa-walking</field>
+            <field name="color">7</field>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Email Templates ==================== -->
+    
+    <!-- Ticket Created Notification Template -->
+    <record id="email_template_ticket_created" model="mail.template">
+        <field name="name">Ticket Created</field>
+        <field name="model_id" ref="model_helpdesk_ticket"/>
+        <field name="subject">Ticket Created: ${object.ticket_number}</field>
+        <field name="email_from">${(object.team_id and object.team_id.alias_id and object.team_id.alias_id.alias_name + '@' + object.team_id.alias_id.alias_domain) or (user.email_formatted)}</field>
+        <field name="email_to">${object.partner_id.email_formatted}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Dear ${object.partner_id.name or 'Customer'},</p>
+                <p>Thank you for contacting us. We have received your support request and created a ticket for you.</p>
+                <div style="margin: 16px 0px 16px 0px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Ticket Number:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.ticket_number}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Subject:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Status:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.state}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Priority:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${dict(object._fields['priority'].selection)[object.priority]}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Created:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.create_date.strftime('%Y-%m-%d %H:%M')}</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>You can view and track your ticket online by clicking the link below:</p>
+                <p style="margin: 16px 0px;">
+                    <a href="${object.get_portal_url()}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                </p>
+                <p>If you have any questions, please reply to this email or contact our support team.</p>
+                <p>Best regards,<br/>${user.name}</p>
+            </div>
+        </field>
+    </record>
+
+    <!-- Ticket Status Change Notification Template -->
+    <record id="email_template_ticket_status_change" model="mail.template">
+        <field name="name">Ticket Status Changed</field>
+        <field name="model_id" ref="model_helpdesk_ticket"/>
+        <field name="subject">Ticket Status Updated: ${object.ticket_number}</field>
+        <field name="email_from">${(object.team_id and object.team_id.alias_id and object.team_id.alias_id.alias_name + '@' + object.team_id.alias_id.alias_domain) or (user.email_formatted)}</field>
+        <field name="email_to">${object.partner_id.email_formatted}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Dear ${object.partner_id.name or 'Customer'},</p>
+                <p>The status of your ticket has been updated.</p>
+                <div style="margin: 16px 0px 16px 0px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Ticket Number:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.ticket_number}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Subject:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">New Status:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${dict(object._fields['state'].selection)[object.state]}</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>You can view and track your ticket online by clicking the link below:</p>
+                <p style="margin: 16px 0px;">
+                    <a href="${object.get_portal_url()}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                </p>
+                <p>Best regards,<br/>${user.name}</p>
+            </div>
+        </field>
+    </record>
+
+    <!-- Ticket Assigned Notification Template -->
+    <record id="email_template_ticket_assigned" model="mail.template">
+        <field name="name">Ticket Assigned</field>
+        <field name="model_id" ref="model_helpdesk_ticket"/>
+        <field name="subject">Ticket Assigned to You: ${object.ticket_number}</field>
+        <field name="email_from">${(object.team_id and object.team_id.alias_id and object.team_id.alias_id.alias_name + '@' + object.team_id.alias_id.alias_domain) or (user.email_formatted)}</field>
+        <field name="email_to">${object.user_id.email_formatted}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Dear ${object.user_id.name},</p>
+                <p>A new ticket has been assigned to you.</p>
+                <div style="margin: 16px 0px 16px 0px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Ticket Number:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.ticket_number}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Subject:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Customer:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.partner_id.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Priority:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${dict(object._fields['priority'].selection)[object.priority]}</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>You can view and manage this ticket by clicking the link below:</p>
+                <p style="margin: 16px 0px;">
+                    <a href="${object.access_url}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                </p>
+            </div>
+        </field>
+    </record>
+
+    <!-- Ticket Comment Notification Template -->
+    <record id="email_template_ticket_comment" model="mail.template">
+        <field name="name">Ticket Comment Added</field>
+        <field name="model_id" ref="model_helpdesk_ticket"/>
+        <field name="subject">Re: ${object.ticket_number} - ${object.name}</field>
+        <field name="email_from">${(object.team_id and object.team_id.alias_id and object.team_id.alias_id.alias_name + '@' + object.team_id.alias_id.alias_domain) or (user.email_formatted)}</field>
+        <field name="email_to">${object.partner_id.email_formatted}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Dear ${object.partner_id.name or 'Customer'},</p>
+                <p>A new comment has been added to your ticket.</p>
+                <div style="margin: 16px 0px 16px 0px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Ticket Number:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.ticket_number}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Subject:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${object.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Status:</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">${dict(object._fields['state'].selection)[object.state]}</td>
+                        </tr>
+                    </table>
+                </div>
+                % if ctx.get('message_body'):
+                <div style="margin: 16px 0px; padding: 12px; background-color: #f8f9fa; border-left: 4px solid #007bff;">
+                    <p style="margin: 0px; font-weight: bold; margin-bottom: 8px;">Comment:</p>
+                    <div style="margin: 0px;">${ctx.get('message_body')}</div>
+                </div>
+                % endif
+                <p>You can view the comment and reply by clicking the link below, or simply reply to this email:</p>
+                <p style="margin: 16px 0px;">
+                    <a href="${object.get_portal_url()}" style="background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                </p>
+                <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d; font-size: 12px;">
+                    <em>You can reply to this email to add a comment to your ticket.</em>
+                </p>
+                <p>Best regards,<br/>${user.name}</p>
+            </div>
+        </field>
+    </record>
+
+</odoo>

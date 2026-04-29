@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Portal Ticket List Template -->
+    <template id="portal_my_tickets" name="My Tickets">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">My Tickets</t>
+            <div class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="o_portal_docs_header">
+                                <h1 class="o_portal_docs_title">My Tickets</h1>
+                                <div class="d-flex align-items-center gap-3">
+                                    <t t-set="support_email" t-value="request.env['ir.config_parameter'].sudo().get_param('helpdesk.support_email', '')"/>
+                                    <t t-set="support_phone" t-value="request.env['ir.config_parameter'].sudo().get_param('helpdesk.support_phone', '')"/>
+                                    <t t-if="support_email or support_phone">
+                                        <div class="text-muted">
+                                            <small>
+                                                <t t-if="support_email">
+                                                    <i class="fa fa-envelope"/> <a t-attf-href="mailto:#{support_email}"><t t-esc="support_email"/></a>
+                                                </t>
+                                                <t t-if="support_email and support_phone"> | </t>
+                                                <t t-if="support_phone">
+                                                    <i class="fa fa-phone"/> <a t-attf-href="tel:#{support_phone}"><t t-esc="support_phone"/></a>
+                                                </t>
+                                            </small>
+                                        </div>
+                                    </t>
+                                    <a href="/my/tickets/new" class="btn btn-primary">
+                                        <i class="fa fa-plus"/> Create New Ticket
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Search and Filters -->
+                            <div class="o_portal_docs_table_header">
+                                <div class="o_portal_searchbar">
+                                    <form method="get" action="/my/tickets" class="d-flex">
+                                        <input type="hidden" name="sortby" t-att-value="sortby"/>
+                                        <input type="hidden" name="filterby" t-att-value="filterby"/>
+                                        <select name="search_in" class="form-control me-2">
+                                            <t t-foreach="searchbar_inputs" t-as="search_input">
+                                                <option t-att-value="search_input['input']" t-att-selected="search_in == search_input['input']">
+                                                    <t t-esc="search_input['label']"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                        <input type="text" name="search" class="form-control me-2" 
+                                               t-att-placeholder="'Search...'" t-att-value="search or ''"/>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search"/> Search
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <div class="o_portal_filters">
+                                    <div class="btn-group" role="group">
+                                        <t t-foreach="searchbar_filters" t-as="filter">
+                                            <a t-attf-href="#{filterby == filter[0] ? '#' : '/my/tickets?filterby=' + filter[0]}"
+                                               t-att-class="filterby == filter[0] ? 'btn btn-primary' : 'btn btn-secondary'"
+                                               t-esc="filter[1]['label']"/>
+                                        </t>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_portal_sorting">
+                                    <select name="sortby" class="form-control" onchange="window.location.href=this.value">
+                                        <t t-foreach="searchbar_sortings" t-as="sort">
+                                            <option t-att-value="'/my/tickets?sortby=' + sort[0]"
+                                                    t-att-selected="sortby == sort[0]">
+                                                <t t-esc="sort[1]['label']"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Tickets Table -->
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Ticket Number</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Created</th>
+                                        <th>Last Update</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="not tickets">
+                                        <tr>
+                                            <td colspan="7" class="text-center">
+                                                <p class="text-muted">No tickets found.</p>
+                                                <a href="/my/tickets/new" class="btn btn-primary">
+                                                    <i class="fa fa-plus"/> Create Your First Ticket
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-foreach="tickets" t-as="ticket">
+                                        <tr>
+                                            <td>
+                                                <a t-attf-href="/my/tickets/#{ticket.id}">
+                                                    <t t-esc="ticket.ticket_number"/>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a t-attf-href="/my/tickets/#{ticket.id}">
+                                                    <t t-esc="ticket.name or 'No Subject'"/>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span t-attf-class="badge badge-#{ticket.state == 'closed' ? 'success' : ticket.state == 'resolved' ? 'info' : ticket.state == 'in_progress' ? 'warning' : 'secondary'}">
+                                                    <t t-esc="state_labels.get(ticket.state, ticket.state)"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span t-attf-class="badge badge-#{ticket.priority == '3' ? 'danger' : ticket.priority == '2' ? 'warning' : ticket.priority == '1' ? 'info' : 'secondary'}">
+                                                    <t t-esc="priority_labels.get(ticket.priority, ticket.priority)"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <t t-esc="ticket.create_date.strftime('%Y-%m-%d %H:%M')"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="ticket.write_date.strftime('%Y-%m-%d %H:%M')"/>
+                                            </td>
+                                            <td>
+                                                <a t-attf-href="/my/tickets/#{ticket.id}" class="btn btn-sm btn-primary">
+                                                    <i class="fa fa-eye"/> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            
+                            <!-- Pager -->
+                            <t t-if="pager['pages'] > 1">
+                                <div class="o_portal_pager">
+                                    <ul class="pagination">
+                                        <li t-attf-class="page-item #{not pager['previous'] ? 'disabled' : ''}">
+                                            <a t-attf-href="#{pager['previous'] or '#'}" class="page-link">Previous</a>
+                                        </li>
+                                        <t t-foreach="range(pager['pages'])" t-as="page_num">
+                                            <li t-attf-class="page-item #{pager['page'] == page_num + 1 ? 'active' : ''}">
+                                                <a t-attf-href="#{pager['page_urls'][page_num]}" class="page-link">
+                                                    <t t-esc="page_num + 1"/>
+                                                </a>
+                                            </li>
+                                        </t>
+                                        <li t-attf-class="page-item #{not pager['next'] ? 'disabled' : ''}">
+                                            <a t-attf-href="#{pager['next'] or '#'}" class="page-link">Next</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Portal Ticket Detail Template -->
+    <template id="portal_ticket_page" name="Ticket Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="title" t-esc="ticket.ticket_number"/>
+            <div class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="o_portal_docs_header">
+                                <h1 class="o_portal_docs_title">
+                                    <t t-esc="ticket.ticket_number"/>
+                                    <span t-attf-class="badge badge-#{ticket.state == 'closed' ? 'success' : ticket.state == 'resolved' ? 'info' : ticket.state == 'in_progress' ? 'warning' : 'secondary'} ms-2">
+                                        <t t-esc="state_labels.get(ticket.state, ticket.state)"/>
+                                    </span>
+                                </h1>
+                                <a href="/my/tickets" class="btn btn-secondary">
+                                    <i class="fa fa-arrow-left"/> Back to Tickets
+                                </a>
+                            </div>
+                            
+                            <!-- Ticket Information -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5>Ticket Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Subject:</dt>
+                                                <dd class="col-sm-8"><t t-esc="ticket.name or 'No Subject'"/></dd>
+                                                
+                                                <dt class="col-sm-4">Priority:</dt>
+                                                <dd class="col-sm-8">
+                                                    <span t-attf-class="badge badge-#{ticket.priority == '3' ? 'danger' : ticket.priority == '2' ? 'warning' : ticket.priority == '1' ? 'info' : 'secondary'}">
+                                                        <t t-esc="priority_labels.get(ticket.priority, ticket.priority)"/>
+                                                    </span>
+                                                </dd>
+                                                
+                                                <dt class="col-sm-4">Category:</dt>
+                                                <dd class="col-sm-8">
+                                                    <t t-esc="ticket.category_id.name if ticket.category_id else 'None'"/>
+                                                </dd>
+                                                
+                                                <dt class="col-sm-4">Assigned To:</dt>
+                                                <dd class="col-sm-8">
+                                                    <t t-esc="ticket.user_id.name if ticket.user_id else 'Unassigned'"/>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Created:</dt>
+                                                <dd class="col-sm-8">
+                                                    <t t-esc="ticket.create_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                </dd>
+                                                
+                                                <dt class="col-sm-4">Last Update:</dt>
+                                                <dd class="col-sm-8">
+                                                    <t t-esc="ticket.write_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                </dd>
+                                                
+                                                <dt class="col-sm-4">Channel:</dt>
+                                                <dd class="col-sm-8">
+                                                    <t t-esc="channel_labels.get(ticket.channel, ticket.channel) if ticket.channel else 'N/A'"/>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Description -->
+                                    <div class="mt-3">
+                                        <h6>Description:</h6>
+                                        <div t-raw="ticket.description or 'No description provided.'"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Tracking Widget -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5>Status Timeline</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="timeline">
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker bg-primary"/>
+                                            <div class="timeline-content">
+                                                <h6>Ticket Created</h6>
+                                                <p class="text-muted">
+                                                    <t t-esc="ticket.create_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <t t-if="ticket.assigned_date">
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker bg-info"/>
+                                                <div class="timeline-content">
+                                                    <h6>Assigned</h6>
+                                                    <p class="text-muted">
+                                                        <t t-esc="ticket.assigned_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-if="ticket.resolved_date">
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker bg-success"/>
+                                                <div class="timeline-content">
+                                                    <h6>Resolved</h6>
+                                                    <p class="text-muted">
+                                                        <t t-esc="ticket.resolved_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-if="ticket.closed_date">
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker bg-success"/>
+                                                <div class="timeline-content">
+                                                    <h6>Closed</h6>
+                                                    <p class="text-muted">
+                                                        <t t-esc="ticket.closed_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Messages/Comments -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5>Conversation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="o_portal_chatter">
+                                        <t t-foreach="ticket.message_ids" t-as="message">
+                                            <div class="media mb-3">
+                                                <div class="media-body">
+                                                    <h6 class="mt-0">
+                                                        <t t-esc="message.author_id.name"/>
+                                                        <small class="text-muted">
+                                                            <t t-esc="message.date.strftime('%Y-%m-%d %H:%M')"/>
+                                                        </small>
+                                                    </h6>
+                                                    <div t-raw="message.body"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    
+                                    <!-- Add Comment Form -->
+                                    <form t-attf-action="/my/tickets/#{ticket.id}/comment" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <div class="form-group">
+                                            <label for="comment">Add a comment:</label>
+                                            <textarea name="comment" id="comment" class="form-control" rows="3" required="required"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="attachment">Attach file (optional):</label>
+                                            <input type="file" name="attachment" id="attachment" class="form-control" multiple="multiple"/>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-comment"/> Post Comment
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Portal Create Ticket Template -->
+    <template id="portal_create_ticket" name="Create Ticket">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Create New Ticket</t>
+            <div class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="o_portal_docs_header">
+                                <h1 class="o_portal_docs_title">Create New Ticket</h1>
+                                <div class="btn-group">
+                                    <a href="/faq" class="btn btn-info">
+                                        <i class="fa fa-question-circle"/> Browse FAQs
+                                    </a>
+                                    <a href="/my/tickets" class="btn btn-secondary">
+                                        <i class="fa fa-arrow-left"/> Back to Tickets
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- FAQ Widget -->
+                            <t t-if="faq_articles">
+                                <div class="card mb-4 border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h5 class="mb-0">
+                                            <i class="fa fa-question-circle"/> Frequently Asked Questions
+                                        </h5>
+                                        <small>Check these FAQs before creating a ticket - you might find your answer here!</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="accordion" id="faqAccordion">
+                                            <t t-foreach="faq_articles" t-as="faq" t-as-index="index">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" t-attf-id="heading#{index}">
+                                                        <button class="accordion-button" t-att-class="index == 0 ? '' : 'collapsed'" 
+                                                                type="button" t-att-data-bs-toggle="collapse" 
+                                                                t-attf-data-bs-target="#collapse#{index}" 
+                                                                t-att-aria-expanded="index == 0 ? 'true' : 'false'"
+                                                                t-att-aria-controls="collapse#{index}">
+                                                            <t t-esc="faq.name"/>
+                                                        </button>
+                                                    </h2>
+                                                    <div t-attf-id="collapse#{index}" 
+                                                         t-att-class="'accordion-collapse collapse' + (index == 0 ? ' show' : '')"
+                                                         t-att-data-bs-parent="#faqAccordion">
+                                                        <div class="accordion-body">
+                                                            <div t-raw="faq.content"/>
+                                                            <div class="mt-2">
+                                                                <a t-attf-href="/knowledge/#{faq.id}" class="btn btn-sm btn-outline-primary">
+                                                                    Read Full Article <i class="fa fa-arrow-right"/>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div class="mt-3 text-center">
+                                            <a href="/faq" class="btn btn-info">
+                                                View All FAQs <i class="fa fa-arrow-right"/>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                            
+                            <div class="card">
+                                <div class="card-body">
+                                    <form t-attf-action="/my/tickets/create" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="name">Subject <span class="text-danger">*</span></label>
+                                            <input type="text" name="name" id="name" class="form-control" required="required" 
+                                                   placeholder="Enter ticket subject..."/>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="description">Description <span class="text-danger">*</span></label>
+                                            <textarea name="description" id="description" class="form-control" rows="5" 
+                                                      required="required" placeholder="Describe your issue..."/>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="category_id">Category</label>
+                                                    <select name="category_id" id="category_id" class="form-control">
+                                                        <option value="">-- Select Category --</option>
+                                                        <t t-foreach="categories" t-as="category">
+                                                            <option t-att-value="category.id">
+                                                                <t t-esc="category.name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="priority">Priority</label>
+                                                    <select name="priority" id="priority" class="form-control">
+                                                        <option value="0">Low</option>
+                                                        <option value="1" selected="selected">Medium</option>
+                                                        <option value="2">High</option>
+                                                        <option value="3">Urgent</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="attachment">Attach Files (optional)</label>
+                                            <input type="file" name="attachment" id="attachment" class="form-control" multiple="multiple"/>
+                                            <small class="form-text text-muted">You can attach multiple files</small>
+                                        </div>
+
+                                        <!-- Data Privacy & Consent -->
+                                        <t t-if="helpdesk_requires_consent">
+                                            <div class="alert alert-warning" role="alert">
+                                                <strong>Data Privacy Notice:</strong>
+                                                We process your personal data to handle your support requests. Please review our
+                                                <a t-att-href="helpdesk_privacy_policy_url or '#'" target="_blank">Privacy Policy</a>
+                                                before submitting this ticket.
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" name="helpdesk_consent" id="helpdesk_consent" required="required"/>
+                                                <label class="form-check-label" for="helpdesk_consent">
+                                                    I have read and agree to the Privacy Policy and consent to the processing of my data for helpdesk purposes.
+                                                </label>
+                                            </div>
+                                        </t>
+                                        <t t-if="not helpdesk_requires_consent">
+                                            <p class="text-muted small">
+                                                Your consent for helpdesk data processing is already recorded. You can
+                                                <a href="/my/tickets/privacy">export or anonymize your helpdesk data</a> at any time.
+                                            </p>
+                                        </t>
+
+                                        <t t-if="helpdesk_consent_error">
+                                            <div class="alert alert-danger mt-2" role="alert">
+                                                Please provide your consent to our Privacy Policy in order to create a support ticket.
+                                            </div>
+                                        </t>
+                                        
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-paper-plane"/> Submit Ticket
+                                            </button>
+                                            <a href="/my/tickets" class="btn btn-secondary">Cancel</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Portal Ticket Dashboard Template -->
+    <template id="portal_ticket_dashboard" name="Ticket Dashboard">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Ticket Dashboard</t>
+            <div class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="o_portal_docs_header">
+                                <h1 class="o_portal_docs_title">My Ticket Dashboard</h1>
+                                <div class="btn-group">
+                                    <a href="/my/tickets/new" class="btn btn-primary">
+                                        <i class="fa fa-plus"/> Create New Ticket
+                                    </a>
+                                    <a href="/my/tickets" class="btn btn-secondary">
+                                        <i class="fa fa-list"/> View All Tickets
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Statistics Cards -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h2 class="card-title text-primary">
+                                                <t t-esc="total_tickets"/>
+                                            </h2>
+                                            <p class="card-text">Total Tickets</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h2 class="card-title text-warning">
+                                                <t t-esc="open_tickets"/>
+                                            </h2>
+                                            <p class="card-text">Open Tickets</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h2 class="card-title text-info">
+                                                <t t-esc="resolved_tickets"/>
+                                            </h2>
+                                            <p class="card-text">Resolved Tickets</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h2 class="card-title text-success">
+                                                <t t-esc="closed_tickets"/>
+                                            </h2>
+                                            <p class="card-text">Closed Tickets</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Average Resolution Time -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Average Resolution Time</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-if="avg_resolution_time > 0">
+                                                <h3>
+                                                    <t t-esc="avg_resolution_time_hours"/> hours 
+                                                    <t t-if="avg_resolution_time_minutes > 0">
+                                                        <t t-esc="avg_resolution_time_minutes"/> minutes
+                                                    </t>
+                                                </h3>
+                                                <p class="text-muted">Based on <t t-esc="resolved_tickets + closed_tickets"/> resolved/closed tickets</p>
+                                            </t>
+                                            <t t-if="avg_resolution_time == 0">
+                                                <p class="text-muted">No resolved tickets yet</p>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Charts Row -->
+                            <div class="row mb-4">
+                                <!-- Status Distribution Chart -->
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Tickets by Status</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="statusChart"></canvas>
+                                            </div>
+                                            <script type="text/javascript">
+                                                (function() {
+                                                    var statusData = {
+                                                        'New': <t t-esc="status_distribution.get('new', 0)"/>,
+                                                        'Assigned': <t t-esc="status_distribution.get('assigned', 0)"/>,
+                                                        'In Progress': <t t-esc="status_distribution.get('in_progress', 0)"/>,
+                                                        'Resolved': <t t-esc="status_distribution.get('resolved', 0)"/>,
+                                                        'Closed': <t t-esc="status_distribution.get('closed', 0)"/>,
+                                                        'Cancelled': <t t-esc="status_distribution.get('cancelled', 0)"/>
+                                                    };
+                                                    var ctx = document.getElementById('statusChart');
+                                                    if (ctx) {
+                                                        new Chart(ctx, {
+                                                            type: 'doughnut',
+                                                            data: {
+                                                                labels: Object.keys(statusData),
+                                                                datasets: [{
+                                                                    data: Object.values(statusData),
+                                                                    backgroundColor: ['#6c757d', '#007bff', '#ffc107', '#17a2b8', '#28a745', '#dc3545']
+                                                                }]
+                                                            },
+                                                            options: {
+                                                                responsive: true,
+                                                                maintainAspectRatio: true
+                                                            }
+                                                        });
+                                                    }
+                                                })();
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Priority Distribution Chart -->
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Tickets by Priority</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="priorityChart"></canvas>
+                                            </div>
+                                            <script type="text/javascript">
+                                                (function() {
+                                                    var priorityData = {
+                                                        'Low': <t t-esc="priority_distribution.get('Low', 0)"/>,
+                                                        'Medium': <t t-esc="priority_distribution.get('Medium', 0)"/>,
+                                                        'High': <t t-esc="priority_distribution.get('High', 0)"/>,
+                                                        'Urgent': <t t-esc="priority_distribution.get('Urgent', 0)"/>
+                                                    };
+                                                    var ctx2 = document.getElementById('priorityChart');
+                                                    if (ctx2) {
+                                                        new Chart(ctx2, {
+                                                            type: 'bar',
+                                                            data: {
+                                                                labels: Object.keys(priorityData),
+                                                                datasets: [{
+                                                                    label: 'Tickets',
+                                                                    data: Object.values(priorityData),
+                                                                    backgroundColor: ['#6c757d', '#17a2b8', '#ffc107', '#dc3545']
+                                                                }]
+                                                            },
+                                                            options: {
+                                                                responsive: true,
+                                                                maintainAspectRatio: true,
+                                                                scales: {
+                                                                    y: {
+                                                                        beginAtZero: true
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                })();
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Recent Tickets -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5>Recent Tickets</h5>
+                                            <a href="/my/tickets" class="btn btn-sm btn-primary">View All</a>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-if="not recent_tickets">
+                                                <p class="text-muted text-center">No tickets yet. <a href="/my/tickets/new">Create your first ticket</a></p>
+                                            </t>
+                                            <t t-if="recent_tickets">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Ticket Number</th>
+                                                                <th>Subject</th>
+                                                                <th>Status</th>
+                                                                <th>Priority</th>
+                                                                <th>Created</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <t t-foreach="recent_tickets" t-as="ticket">
+                                                                <tr>
+                                                                    <td>
+                                                                        <a t-attf-href="/my/tickets/#{ticket.id}">
+                                                                            <t t-esc="ticket.ticket_number"/>
+                                                                        </a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a t-attf-href="/my/tickets/#{ticket.id}">
+                                                                            <t t-esc="ticket.name or 'No Subject'"/>
+                                                                        </a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-attf-class="badge badge-#{ticket.state == 'closed' ? 'success' : ticket.state == 'resolved' ? 'info' : ticket.state == 'in_progress' ? 'warning' : 'secondary'}">
+                                                                            <t t-esc="state_labels.get(ticket.state, ticket.state)"/>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span t-attf-class="badge badge-#{ticket.priority == '3' ? 'danger' : ticket.priority == '2' ? 'warning' : ticket.priority == '1' ? 'info' : 'secondary'}">
+                                                                            <t t-esc="priority_labels.get(ticket.priority, ticket.priority)"/>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <t t-esc="ticket.create_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a t-attf-href="/my/tickets/#{ticket.id}" class="btn btn-sm btn-primary">
+                                                                            <i class="fa fa-eye"/> View
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            </t>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Actions -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Quick Actions</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <a href="/my/tickets/new" class="btn btn-primary btn-lg btn-block mb-2">
+                                                        <i class="fa fa-plus"/> Create New Ticket
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <a href="/my/tickets" class="btn btn-secondary btn-lg btn-block mb-2">
+                                                        <i class="fa fa-list"/> View All Tickets
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Portal Data Privacy & GDPR Template -->
+    <template id="portal_ticket_privacy" name="Ticket Data Privacy">
+        <t t-call="portal.portal_layout">
+            <t t-set="title">Data Privacy &amp; GDPR</t>
+            <div class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="o_portal_docs_header">
+                                <h1 class="o_portal_docs_title">Data Privacy &amp; GDPR</h1>
+                                <a href="/my/tickets" class="btn btn-secondary">
+                                    <i class="fa fa-arrow-left"/> Back to Tickets
+                                </a>
+                            </div>
+
+                            <t t-if="status == 'deleted'">
+                                <div class="alert alert-success" role="alert">
+                                    Your helpdesk-related personal data has been anonymized. Existing tickets now retain only non-identifying information.
+                                </div>
+                            </t>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Your Data Summary</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>
+                                                <strong>Name:</strong>
+                                                <t t-esc="partner.name"/>
+                                            </p>
+                                            <p>
+                                                <strong>Email:</strong>
+                                                <t t-esc="partner.email or '-'"/>
+                                            </p>
+                                            <p>
+                                                <strong>Total Helpdesk Tickets:</strong>
+                                                <t t-esc="ticket_count"/>
+                                            </p>
+                                            <p>
+                                                <strong>Helpdesk Consent:</strong>
+                                                <t t-if="helpdesk_has_consent">
+                                                    Granted
+                                                    <t t-if="helpdesk_consent_date">
+                                                        on <t t-esc="helpdesk_consent_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                    </t>
+                                                </t>
+                                                <t t-if="not helpdesk_has_consent">
+                                                    Not recorded
+                                                </t>
+                                            </p>
+                                            <p>
+                                                <strong>Helpdesk Data Anonymized:</strong>
+                                                <t t-esc="'Yes' if helpdesk_anonymized else 'No'"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Privacy Policy</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>
+                                                You can review how we process your personal data in our
+                                                <a t-att-href="helpdesk_privacy_policy_url or '#'" target="_blank">Privacy Policy</a>.
+                                            </p>
+                                            <p class="text-muted small">
+                                                The helpdesk application stores the minimum personal data required to manage your support requests.
+                                                You can export or anonymize this data using the options below.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5>Export My Helpdesk Data</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>
+                                                Download a machine-readable export (JSON) of all helpdesk tickets,
+                                                messages, and feedback associated with your account.
+                                            </p>
+                                            <a href="/my/tickets/privacy/export" class="btn btn-outline-primary">
+                                                <i class="fa fa-download"/> Download My Data (JSON)
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5>Right to be Forgotten</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>
+                                                Anonymize personal data stored in helpdesk tickets associated with your account.
+                                                Ticket records will be kept for operational and statistical purposes but will no longer
+                                                contain identifying information about you.
+                                            </p>
+                                            <form action="/my/tickets/privacy/delete" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" class="btn btn-outline-danger"
+                                                        onclick="return confirm('Are you sure you want to anonymize your helpdesk data? This action cannot be undone.');">
+                                                    <i class="fa fa-user-slash"/> Anonymize My Helpdesk Data
+                                                </button>
+                                            </form>
+                                            <p class="text-muted small mt-2">
+                                                This action affects only helpdesk data and does not delete your portal account or other business records.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ==================== Knowledge Base Portal Templates ==================== -->
+    
+    <!-- Knowledge Base List Template -->
+    <template id="portal_knowledge_base" name="Knowledge Base">
+        <t t-call="website.layout">
+            <t t-set="title">Knowledge Base</t>
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="o_portal_docs_header mb-4">
+                                <h1 class="o_portal_docs_title">Knowledge Base</h1>
+                                <p class="text-muted">Find answers to common questions and learn how to use our services</p>
+                            </div>
+                            
+                            <!-- Search and Filters -->
+                            <div class="o_portal_docs_table_header mb-4">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <form method="get" action="/knowledge" class="d-flex">
+                                            <input type="hidden" name="sortby" t-att-value="sortby"/>
+                                            <input type="hidden" name="filterby" t-att-value="filterby"/>
+                                            <input type="hidden" name="category_id" t-att-value="category_id or ''"/>
+                                            <select name="search_in" class="form-control me-2" style="max-width: 200px;">
+                                                <t t-foreach="searchbar_inputs" t-as="search_input">
+                                                    <option t-att-value="search_input['input']" t-att-selected="search_in == search_input['input']">
+                                                        <t t-esc="search_input['label']"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                            <input type="text" name="search" class="form-control me-2" 
+                                                   placeholder="Search articles..." t-att-value="search or ''"/>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-search"/> Search
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <select name="sortby" class="form-control" onchange="window.location.href=this.value" style="display: inline-block; width: auto;">
+                                            <t t-foreach="searchbar_sortings" t-as="sorting">
+                                                <option t-att-value="'/knowledge?sortby=' + sorting[0]" t-att-selected="sortby == sorting[0]">
+                                                    <t t-esc="sorting[1]['label']"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Category Filter -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="btn-group" role="group">
+                                            <a href="/knowledge" class="btn btn-sm" t-att-class="not category_id ? 'btn-primary' : 'btn-secondary'">
+                                                All Categories
+                                            </a>
+                                            <t t-foreach="categories" t-as="cat">
+                                                <a t-attf-href="/knowledge?category_id=#{cat.id}" 
+                                                   t-att-class="category_id == cat.id ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary'"
+                                                   t-esc="cat.name"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- FAQ Filter -->
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <div class="btn-group" role="group">
+                                            <t t-foreach="searchbar_filters" t-as="filter">
+                                                <a t-attf-href="#{filterby == filter[0] ? '#' : '/knowledge?filterby=' + filter[0] + (category_id ? '&amp;category_id=' + category_id : '')}"
+                                                   t-att-class="filterby == filter[0] ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary'"
+                                                   t-esc="filter[1]['label']"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Articles List -->
+                            <div class="row">
+                                <t t-if="articles">
+                                    <t t-foreach="articles" t-as="article">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <h5 class="card-title mb-0">
+                                                            <a t-attf-href="/knowledge/#{article.id}" t-esc="article.name"/>
+                                                        </h5>
+                                                        <span t-if="article.is_faq" class="badge bg-info">FAQ</span>
+                                                    </div>
+                                                    <div class="card-text text-muted" t-raw="article.content[:200] + '...' if len(article.content) > 200 else article.content"/>
+                                                    <div class="mt-3">
+                                                        <small class="text-muted">
+                                                            <i class="fa fa-eye"/> <t t-esc="article.view_count"/> views
+                                                            <span t-if="article.rating > 0">
+                                                                | <i class="fa fa-star"/> <t t-esc="'%.1f' % article.rating"/>
+                                                            </span>
+                                                            <span t-if="article.category_id">
+                                                                | <i class="fa fa-folder"/> <t t-esc="article.category_id.name"/>
+                                                            </span>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer">
+                                                    <a t-attf-href="/knowledge/#{article.id}" class="btn btn-sm btn-primary">
+                                                        Read More <i class="fa fa-arrow-right"/>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </t>
+                                <t t-if="not articles">
+                                    <div class="col-12">
+                                        <div class="alert alert-info">
+                                            <p>No articles found. Please try a different search or filter.</p>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <!-- Pager -->
+                            <t t-if="pager['pages'] > 1">
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <ul class="pagination justify-content-center">
+                                            <li class="page-item" t-att-class="'disabled' if pager['page'] == 1 else ''">
+                                                <a class="page-link" t-attf-href="#{pager['previous']['url'] if pager['page'] > 1 else '#'}">Previous</a>
+                                            </li>
+                                            <li class="page-item" t-att-class="'active' if pager['page'] == pager['page'] else ''">
+                                                <span class="page-link">
+                                                    Page <t t-esc="pager['page']"/> of <t t-esc="pager['pages']"/>
+                                                </span>
+                                            </li>
+                                            <li class="page-item" t-att-class="'disabled' if pager['page'] == pager['pages'] else ''">
+                                                <a class="page-link" t-attf-href="#{pager['next']['url'] if pager['page'] &lt; pager['pages'] else '#'}">Next</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Knowledge Base Article Detail Template -->
+    <template id="portal_knowledge_article" name="Knowledge Base Article">
+        <t t-call="website.layout">
+            <t t-set="title" t-esc="article.name"/>
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <!-- Breadcrumb -->
+                            <nav aria-label="breadcrumb" class="mb-3">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="/knowledge">Knowledge Base</a></li>
+                                    <t t-if="article.category_id">
+                                        <li class="breadcrumb-item">
+                                            <a t-attf-href="/knowledge?category_id=#{article.category_id.id}" t-esc="article.category_id.name"/>
+                                        </li>
+                                    </t>
+                                    <li class="breadcrumb-item active" t-esc="article.name"/>
+                                </ol>
+                            </nav>
+                            
+                            <!-- Article Content -->
+                            <article class="card mb-4">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h1 class="h3 mb-0" t-esc="article.name"/>
+                                            <small class="text-muted">
+                                                <i class="fa fa-eye"/> <t t-esc="article.view_count"/> views
+                                                <span t-if="article.rating > 0">
+                                                    | <i class="fa fa-star"/> <t t-esc="'%.1f' % article.rating"/> (<t t-esc="article.rating_count"/> ratings)
+                                                </span>
+                                                <span t-if="article.author_id">
+                                                    | <i class="fa fa-user"/> <t t-esc="article.author_id.name"/>
+                                                </span>
+                                                <span t-if="article.create_date">
+                                                    | <i class="fa fa-calendar"/> <t t-esc="article.create_date.strftime('%B %d, %Y')"/>
+                                                </span>
+                                            </small>
+                                        </div>
+                                        <span t-if="article.is_faq" class="badge bg-info">FAQ</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="article-content" t-raw="article.content"/>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <t t-if="article.tag_ids">
+                                                <div class="mb-2">
+                                                    <strong>Tags:</strong>
+                                                    <t t-foreach="article.tag_ids" t-as="tag">
+                                                        <span class="badge bg-secondary me-1" t-esc="tag.name"/>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div class="col-md-6 text-end">
+                                            <small class="text-muted">Version <t t-esc="article.version"/></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                            
+                            <!-- Feedback Form -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Was this article helpful?</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form method="post" t-attf-action="/knowledge/#{article.id}/feedback">
+                                        <div class="mb-3">
+                                            <label class="form-label">Rate this article:</label>
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" name="rating" id="rating1" value="1" required="required"/>
+                                                <label class="btn btn-outline-primary" for="rating1">1</label>
+                                                <input type="radio" class="btn-check" name="rating" id="rating2" value="2"/>
+                                                <label class="btn btn-outline-primary" for="rating2">2</label>
+                                                <input type="radio" class="btn-check" name="rating" id="rating3" value="3"/>
+                                                <label class="btn btn-outline-primary" for="rating3">3</label>
+                                                <input type="radio" class="btn-check" name="rating" id="rating4" value="4"/>
+                                                <label class="btn btn-outline-primary" for="rating4">4</label>
+                                                <input type="radio" class="btn-check" name="rating" id="rating5" value="5"/>
+                                                <label class="btn btn-outline-primary" for="rating5">5</label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Additional Feedback (optional):</label>
+                                            <textarea name="feedback" class="form-control" rows="3" placeholder="Tell us what you think..."></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="helpful" id="helpful"/>
+                                                <label class="form-check-label" for="helpful">This article was helpful</label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sidebar -->
+                        <div class="col-md-3">
+                            <!-- Related Articles -->
+                            <t t-if="related_articles">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Related Articles</h6>
+                                    </div>
+                                    <div class="list-group list-group-flush">
+                                        <t t-foreach="related_articles" t-as="rel_article">
+                                            <a t-attf-href="/knowledge/#{rel_article.id}" class="list-group-item list-group-item-action">
+                                                <t t-esc="rel_article.name"/>
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                            
+                            <!-- Same Category Articles -->
+                            <t t-if="same_category_articles">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">More from <t t-esc="article.category_id.name if article.category_id else 'this category'"/></h6>
+                                    </div>
+                                    <div class="list-group list-group-flush">
+                                        <t t-foreach="same_category_articles" t-as="cat_article">
+                                            <a t-attf-href="/knowledge/#{cat_article.id}" class="list-group-item list-group-item-action">
+                                                <t t-esc="cat_article.name"/>
+                                                <small class="text-muted d-block">
+                                                    <i class="fa fa-eye"/> <t t-esc="cat_article.view_count"/>
+                                                </small>
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                            
+                            <!-- FAQ Articles -->
+                            <t t-if="faq_articles">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Frequently Asked Questions</h6>
+                                    </div>
+                                    <div class="list-group list-group-flush">
+                                        <t t-foreach="faq_articles" t-as="faq_article">
+                                            <a t-attf-href="/knowledge/#{faq_article.id}" class="list-group-item list-group-item-action">
+                                                <t t-esc="faq_article.name"/>
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- FAQ Portal Template -->
+    <template id="portal_faq" name="FAQ">
+        <t t-call="website.layout">
+            <t t-set="title">Frequently Asked Questions</t>
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="o_portal_docs_header mb-4">
+                                <h1 class="o_portal_docs_title">Frequently Asked Questions</h1>
+                                <p class="text-muted">Find quick answers to common questions</p>
+                            </div>
+                            
+                            <!-- Search and Category Filter -->
+                            <div class="o_portal_docs_table_header mb-4">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <form method="get" action="/faq" class="d-flex">
+                                            <input type="hidden" name="category_id" t-att-value="category_id or ''"/>
+                                            <input type="text" name="search" class="form-control me-2" 
+                                                   placeholder="Search FAQs..." t-att-value="search or ''"/>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-search"/> Search
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                
+                                <!-- Category Filter -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="btn-group" role="group">
+                                            <a href="/faq" class="btn btn-sm" t-att-class="not category_id ? 'btn-primary' : 'btn-secondary'">
+                                                All Categories
+                                            </a>
+                                            <t t-foreach="categories" t-as="cat">
+                                                <a t-attf-href="/faq?category_id=#{cat.id}" 
+                                                   t-att-class="category_id == cat.id ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary'"
+                                                   t-esc="cat.name"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- FAQ Articles -->
+                            <div class="row">
+                                <t t-if="faq_articles">
+                                    <div class="col-12">
+                                        <div class="accordion" id="faqAccordion">
+                                            <t t-foreach="faq_articles" t-as="faq" t-as-index="index">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" t-attf-id="heading#{index}">
+                                                        <button class="accordion-button" t-att-class="index == 0 ? '' : 'collapsed'" 
+                                                                type="button" t-att-data-bs-toggle="collapse" 
+                                                                t-attf-data-bs-target="#collapse#{index}" 
+                                                                t-att-aria-expanded="index == 0 ? 'true' : 'false'"
+                                                                t-att-aria-controls="collapse#{index}">
+                                                            <t t-esc="faq.name"/>
+                                                            <span class="badge bg-info ms-2" t-if="faq.category_id" t-esc="faq.category_id.name"/>
+                                                        </button>
+                                                    </h2>
+                                                    <div t-attf-id="collapse#{index}" 
+                                                         t-att-class="'accordion-collapse collapse' + (index == 0 ? ' show' : '')"
+                                                         t-att-data-bs-parent="#faqAccordion">
+                                                        <div class="accordion-body">
+                                                            <div t-raw="faq.content"/>
+                                                            <div class="mt-3">
+                                                                <a t-attf-href="/knowledge/#{faq.id}" class="btn btn-sm btn-outline-primary">
+                                                                    Read Full Article <i class="fa fa-arrow-right"/>
+                                                                </a>
+                                                                <span class="text-muted ms-3">
+                                                                    <i class="fa fa-eye"/> <t t-esc="faq.view_count"/> views
+                                                                    <span t-if="faq.rating > 0">
+                                                                        | <i class="fa fa-star"/> <t t-esc="'%.1f' % faq.rating"/>
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-if="not faq_articles">
+                                    <div class="col-12">
+                                        <div class="alert alert-info">
+                                            <p>No FAQs found. Please try a different search or category.</p>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <!-- Pager -->
+                            <t t-if="pager['pages'] > 1">
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <ul class="pagination justify-content-center">
+                                            <li class="page-item" t-att-class="'disabled' if pager['page'] == 1 else ''">
+                                                <a class="page-link" t-attf-href="#{pager['previous']['url'] if pager['page'] > 1 else '#'}">Previous</a>
+                                            </li>
+                                            <li class="page-item" t-att-class="'active' if pager['page'] == pager['page'] else ''">
+                                                <span class="page-link">
+                                                    Page <t t-esc="pager['page']"/> of <t t-esc="pager['pages']"/>
+                                                </span>
+                                            </li>
+                                            <li class="page-item" t-att-class="'disabled' if pager['page'] == pager['pages'] else ''">
+                                                <a class="page-link" t-attf-href="#{pager['next']['url'] if pager['page'] &lt; pager['pages'] else '#'}">Next</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </t>
+                            
+                            <!-- Call to Action -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5>Still need help?</h5>
+                                            <p class="mb-0">
+                                                <a href="/my/tickets/new" class="btn btn-primary">
+                                                    <i class="fa fa-plus"/> Create a Support Ticket
+                                                </a>
+                                                <a href="/knowledge" class="btn btn-secondary ms-2">
+                                                    <i class="fa fa-book"/> Browse Knowledge Base
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

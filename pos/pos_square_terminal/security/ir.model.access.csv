@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_square_device_code_wizard,access_square_device_code_wizard,pos_square_terminal.model_square_device_code_wizard,base.group_user,1,1,1,1
+access_square_refund_wizard,access_square_refund_wizard,pos_square_terminal.model_square_refund_wizard,base.group_user,1,1,1,1

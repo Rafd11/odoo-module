@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default Ticket Types -->
+        <record id="ticket_type_incident" model="helpdesk.ticket.type">
+            <field name="name">Incident</field>
+            <field name="description">An unplanned interruption to an IT service or reduction in the quality of an IT service</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="ticket_type_request" model="helpdesk.ticket.type">
+            <field name="name">Service Request</field>
+            <field name="description">A request from a user for information, consultation, or a change</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="ticket_type_problem" model="helpdesk.ticket.type">
+            <field name="name">Problem</field>
+            <field name="description">A cause of one or more incidents that is not yet known to the service provider</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="ticket_type_change" model="helpdesk.ticket.type">
+            <field name="name">Change Request</field>
+            <field name="description">A request for change to add, modify, or remove something from the IT infrastructure</field>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>

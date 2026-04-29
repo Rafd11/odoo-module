@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== SLA Compliance Report (Pivot) ==================== -->
+    <record id="view_helpdesk_sla_compliance_pivot" model="ir.ui.view">
+        <field name="name">helpdesk.sla.compliance.pivot</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="SLA Compliance Report">
+                <field name="ticket_type_id" type="row"/>
+                <field name="sla_policy_id" type="row"/>
+                <field name="team_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="priority" type="row"/>
+                <field name="create_date" interval="day" type="col"/>
+                <field name="sla_response_status" type="row"/>
+                <field name="sla_resolution_status" type="row"/>
+<!--                <field name="id" type="measure" string="Ticket Count" operator="count"/>-->
+                <field name="sla_response_time_remaining" type="measure"/>
+                <field name="sla_resolution_time_remaining" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Response Time Analytics (Graph) ==================== -->
+    <record id="view_helpdesk_sla_response_time_graph" model="ir.ui.view">
+        <field name="name">helpdesk.sla.response.time.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="SLA Response Time Analytics" type="bar" stacked="True">
+                <field name="sla_response_status" type="row"/>
+                <field name="sla_policy_id" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Resolution Time Analytics (Graph) ==================== -->
+    <record id="view_helpdesk_sla_resolution_time_graph" model="ir.ui.view">
+        <field name="name">helpdesk.sla.resolution.time.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="SLA Resolution Time Analytics" type="bar" stacked="True">
+                <field name="sla_resolution_status" type="row"/>
+                <field name="sla_policy_id" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Breach Report (Tree) ==================== -->
+    <record id="view_helpdesk_sla_breach_tree" model="ir.ui.view">
+        <field name="name">helpdesk.sla.breach.tree</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <list string="SLA Breach Report" 
+                  decoration-danger="sla_response_status == 'breached' or sla_resolution_status == 'breached'"
+                  default_order="sla_response_deadline asc, sla_resolution_deadline asc">
+                <field name="ticket_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="sla_policy_id"/>
+                <field name="team_id"/>
+                <field name="user_id"/>
+                <field name="priority" widget="priority"/>
+                <field name="state"/>
+                <field name="sla_response_deadline" widget="datetime"/>
+                <field name="sla_response_status" widget="badge"
+                       decoration-danger="sla_response_status == 'breached'"/>
+                <field name="sla_resolution_deadline" widget="datetime"/>
+                <field name="sla_resolution_status" widget="badge"
+                       decoration-danger="sla_resolution_status == 'breached'"/>
+                <field name="create_date" widget="datetime"/>
+                <field name="assigned_date" widget="datetime"/>
+                <field name="resolved_date" widget="datetime"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Breach Report (Pivot) ==================== -->
+    <record id="view_helpdesk_sla_breach_pivot" model="ir.ui.view">
+        <field name="name">helpdesk.sla.breach.pivot</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="SLA Breach Analysis">
+                <field name="ticket_type_id" type="row"/>
+                <field name="sla_policy_id" type="row"/>
+                <field name="team_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="priority" type="row"/>
+                <field name="create_date" interval="day" type="col"/>
+                <field name="sla_response_status" type="row"/>
+                <field name="sla_resolution_status" type="row"/>
+<!--                <field name="id" type="measure" string="Ticket Count" operator="count"/>-->
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== Team-wise SLA Performance (Pivot) ==================== -->
+    <record id="view_helpdesk_team_sla_performance_pivot" model="ir.ui.view">
+        <field name="name">helpdesk.team.sla.performance.pivot</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="Team SLA Performance">
+                <field name="ticket_type_id" type="row"/>
+                <field name="team_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="sla_policy_id" type="row"/>
+                <field name="create_date" interval="week" type="col"/>
+<!--                <field name="id" type="measure" string="Ticket Count" operator="count"/>-->
+                <field name="sla_response_status" type="row"/>
+                <field name="sla_resolution_status" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== Team-wise SLA Performance (Graph) ==================== -->
+    <record id="view_helpdesk_team_sla_performance_graph" model="ir.ui.view">
+        <field name="name">helpdesk.team.sla.performance.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Team SLA Performance" type="bar">
+                <field name="team_id" type="row"/>
+                <field name="sla_response_status" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Dashboard (Graph - Status Distribution) ==================== -->
+    <record id="view_helpdesk_sla_dashboard_status_graph" model="ir.ui.view">
+        <field name="name">helpdesk.sla.dashboard.status.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="SLA Status Distribution" type="pie">
+                <field name="sla_response_status" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Dashboard (Graph - Timeline) ==================== -->
+    <record id="view_helpdesk_sla_dashboard_timeline_graph" model="ir.ui.view">
+        <field name="name">helpdesk.sla.dashboard.timeline.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="SLA Compliance Timeline" type="line">
+                <field name="create_date" interval="day" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+                <field name="sla_response_status" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Compliance Report Action ==================== -->
+    <record id="action_helpdesk_sla_compliance_report" model="ir.actions.act_window">
+        <field name="name">SLA Compliance Report</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="view_id" ref="view_helpdesk_sla_compliance_pivot"/>
+        <field name="domain">[('sla_policy_id', '!=', False)]</field>
+        <field name="context">{'search_default_group_sla_policy': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No SLA data available.
+            </p>
+            <p>
+                This report shows SLA compliance metrics across policies, teams, and agents.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Response Time Analytics Action ==================== -->
+    <record id="action_helpdesk_sla_response_time_analytics" model="ir.actions.act_window">
+        <field name="name">SLA Response Time Analytics</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_helpdesk_sla_response_time_graph"/>
+        <field name="domain">[('sla_policy_id', '!=', False)]</field>
+        <field name="context">{'search_default_group_sla_response_status': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No response time data available.
+            </p>
+            <p>
+                Analyze response time performance and SLA compliance.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Resolution Time Analytics Action ==================== -->
+    <record id="action_helpdesk_sla_resolution_time_analytics" model="ir.actions.act_window">
+        <field name="name">SLA Resolution Time Analytics</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="view_id" ref="view_helpdesk_sla_resolution_time_graph"/>
+        <field name="domain">[('sla_policy_id', '!=', False)]</field>
+        <field name="context">{'search_default_group_sla_resolution_status': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No resolution time data available.
+            </p>
+            <p>
+                Analyze resolution time performance and SLA compliance.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Breach Report Action ==================== -->
+    <record id="action_helpdesk_sla_breach_report" model="ir.actions.act_window">
+        <field name="name">SLA Breach Report</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="view_id" ref="view_helpdesk_sla_breach_tree"/>
+        <field name="domain">['|', ('sla_response_status', '=', 'breached'), ('sla_resolution_status', '=', 'breached')]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No SLA breaches found.
+            </p>
+            <p>
+                This report shows all tickets that have breached their SLA deadlines.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== Team SLA Performance Action ==================== -->
+    <record id="action_helpdesk_team_sla_performance" model="ir.actions.act_window">
+        <field name="name">Team SLA Performance</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="view_id" ref="view_helpdesk_team_sla_performance_pivot"/>
+        <field name="domain">[('sla_policy_id', '!=', False)]</field>
+        <field name="context">{'search_default_group_team': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No team SLA data available.
+            </p>
+            <p>
+                Analyze SLA performance by team and agent.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== SLA Dashboard Action ==================== -->
+    <record id="action_helpdesk_sla_dashboard" model="ir.actions.act_window">
+        <field name="name">SLA Dashboard</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_helpdesk_sla_dashboard_status_graph"/>
+        <field name="domain">[('sla_policy_id', '!=', False)]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                SLA Dashboard
+            </p>
+            <p>
+                Visual overview of SLA compliance and performance metrics.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Main Menu ==================== -->
+    <menuitem id="menu_helpdesk_root"
+              name="Helpdesk"
+              sequence="50"
+              web_icon="support_helpdesk_ticket,static/description/icon.png"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager,support_helpdesk_ticket.group_helpdesk_ticket_creator"/>
+
+    <!-- ==================== Dashboard ==================== -->
+    <menuitem id="menu_helpdesk_dashboard"
+              name="Dashboard"
+              parent="menu_helpdesk_root"
+              action="action_helpdesk_dashboard"
+              sequence="5"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- ==================== Advanced Views ==================== -->
+    <menuitem id="menu_helpdesk_advanced"
+              name="Advanced Views"
+              parent="menu_helpdesk_root"
+              sequence="20"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <menuitem id="menu_helpdesk_team_dashboard"
+              name="Team Dashboard"
+              parent="menu_helpdesk_advanced"
+              action="action_helpdesk_team_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_helpdesk_workload"
+              name="Agent Workload"
+              parent="menu_helpdesk_advanced"
+              action="action_helpdesk_workload"
+              sequence="20"/>
+
+    <menuitem id="menu_helpdesk_sla_monitoring"
+              name="SLA Monitoring"
+              parent="menu_helpdesk_advanced"
+              action="action_helpdesk_sla_monitoring"
+              sequence="30"/>
+
+    <menuitem id="menu_helpdesk_queue"
+              name="Queue Management"
+              parent="menu_helpdesk_advanced"
+              action="action_helpdesk_queue_management"
+              sequence="40"/>
+
+    <menuitem id="menu_helpdesk_assignment"
+              name="Ticket Assignment"
+              parent="menu_helpdesk_advanced"
+              action="action_helpdesk_assignment"
+              sequence="50"/>
+
+    <!-- ==================== Tickets Section ==================== -->
+
+    <!-- Tickets Menu for Users, Agents, Managers -->
+    <menuitem id="menu_helpdesk_tickets"
+              name="Tickets"
+              parent="menu_helpdesk_root"
+              action="action_helpdesk_ticket"
+              sequence="10"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- Tickets Menu for Ticket Creators (shows only their tickets) -->
+    <menuitem id="menu_helpdesk_tickets_creator"
+              name="My Tickets"
+              parent="menu_helpdesk_root"
+              action="action_helpdesk_ticket_creator"
+              sequence="10"
+              groups="support_helpdesk_ticket.group_helpdesk_ticket_creator"/>
+
+    <menuitem id="menu_helpdesk_call_logs"
+              name="Call Logs"
+              parent="menu_helpdesk_root"
+              action="action_helpdesk_call_log"
+              sequence="15"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- ==================== Social Media Section ==================== -->
+    <menuitem id="menu_helpdesk_social_media"
+              name="Social Media"
+              parent="menu_helpdesk_root"
+              sequence="16"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <menuitem id="menu_helpdesk_social_media_posts"
+              name="Posts"
+              parent="menu_helpdesk_social_media"
+              action="action_helpdesk_social_media_post"
+              sequence="10"/>
+
+    <menuitem id="menu_helpdesk_social_media_platforms"
+              name="Platforms"
+              parent="menu_helpdesk_social_media"
+              action="action_helpdesk_social_media_platform"
+              sequence="20"/>
+
+    <!-- All Tickets submenu (for managers only - shows all tickets) -->
+    <menuitem id="menu_helpdesk_tickets_all"
+              name="All Tickets"
+              parent="menu_helpdesk_tickets"
+              action="action_helpdesk_ticket_all"
+              sequence="5"
+              groups="support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- My Tickets submenu (for users, agents, managers - shows assigned tickets) -->
+    <menuitem id="menu_helpdesk_tickets_my_tickets"
+              name="My Tickets"
+              parent="menu_helpdesk_tickets"
+              action="action_helpdesk_ticket_my_tickets"
+              sequence="10"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- Unassigned Tickets submenu (hidden for ticket creators) -->
+    <menuitem id="menu_helpdesk_tickets_unassigned"
+              name="Unassigned Tickets"
+              parent="menu_helpdesk_tickets"
+              action="action_helpdesk_ticket_unassigned"
+              sequence="20"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- Overdue Tickets submenu (hidden for ticket creators) -->
+    <menuitem id="menu_helpdesk_tickets_overdue"
+              name="Overdue Tickets"
+              parent="menu_helpdesk_tickets"
+              action="action_helpdesk_ticket_overdue"
+              sequence="30"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- ==================== Configuration Section ==================== -->
+    <menuitem id="menu_helpdesk_configuration"
+              name="Configuration"
+              parent="menu_helpdesk_root"
+              sequence="90"
+              groups="support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- Categories -->
+    <menuitem id="menu_helpdesk_categories"
+              name="Categories"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_category"
+              sequence="10"/>
+
+    <!-- Channels -->
+    <menuitem id="menu_helpdesk_channels"
+              name="Channels"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_channel"
+              sequence="15"/>
+
+    <!-- Tags -->
+    <menuitem id="menu_helpdesk_tags"
+              name="Tags"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_tag"
+              sequence="20"/>
+
+    <!-- Templates -->
+    <menuitem id="menu_helpdesk_templates"
+              name="Templates"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_ticket_template"
+              sequence="30"/>
+    
+    <!-- Teams -->
+    <menuitem id="menu_helpdesk_teams"
+              name="Teams"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_team"
+              sequence="40"/>
+
+    <!-- Ticket Types -->
+    <menuitem id="menu_helpdesk_ticket_types"
+              name="Ticket Types"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_ticket_type"
+              sequence="50"/>
+
+    <!-- SLA Policies -->
+    <menuitem id="menu_helpdesk_sla_policies"
+              name="SLA Policies"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_sla_policy"
+              sequence="60"/>
+
+    <!-- Workflow Rules -->
+    <menuitem id="menu_helpdesk_workflow_rules"
+              name="Workflow Rules"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_workflow_rule"
+              sequence="70"/>
+    
+    <!-- Notification Templates -->
+    <menuitem id="menu_helpdesk_notification_templates"
+              name="Notification Templates"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_notification_template"
+              sequence="80"/>
+    
+    <!-- Notification Preferences -->
+    <menuitem id="menu_helpdesk_notification_preferences"
+              name="My Notification Preferences"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_notification_preference"
+              sequence="81"/>
+    
+    <!-- Reminder Rules -->
+    <menuitem id="menu_helpdesk_reminder_rules"
+              name="Reminder Rules"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_reminder_rule"
+              sequence="82"/>
+    
+    <!-- Linked Records (Model Links) -->
+    <menuitem id="menu_helpdesk_ticket_model_links"
+              name="Linked Records"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_ticket_model_link"
+              sequence="83"/>
+    
+    <!-- Access Logs -->
+    <menuitem id="menu_helpdesk_model_link_access_logs"
+              name="Access Logs"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_model_link_access_log"
+              sequence="84"/>
+    
+    <!-- Auto-Link Rules -->
+    <menuitem id="menu_helpdesk_auto_link_rules"
+              name="Auto-Link Rules"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_auto_link_rule"
+              sequence="85"/>
+    
+    <!-- REST API Documentation -->
+    <menuitem id="menu_helpdesk_api_documentation"
+              name="REST API Documentation"
+              parent="menu_helpdesk_configuration"
+              action="action_helpdesk_api_documentation"
+              sequence="95"/>
+
+    <!-- Reminders -->
+    <menuitem id="menu_helpdesk_reminders"
+              name="Reminders"
+              parent="menu_helpdesk_root"
+              action="action_helpdesk_reminder"
+              sequence="25"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- ==================== Knowledge Base Section ==================== -->
+    <menuitem id="menu_helpdesk_knowledge_base"
+              name="Knowledge Base"
+              parent="menu_helpdesk_root"
+              action="action_helpdesk_knowledge_article"
+              sequence="50"
+              groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <menuitem id="menu_helpdesk_knowledge_analytics"
+              name="KB Analytics"
+              parent="menu_helpdesk_knowledge_base"
+              action="action_helpdesk_knowledge_analytics"
+              sequence="10"/>
+
+    <menuitem id="menu_helpdesk_knowledge_performance"
+              name="Performance Report"
+              parent="menu_helpdesk_knowledge_base"
+              action="action_helpdesk_knowledge_performance_report"
+              sequence="20"/>
+
+    <!-- ==================== Reporting Section ==================== -->
+    <menuitem id="menu_helpdesk_reporting"
+              name="Reporting"
+              parent="menu_helpdesk_root"
+              sequence="80"
+              groups="support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+    <!-- Ticket Volume Reports -->
+    <menuitem id="menu_helpdesk_reports_ticket_volume"
+              name="Ticket Volume"
+              parent="menu_helpdesk_reporting"
+              action="action_helpdesk_ticket_volume_report"
+              sequence="10"/>
+
+    <!-- Team Performance Dashboard -->
+    <menuitem id="menu_helpdesk_reports_team_performance"
+              name="Team Performance Dashboard"
+              parent="menu_helpdesk_reporting"
+              action="action_helpdesk_team_sla_performance"
+              sequence="15"/>
+
+    <!-- Customer Satisfaction Reports -->
+    <menuitem id="menu_helpdesk_reports_customer_satisfaction"
+              name="Customer Satisfaction"
+              parent="menu_helpdesk_reporting"
+              action="action_helpdesk_customer_satisfaction_report"
+              sequence="16"/>
+
+    <!-- Custom Report Builder -->
+    <menuitem id="menu_helpdesk_reports_custom_builder"
+              name="Custom Report Builder"
+              parent="menu_helpdesk_reporting"
+              action="action_helpdesk_custom_report_builder"
+              sequence="30"/>
+
+    <!-- SLA Reports Submenu -->
+    <menuitem id="menu_helpdesk_reports_sla"
+              name="SLA Reports"
+              parent="menu_helpdesk_reporting"
+              sequence="20"/>
+
+    <menuitem id="menu_helpdesk_reports_sla_dashboard"
+              name="SLA Dashboard"
+              parent="menu_helpdesk_reports_sla"
+              action="action_helpdesk_sla_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_helpdesk_reports_sla_compliance"
+              name="SLA Compliance Report"
+              parent="menu_helpdesk_reports_sla"
+              action="action_helpdesk_sla_compliance_report"
+              sequence="20"/>
+
+    <menuitem id="menu_helpdesk_reports_sla_response_time"
+              name="Response Time Analytics"
+              parent="menu_helpdesk_reports_sla"
+              action="action_helpdesk_sla_response_time_analytics"
+              sequence="30"/>
+
+    <menuitem id="menu_helpdesk_reports_sla_resolution_time"
+              name="Resolution Time Analytics"
+              parent="menu_helpdesk_reports_sla"
+              action="action_helpdesk_sla_resolution_time_analytics"
+              sequence="40"/>
+
+    <menuitem id="menu_helpdesk_reports_sla_breach"
+              name="SLA Breach Report"
+              parent="menu_helpdesk_reports_sla"
+              action="action_helpdesk_sla_breach_report"
+              sequence="50"/>
+
+    <menuitem id="menu_helpdesk_reports_team_sla"
+              name="Team SLA Performance"
+              parent="menu_helpdesk_reports_sla"
+              action="action_helpdesk_team_sla_performance"
+              sequence="60"/>
+
+    <!-- ==================== Settings ==================== -->
+    <menuitem id="menu_helpdesk_settings"
+              name="Settings"
+              parent="menu_helpdesk_root"
+              action="action_helpdesk_settings"
+              sequence="999"
+              groups="support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+
+</odoo>

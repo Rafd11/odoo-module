@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Assignment History Tree View -->
+    <record id="view_helpdesk_ticket_assignment_history_tree" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.assignment.history.tree</field>
+        <field name="model">helpdesk.ticket.assignment.history</field>
+        <field name="arch" type="xml">
+            <list string="Assignment History" decoration-muted="not new_user_id">
+                <field name="assignment_date" widget="datetime"/>
+                <field name="ticket_id"/>
+                <field name="old_user_id"/>
+                <field name="new_user_id"/>
+                <field name="old_team_id"/>
+                <field name="new_team_id"/>
+                <field name="assignment_method"/>
+                <field name="assigned_by_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Assignment History Form View -->
+    <record id="view_helpdesk_ticket_assignment_history_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.assignment.history.form</field>
+        <field name="model">helpdesk.ticket.assignment.history</field>
+        <field name="arch" type="xml">
+            <form string="Assignment History">
+                <header>
+                    <button name="action_view_ticket" string="View Ticket" type="object" 
+                            class="oe_highlight" icon="fa-ticket"/>
+                    <button name="action_view_old_user" string="Previous Assignee" type="object" 
+                            icon="fa-user" invisible="not old_user_id"/>
+                    <button name="action_view_new_user" string="New Assignee" type="object" 
+                            icon="fa-user"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="ticket_id"/>
+                            <field name="assignment_date" widget="datetime"/>
+                            <field name="assigned_by_id"/>
+                            <field name="assignment_method"/>
+                            <field name="workflow_rule_id" invisible="not workflow_rule_id"/>
+                        </group>
+                        <group>
+                            <field name="old_user_id"/>
+                            <field name="new_user_id"/>
+                            <field name="old_team_id"/>
+                            <field name="new_team_id"/>
+                        </group>
+                    </group>
+                    <group string="Notes" invisible="not note">
+                        <field name="note" nolabel="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Assignment History Search View -->
+    <record id="view_helpdesk_ticket_assignment_history_search" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.assignment.history.search</field>
+        <field name="model">helpdesk.ticket.assignment.history</field>
+        <field name="arch" type="xml">
+            <search string="Assignment History">
+                <field name="ticket_id"/>
+                <field name="old_user_id"/>
+                <field name="new_user_id"/>
+                <field name="assignment_method"/>
+                
+                <filter string="Today" name="today" domain="[('assignment_date', '>=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <filter string="This Week" name="this_week" domain="[('assignment_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                <filter string="Workflow Rules" name="workflow" domain="[('assignment_method', '=', 'workflow')]"/>
+                <filter string="Round-Robin" name="round_robin" domain="[('assignment_method', '=', 'round_robin')]"/>
+                <filter string="Workload-Based" name="workload_based" domain="[('assignment_method', '=', 'workload_based')]"/>
+                <filter string="Skill-Based" name="skill_based" domain="[('assignment_method', '=', 'skill_based')]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Ticket" name="group_ticket" context="{'group_by': 'ticket_id'}"/>
+                    <filter string="New Assignee" name="group_new_user" context="{'group_by': 'new_user_id'}"/>
+                    <filter string="Assignment Method" name="group_method" context="{'group_by': 'assignment_method'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'assignment_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Assignment History Action -->
+    <record id="action_helpdesk_ticket_assignment_history" model="ir.actions.act_window">
+        <field name="name">Assignment History</field>
+        <field name="res_model">helpdesk.ticket.assignment.history</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_ticket_assignment_history_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No assignment history yet!
+            </p>
+            <p>
+                Assignment history tracks all ticket assignments, including automatic assignments via workflow rules.
+            </p>
+        </field>
+    </record>
+
+</odoo>

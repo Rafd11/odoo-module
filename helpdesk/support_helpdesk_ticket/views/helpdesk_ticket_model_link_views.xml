@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Model Link Views ==================== -->
+
+    <!-- Tree/List View -->
+    <record id="view_helpdesk_ticket_model_link_tree" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.model.link.tree</field>
+        <field name="model">helpdesk.ticket.model.link</field>
+        <field name="arch" type="xml">
+            <list string="Linked Records" 
+                  decoration-muted="res_name == 'Deleted Record' or res_name == 'Invalid Record'"
+                  decoration-danger="res_name == 'Invalid Record'"
+                  delete="1"
+                  create="1"
+                  edit="1"
+                  default_order="id desc">
+                <field name="ticket_id"/>
+                <field name="res_ref" widget="reference" string="Linked Record"/>
+                <field name="res_name" string="Record Name"/>
+                <field name="model_name" string="Model" invisible="1"/>
+                <field name="res_id" string="Record ID" invisible="1"/>
+                <field name="access_url" readonly="1" invisible="1"/>
+                <button name="action_open_linked_record" string="Open" type="object"
+                        class="btn-primary" icon="fa-external-link" title="Open in current tab"/>
+                <button name="action_open_linked_record_new_tab" string="New Tab" type="object"
+                        class="btn-secondary" icon="fa-external-link-square" title="Open in new tab"/>
+                <button name="action_validate_link" string="Validate" type="object"
+                        class="btn-secondary" icon="fa-check" title="Validate link"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_helpdesk_ticket_model_link_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.model.link.form</field>
+        <field name="model">helpdesk.ticket.model.link</field>
+        <field name="arch" type="xml">
+            <form string="Linked Record" create="1" edit="1" delete="1">
+                <header>
+                    <button name="action_open_linked_record" string="Open Record" type="object"
+                            class="oe_highlight" icon="fa-external-link" 
+                            title="Open the linked record in current tab"
+                            invisible="not res_ref"/>
+                    <button name="action_open_linked_record_new_tab" string="Open in New Tab" type="object"
+                            icon="fa-external-link-square" 
+                            title="Open the linked record in a new tab"
+                            invisible="not res_ref"/>
+                    <button name="action_validate_link" string="Validate Link" type="object"
+                            icon="fa-check" 
+                            title="Validate that the linked record exists and is accessible"
+                            invisible="not res_ref"/>
+                    <button name="action_remove_link" string="Remove Link" type="object"
+                            icon="fa-trash" 
+                            title="Remove this link"
+                            invisible="not id"/>
+                    <button name="action_view_access_logs" string="Access Logs" type="object"
+                            icon="fa-list"
+                            title="View access logs for this link"
+                            invisible="not id"/>
+                </header>
+                
+                <!-- Stat Button -->
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" type="object" icon="fa-list" name="action_view_access_logs"
+                            invisible="not id">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Access Logs</span>
+                            <span class="o_stat_value">
+                                <field name="access_log_count" widget="statinfo"/>
+                            </span>
+                        </div>
+                    </button>
+                </div>
+                
+                <sheet>
+                    <!-- Main Information -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="res_name" readonly="1" placeholder="Select a record to link..."/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Link Information">
+                            <field name="ticket_id" required="1" 
+                                   options="{'no_create': True}"
+                                   placeholder="Select a ticket..."/>
+                            <field name="res_ref" 
+                                   widget="reference"
+                                   placeholder="Select a model and record to link..."
+                                   required="1"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group string="Record Details">
+                            <field name="model_name" readonly="1" string="Model Name"/>
+                            <field name="res_id" readonly="1" string="Record ID"/>
+                            <field name="res_name" readonly="1" string="Record Name"/>
+                            <field name="access_url" readonly="1" widget="url" 
+                                   string="Access URL"
+                                   invisible="not access_url"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Related Data Summary -->
+                    <group string="Related Information" invisible="not related_data_summary">
+                        <field name="related_data_summary" nolabel="1" widget="text" readonly="1"/>
+                    </group>
+                    
+                    <!-- Notebook for additional information -->
+                    <notebook invisible="not id">
+                        <page string="Access Logs" name="access_logs">
+                            <field name="access_log_ids" nolabel="1" readonly="1">
+                                <list string="Access Logs" default_order="access_date desc">
+                                    <field name="user_id" string="User"/>
+                                    <field name="access_date" string="Date" widget="datetime"/>
+                                    <field name="access_type" string="Type"/>
+                                    <field name="status" string="Status" widget="badge"
+                                           decoration-success="status == 'success'"
+                                           decoration-danger="status == 'denied' or status == 'error' or status == 'not_found'"
+                                           decoration-warning="status == 'warning'"/>
+                                    <field name="error_message" string="Error Message" invisible="not error_message"/>
+                                    <field name="ip_address" string="IP Address" invisible="not ip_address"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <!-- Chatter -->
+                <chatter invisible="not id"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_helpdesk_ticket_model_link_search" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.model.link.search</field>
+        <field name="model">helpdesk.ticket.model.link</field>
+        <field name="arch" type="xml">
+            <search string="Linked Records">
+                <field name="ticket_id" string="Ticket"/>
+                <field name="res_ref" string="Linked Record"/>
+                <field name="model_name" string="Model"/>
+                <field name="res_name" string="Record Name"/>
+                <field name="res_id" string="Record ID"/>
+                
+                <filter string="My Tickets" name="my_tickets"
+                        domain="[('ticket_id.user_id', '=', uid)]"
+                        help="Show links for tickets assigned to me"/>
+                <filter string="Valid Links" name="valid_links"
+                        domain="[('res_name', 'not in', ['Deleted Record', 'Invalid Record'])]"
+                        help="Show only valid links"/>
+                <filter string="Invalid Links" name="invalid_links"
+                        domain="[('res_name', 'in', ['Deleted Record', 'Invalid Record'])]"
+                        help="Show only invalid or deleted links"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Ticket" name="group_ticket" context="{'group_by': 'ticket_id'}"/>
+                    <filter string="Model" name="group_model" context="{'group_by': 'model_name'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'res_name'}"/>
+                    <filter string="Access Logs" name="group_access_logs" context="{'group_by': 'access_log_count'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_helpdesk_ticket_model_link" model="ir.actions.act_window">
+        <field name="name">Linked Records</field>
+        <field name="res_model">helpdesk.ticket.model.link</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_helpdesk_ticket_model_link_tree"/>
+        <field name="search_view_id" ref="view_helpdesk_ticket_model_link_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first linked record!
+            </p>
+            <p>
+                Link tickets to other Odoo records such as Partners, Sale Orders, Invoices, Projects, and more.
+                This helps you track relationships and navigate between related records easily.
+            </p>
+        </field>
+    </record>
+
+</odoo>

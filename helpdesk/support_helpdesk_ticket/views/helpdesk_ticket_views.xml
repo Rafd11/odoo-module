@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Search View ==================== -->
+    <record id="view_helpdesk_ticket_search" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.search</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <search string="Tickets">
+                <field name="ticket_number" string="Ticket Number"/>
+                <field name="name" string="Subject"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="user_id" string="Assigned To"/>
+                <field name="team_id" string="Team"/>
+                <field name="ticket_type_id" string="Type"/>
+                <field name="category_id" string="Category"/>
+                <field name="tag_ids" string="Tags"/>
+                
+                <!-- Filters -->
+                <filter string="My Tickets" name="my_tickets" domain="[('user_id', '=', uid)]"/>
+                <filter string="Unassigned" name="unassigned" domain="[('user_id', '=', False)]"/>
+                <filter string="New" name="new" domain="[('state', '=', 'new')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Resolved" name="resolved" domain="[('state', '=', 'resolved')]"/>
+                <filter string="Closed" name="closed" domain="[('state', '=', 'closed')]"/>
+                <filter string="Overdue" name="overdue" domain="[('is_overdue', '=', True)]"/>
+                <filter string="High Priority" name="high_priority" domain="[('priority', 'in', ['2', '3'])]"/>
+                <filter string="Urgent" name="urgent" domain="[('priority', '=', '3')]"/>
+                <filter string="High" name="priority_high" domain="[('priority', '=', '2')]"/>
+                <filter string="Medium" name="priority_medium" domain="[('priority', '=', '1')]"/>
+                <filter string="Low" name="priority_low" domain="[('priority', '=', '0')]"/>
+                <filter string="SLA At Risk" name="sla_at_risk" domain="['|', ('sla_response_status', '=', 'at_risk'), ('sla_resolution_status', '=', 'at_risk')]"/>
+                <filter string="SLA Breached" name="sla_breached" domain="['|', ('sla_response_status', '=', 'breached'), ('sla_resolution_status', '=', 'breached')]"/>
+                <filter string="Today" name="today" domain="[]" context="{'search_default_today': 1}"/>
+                <filter string="Creation Date" name="create_date_range" date="create_date"/>
+                
+                <!-- Separator -->
+                <separator/>
+                
+                <!-- Tag Filters -->
+                <filter string="Tagged" name="tagged" domain="[('tag_ids', '!=', False)]"/>
+                <filter string="Untagged" name="untagged" domain="[('tag_ids', '=', False)]"/>
+                
+                <!-- Separator -->
+                <separator/>
+                
+                <!-- Group By -->
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Priority" name="group_priority" context="{'group_by': 'priority'}"/>
+                    <filter string="Assigned To" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Team" name="group_team" context="{'group_by': 'team_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'ticket_type_id'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Tags" name="group_tags" context="{'group_by': 'tag_ids'}"/>
+                    <filter string="Channel" name="group_channel" context="{'group_by': 'channel_id'}"/>
+                    <filter string="Creation Date" name="group_create_date" context="{'group_by': 'create_date:day'}"/>
+                    <filter string="Creation Month" name="group_create_month" context="{'group_by': 'create_date:month'}"/>
+                    <filter string="SLA Policy" name="group_sla_policy" context="{'group_by': 'sla_policy_id'}"/>
+                    <filter string="SLA Response Status" name="group_sla_response_status" context="{'group_by': 'sla_response_status'}"/>
+                    <filter string="SLA Resolution Status" name="group_sla_resolution_status" context="{'group_by': 'sla_resolution_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== Tree/List View ==================== -->
+    <record id="view_helpdesk_ticket_tree" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.tree</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <list string="Tickets" decoration-info="state == 'new'" 
+                  decoration-warning="state == 'in_progress' or is_overdue == True"
+                  decoration-success="state == 'resolved'"
+                  decoration-muted="state == 'closed' or state == 'cancelled'"
+                  decoration-danger="priority == '3'"
+                  default_order="create_date desc">
+                <field name="ticket_number" string="Ticket #"/>
+                <field name="name" string="Subject"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="ticket_type_id" string="Type"/>
+                <field name="tag_ids" string="Tags" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="state" decoration-info="state == 'new'" 
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'resolved'"
+                       decoration-muted="state == 'closed' or state == 'cancelled'"/>
+                <field name="priority" widget="priority"/>
+                <field name="user_id" string="Assigned To"
+                       groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                <field name="team_id" string="Team"
+                       groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                <field name="category_id" string="Category"/>
+                <field name="channel_id" string="Channel"/>
+                <field name="create_date" string="Created" widget="datetime"/>
+                <field name="days_since_creation" string="Days Open" readonly="1"/>
+                <field name="is_overdue" string="Overdue" readonly="1"/>
+                <field name="sla_response_status" string="SLA Response" readonly="1"/>
+                <field name="sla_resolution_status" string="SLA Resolution" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== Form View ==================== -->
+    <record id="view_helpdesk_ticket_form" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Ticket">
+                <header>
+                    <button name="action_assign" string="Assign to Me" type="object" 
+                            class="oe_highlight" invisible="user_id == uid and state != 'new'"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_start_progress" string="Start Progress" type="object" 
+                            class="oe_highlight" invisible="state not in ['new', 'assigned']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_resolve" string="Resolve" type="object" 
+                            class="oe_highlight" invisible="state not in ['assigned', 'in_progress']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_close" string="Close" type="object" 
+                            invisible="state != 'resolved'"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_cancel" string="Cancel" type="object" 
+                            invisible="state in ['closed', 'cancelled']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_reopen" string="Reopen" type="object" 
+                            invisible="state not in ['resolved', 'closed']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_change_status_wizard" string="Change Status" type="object" 
+                            class="oe_highlight" invisible="state in ['closed', 'cancelled']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_increase_priority" string="Increase Priority" type="object" 
+                            icon="fa-arrow-up" invisible="priority == '3'"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_decrease_priority" string="Decrease Priority" type="object" 
+                            icon="fa-arrow-down" invisible="priority == '0'"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_apply_template" string="Apply Template" type="object" 
+                            icon="fa-file-text-o"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_merge_tickets" string="Merge" type="object" 
+                            icon="fa-compress" invisible="state in ['closed', 'cancelled']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_split_ticket" string="Split" type="object" 
+                            icon="fa-expand" invisible="state in ['closed', 'cancelled']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_create_article_from_ticket" string="Create Article" type="object" 
+                            icon="fa-book" invisible="state in ['closed', 'cancelled']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <button name="action_create_reminder" string="Create Reminder" type="object" 
+                            icon="fa-clock-o" invisible="state in ['closed', 'cancelled']"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,new,assigned,in_progress,resolved,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                    <button name="action_open_linked_records" type="object" 
+                            class="oe_stat_button" icon="fa-link">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Linked</span>
+                                <span class="o_stat_value">
+                                    <field name="model_link_count" widget="statinfo" string="Records"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_quick_add_link" type="object" 
+                            class="oe_stat_button" icon="fa-plus" 
+                            invisible="state in ['closed', 'cancelled']"
+                            title="Quick Link Record"
+                            >
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Quick Link</span>
+                            </div>
+                        </button>
+                        <button name="action_manual_auto_link" type="object" 
+                                class="oe_stat_button" icon="fa-magic" 
+                                invisible="state in ['closed', 'cancelled']"
+                                title="Run Auto-Linking"
+                                >
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Auto-Link</span>
+                                </div>
+                            </button>
+                        <button name="action_manage_links" type="object" 
+                                class="oe_stat_button" icon="fa-cog" 
+                                invisible="model_link_count == 0"
+                                title="Manage Linked Records"
+                                >
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Manage Linked</span>
+                                </div>
+                            </button>
+                        <button name="action_view_status_history" type="object" 
+                                class="oe_stat_button" icon="fa-history">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Status</span>
+                                <span class="o_stat_value">
+                                    <field name="status_history_count" widget="statinfo" string="Changes"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_assignment_history" type="object" 
+                                class="oe_stat_button" icon="fa-user">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Assignments</span>
+                                <span class="o_stat_value">
+                                    <field name="assignment_history_count" widget="statinfo" string="Changes"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_notification_history" type="object" 
+                                class="oe_stat_button" icon="fa-bell">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Notifications</span>
+                                <span class="o_stat_value">
+                                    <field name="notification_history_count" widget="statinfo" string="Sent"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_reminders" type="object" 
+                                class="oe_stat_button" icon="fa-clock-o">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Reminders</span>
+                                <span class="o_stat_value">
+                                    <field name="pending_reminder_count" widget="statinfo" string="Pending"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="%(base.action_attachment)d" type="action" 
+                                class="oe_stat_button" icon="fa-paperclip"
+                                context="{'default_res_model': 'helpdesk.ticket', 'default_res_id': id}">
+                            <field name="attachment_count" widget="statinfo" string="Attachments"/>
+                        </button>
+                        <button name="action_view_knowledge_articles" type="object" 
+                                class="oe_stat_button" icon="fa-book"
+                                invisible="knowledge_article_count == 0">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Articles</span>
+                                <span class="o_stat_value">
+                                    <field name="knowledge_article_count" widget="statinfo" string="Articles"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Overdue" bg_color="text-danger" 
+                            invisible="is_overdue == False"
+                            groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                    
+                    <group>
+                        <group>
+                            <field name="ticket_number" readonly="1"/>
+                            <field name="template_id" options="{'no_create': True}" 
+                                   invisible="template_id == False"
+                                   readonly="1"/>
+                            <field name="name" placeholder="Enter ticket subject..."/>
+                            <field name="ticket_type_id"/>
+                            <field name="category_id"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="reference"/>
+                        </group>
+                        <group>
+                            <field name="partner_id" options="{'no_create': False, 'no_create_edit': False}"/>
+                            <field name="partner_email" readonly="1"/>
+                            <field name="partner_phone" readonly="1"/>
+                            <field name="phone_number" invisible="channel_id.code != 'phone'"/>
+                            <field name="channel_id" options="{'no_create': True}"/>
+                            <field name="priority" widget="priority" options="{'color_field': 'priority_color'}"
+                                   groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                            <field name="priority_color" invisible="1"
+                                   groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                            <field name="user_id" options="{'no_create': True}"
+                                   groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                            <field name="team_id" options="{'no_create': True}"
+                                   groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Enter detailed description of the issue..."/>
+                        </page>
+                        
+                        <!-- Task 8.4: Quick Access Links -->
+                        <page string="Linked Records" name="linked_models" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <div class="oe_button_box" name="button_box" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                                <button name="action_manage_links" type="object" 
+                                        class="oe_stat_button" icon="fa-cog">
+                                    <div class="o_stat_info">
+                                        <span class="o_stat_text">Manage Links</span>
+                                    </div>
+                                </button>
+                                <button name="action_validate_all_links" type="object" 
+                                        class="oe_stat_button" icon="fa-check-square">
+                                    <div class="o_stat_info">
+                                        <span class="o_stat_text">Validate All</span>
+                                    </div>
+                                </button>
+                            </div>
+                            
+                            <group string="All Linked Records" class="oe_no_column" colspan="2">
+                                <field name="model_link_ids" nolabel="1">
+                                    <list decoration-muted="res_name == 'Deleted Record' or res_name == 'Invalid Record'"
+                                          decoration-danger="res_name == 'Invalid Record'"
+                                          delete="1"
+                                          create="1"
+                                          edit="1">
+                                        <field name="model_name" string="Model"/>
+                                        <field name="res_name" string="Record"/>
+                                        <field name="access_url" string="URL" readonly="1" invisible="1"/>
+                                        <button name="action_open_linked_record" string="Open" type="object" 
+                                                class="btn-primary" icon="fa-external-link" title="Open in current tab"/>
+                                        <button name="action_open_linked_record_new_tab" string="New Tab" type="object" 
+                                                class="btn-secondary" icon="fa-external-link-square" title="Open in new tab"/>
+                                        <button name="action_validate_link" string="Validate" type="object" 
+                                                class="btn-secondary" icon="fa-check" title="Validate link"/>
+                                    </list>
+                                    <form string="Linked Record">
+                                        <header>
+                                            <button name="action_open_linked_record" string="Open Record" type="object" 
+                                                    class="oe_highlight" icon="fa-external-link"/>
+                                            <button name="action_open_linked_record_new_tab" string="Open in New Tab" type="object" 
+                                                    icon="fa-external-link-square"/>
+                                        </header>
+                                        <sheet>
+                                            <group>
+                                                <group>
+                                                    <field name="ticket_id" invisible="1"/>
+                                                    <field name="res_ref" widget="helpdesk_model_reference"/>
+                                                </group>
+                                                <group>
+                                                    <field name="model_name" readonly="1"/>
+                                                    <field name="res_id" readonly="1"/>
+                                                    <field name="res_name" readonly="1"/>
+                                                    <field name="access_url" readonly="1"/>
+                                                </group>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </group>
+                        </page>
+                        
+                        <page string="Internal Notes" name="internal_notes" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <field name="internal_note" placeholder="Private notes visible only to staff..."/>
+                        </page>
+                        
+                        <page string="SLA Information" name="sla_info" invisible="sla_policy_id == False" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <group>
+                                <group>
+                                    <field name="sla_policy_id" readonly="1"/>
+                                    <field name="sla_response_deadline" readonly="1" widget="datetime"/>
+                                    <field name="sla_response_status" readonly="1"
+                                           decoration-success="sla_response_status == 'met'"
+                                           decoration-warning="sla_response_status == 'at_risk'"
+                                           decoration-danger="sla_response_status == 'breached'"/>
+                                </group>
+                                <group>
+                                    <field name="sla_resolution_deadline" readonly="1" widget="datetime"/>
+                                    <field name="sla_resolution_status" readonly="1"
+                                           decoration-success="sla_resolution_status == 'met'"
+                                           decoration-warning="sla_resolution_status == 'at_risk'"
+                                           decoration-danger="sla_resolution_status == 'breached'"/>
+                                    <field name="is_overdue" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Rating &amp; Feedback" name="rating" invisible="rating == False and feedback == False" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <group>
+                                <group>
+                                    <field name="rating" widget="radio" options="{'horizontal': true}"/>
+                                    <field name="feedback"/>
+                                    <field name="feedback_date" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Call History" name="call_history" invisible="call_log_ids == []" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <field name="call_log_ids" nolabel="1" context="{'default_ticket_id': id, 'default_partner_id': partner_id, 'default_phone_number': phone_number}">
+                                <list>
+                                    <field name="name" string="Reference"/>
+                                    <field name="call_date" widget="datetime"/>
+                                    <field name="direction" widget="badge"/>
+                                    <field name="phone_number"/>
+                                    <field name="contact_name"/>
+                                    <field name="agent_id"/>
+                                    <field name="duration_display" string="Duration"/>
+                                    <field name="call_outcome" widget="badge"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="Social Media Posts" name="social_media_posts" invisible="social_media_post_ids == []" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <field name="social_media_post_ids" nolabel="1" context="{'default_ticket_id': id, 'default_partner_id': partner_id}">
+                                <list>
+                                    <field name="name" string="Reference"/>
+                                    <field name="platform_id"/>
+                                    <field name="post_type" widget="badge"/>
+                                    <field name="author_name"/>
+                                    <field name="content" widget="text"/>
+                                    <field name="post_date" widget="datetime"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="Status History" name="status_history" invisible="status_history_ids == []" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <field name="status_history_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="change_date" widget="datetime"/>
+                                    <field name="user_id"/>
+                                    <field name="old_state" widget="badge"/>
+                                    <field name="new_state" widget="badge"/>
+                                    <field name="reason"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="Priority History" name="priority_history" invisible="priority_change_count == 0" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <group>
+                                <group>
+                                    <field name="priority" readonly="1" widget="priority"/>
+                                    <field name="old_priority" readonly="1" widget="priority"/>
+                                    <field name="priority_change_date" readonly="1"/>
+                                    <field name="priority_change_count" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Knowledge Base" name="knowledge_base" groups="support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <group string="Suggested Articles" col="12" class="oe_no_column" invisible="not suggested_article_ids">
+                                <field name="suggested_article_ids" nolabel="1" readonly="1" widget="many2many_tags" 
+                                       options="{'no_create': True, 'no_create_edit': True}">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="category_id"/>
+                                        <field name="view_count"/>
+                                        <field name="rating"/>
+                                    </list>
+                                </field>
+                                <div class="alert alert-info mt-2" role="alert" invisible="suggested_article_ids">
+                                    <p>No suggested articles found. Articles are suggested based on ticket content, category, and tags.</p>
+                                </div>
+                                <div class="mt-2" invisible="not suggested_article_ids">
+                                    <p class="text-muted">
+                                        <small>Click on suggested articles above to view them. Use the "Linked Articles" section to link articles to this ticket.</small>
+                                    </p>
+                                </div>
+                            </group>
+                            <group string="Linked Articles" class="oe_no_column" colspan="2">
+                                <field name="knowledge_article_ids" nolabel="1" 
+                                       domain="[('state', '=', 'published'), ('active', '=', True)]"
+                                       context="{'default_ticket_ids': [(4, id)]}">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="category_id"/>
+                                        <field name="state"/>
+                                        <field name="view_count"/>
+                                        <field name="rating"/>
+                                    </list>
+                                </field>
+                                <div class="alert alert-info mt-2" role="alert" invisible="knowledge_article_ids">
+                                    <p>No articles linked to this ticket. Click "Add a line" to search and link articles, or use suggested articles above.</p>
+                                </div>
+                            </group>
+                        </page>
+                        
+                        <page string="Dates" name="dates" groups="support_helpdesk_ticket.group_helpdesk_ticket_creator,support_helpdesk_ticket.group_helpdesk_user,support_helpdesk_ticket.group_helpdesk_agent,support_helpdesk_ticket.group_helpdesk_manager">
+                            <group>
+                                <group>
+                                    <field name="create_date" readonly="1"/>
+                                    <field name="write_date" readonly="1"/>
+                                    <field name="assigned_date" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="resolved_date" readonly="1"/>
+                                    <field name="closed_date" readonly="1"/>
+                                    <field name="last_stage_update" readonly="1"/>
+                                    <field name="days_since_creation" readonly="1"/>
+                                    <field name="days_to_resolve" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Discuss" name="discuss">
+                            <field name="discuss_message_ids" nolabel="1" context="{'default_ticket_id': id, 'default_message_type': 'team'}">
+                                <list decoration-info="message_type == 'customer'" 
+                                      decoration-muted="message_type == 'team'"
+                                      default_order="date desc">
+                                    <field name="date" widget="datetime"/>
+                                    <field name="message_type" widget="badge" 
+                                           decoration-info="message_type == 'customer'"
+                                           decoration-muted="message_type == 'team'"/>
+                                    <field name="message" widget="text"/>
+                                    <field name="user_id" string="Author" readonly="1"/>
+                                    <field name="attachment_ids" widget="many2many_tags" readonly="1"/>
+                                </list>
+                                <form string="Message">
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="ticket_id" invisible="1"/>
+                                                <field name="date" widget="datetime"/>
+                                                <field name="message_type" widget="radio" options="{'horizontal': true}"/>
+                                                <field name="user_id" readonly="1"/>
+                                            </group>
+                                        </group>
+                                        <group colspan="2" class="oe_no_column">
+                                            <field name="message" placeholder="Enter your message..." nolabel="1"/>
+                                        </group>
+                                        <group string="Attachments">
+                                            <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== Kanban View ==================== -->
+    <record id="view_helpdesk_ticket_kanban" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.kanban</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column" 
+                    quick_create="0" create="1">
+                <field name="ticket_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="team_id"/>
+                <field name="priority"/>
+                <field name="state"/>
+                <field name="ticket_type_id"/>
+                <field name="is_overdue"/>
+                <field name="sla_response_status"/>
+                <field name="sla_resolution_status"/>
+                <field name="create_date"/>
+                <field name="days_since_creation"/>
+                
+                <progressbar field="state" colors='{"new": "info", "assigned": "warning", "in_progress": "warning", "resolved": "success", "closed": "muted", "cancelled": "muted"}'/>
+                
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click helpdesk_professional_card">
+                            <div class="helpdesk_card_header" t-att-class="record.state.raw_value == 'new' ? 'info' : (record.state.raw_value == 'resolved' ? 'success' : (record.state.raw_value == 'closed' ? 'muted' : 'warning'))">
+                                <div class="helpdesk_card_title">
+                                    <i class="fa fa-ticket" style="font-size: 14px;" title="Ticket"/>
+                                    <field name="ticket_number"/>
+                                    <span t-if="record.is_overdue.raw_value" class="helpdesk_badge overdue" style="margin-left: auto;">Overdue</span>
+                                </div>
+                                <div class="helpdesk_card_subtitle">
+                                    <field name="name"/>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_body">
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-user" title="Customer"/>
+                                    <span class="helpdesk_info_label">Customer:</span>
+                                    <span class="helpdesk_info_value"><field name="partner_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.user_id.raw_value">
+                                    <i class="fa fa-user-circle" title="Assigned To"/>
+                                    <span class="helpdesk_info_label">Assigned:</span>
+                                    <span class="helpdesk_info_value"><field name="user_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.team_id.raw_value">
+                                    <i class="fa fa-users" title="Team"/>
+                                    <span class="helpdesk_info_label">Team:</span>
+                                    <span class="helpdesk_info_value"><field name="team_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-flag" title="Priority"/>
+                                    <span class="helpdesk_info_label">Priority:</span>
+                                    <span class="helpdesk_info_value">
+                                        <span t-att-class="'helpdesk_priority_indicator ' + (record.priority.raw_value == 'urgent' ? 'urgent' : (record.priority.raw_value == 'high' ? 'high' : (record.priority.raw_value == 'medium' ? 'medium' : 'low')))"/>
+                                        <field name="priority"/>
+                                    </span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.ticket_type_id.raw_value">
+                                    <i class="fa fa-tag" title="Ticket Type"/>
+                                    <span class="helpdesk_info_label">Type:</span>
+                                    <span class="helpdesk_info_value"><field name="ticket_type_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.sla_response_status.raw_value == 'at_risk'">
+                                    <i class="fa fa-exclamation-triangle" style="color: #ffc107;" title="SLA At Risk"/>
+                                    <span class="helpdesk_badge sla_at_risk">SLA At Risk</span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.sla_response_status.raw_value == 'breached'">
+                                    <i class="fa fa-times-circle" style="color: #dc3545;" title="SLA Breached"/>
+                                    <span class="helpdesk_badge sla_breached">SLA Breached</span>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_footer">
+                                <div>
+                                    <i class="fa fa-calendar" style="margin-right: 6px;" title="Creation Date"/>
+                                    <field name="create_date" widget="date"/>
+                                </div>
+                                <div t-if="record.days_since_creation.raw_value">
+                                    <i class="fa fa-clock-o" style="margin-right: 6px;" title="Days Since Creation"/>
+                                    <span><field name="days_since_creation"/> days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ==================== Calendar View ==================== -->
+    <record id="view_helpdesk_ticket_calendar" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.calendar</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <calendar string="Tickets" date_start="create_date" 
+                      color="priority" mode="month" quick_create="0">
+                <field name="ticket_number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ==================== Pivot View ==================== -->
+    <record id="view_helpdesk_ticket_pivot" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.pivot</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="Ticket Analysis">
+                <field name="state" type="row"/>
+                <field name="priority" type="row"/>
+                <field name="team_id" type="row"/>
+                <field name="ticket_type_id" type="row"/>
+                <field name="category_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="channel_id" type="row"/>
+                <field name="create_date" interval="day" type="col"/>
+<!--                <field name="id" type="measure" string="Ticket Count" operator="count"/>-->
+                <field name="days_to_resolve" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ==================== Graph View ==================== -->
+    <record id="view_helpdesk_ticket_graph" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.graph</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Ticket Statistics" type="bar" stacked="True">
+                <field name="state" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- Alternative Graph View - By Priority -->
+    <record id="view_helpdesk_ticket_graph_priority" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.graph.priority</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Tickets by Priority" type="pie">
+                <field name="priority" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- Alternative Graph View - By Channel -->
+    <record id="view_helpdesk_ticket_graph_channel" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.graph.channel</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Tickets by Channel" type="bar">
+                <field name="channel_id" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- Alternative Graph View - Timeline -->
+    <record id="view_helpdesk_ticket_graph_timeline" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.graph.timeline</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Ticket Timeline" type="line">
+                <field name="create_date" interval="day" type="row"/>
+<!--                <field name="id" type="measure"/>-->
+            </graph>
+        </field>
+    </record>
+
+    <!-- ==================== Action ==================== -->
+    <!-- Main Tickets Action (for users, agents, managers) -->
+    <record id="action_helpdesk_ticket" model="ir.actions.act_window">
+        <field name="name">Tickets</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_ticket_search"/>
+        <field name="context">{'search_default_my_tickets': 1, 'default_state': 'new'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first ticket!
+            </p>
+            <p>
+                Track and manage customer support tickets efficiently.
+            </p>
+        </field>
+        <field name="group_ids" eval="[(4, ref('group_helpdesk_user')), (4, ref('group_helpdesk_agent')), (4, ref('group_helpdesk_manager'))]"/>
+    </record>
+
+    <!-- Tickets Action for Ticket Creators (shows only tickets they created) -->
+    <record id="action_helpdesk_ticket_creator" model="ir.actions.act_window">
+        <field name="name">My Tickets</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('create_uid', '=', uid)]</field>
+        <field name="context">{'default_state': 'new', 'group_by': 'state'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first ticket!
+            </p>
+            <p>
+                View and manage tickets you have created.
+            </p>
+        </field>
+        <field name="group_ids" eval="[(4, ref('group_helpdesk_ticket_creator'))]"/>
+    </record>
+
+    <!-- Action for All Tickets (shows all tickets without filters - managers only) -->
+    <record id="action_helpdesk_ticket_all" model="ir.actions.act_window">
+        <field name="name">All Tickets</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_ticket_search"/>
+        <field name="context">{'default_state': 'new'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first ticket!
+            </p>
+            <p>
+                View and manage all tickets in the system.
+            </p>
+        </field>
+        <field name="group_ids" eval="[(4, ref('group_helpdesk_manager'))]"/>
+    </record>
+
+    <!-- Action for My Tickets (for assigned users) -->
+    <record id="action_helpdesk_ticket_my_tickets" model="ir.actions.act_window">
+        <field name="name">My Tickets</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'search_default_in_progress': 1}</field>
+        <field name="group_ids" eval="[(4, ref('group_helpdesk_user')), (4, ref('group_helpdesk_agent')), (4, ref('group_helpdesk_manager'))]"/>
+    </record>
+
+    <!-- Action for My Tickets (for ticket creators - shows tickets they created) -->
+    <record id="action_helpdesk_ticket_my_created_tickets" model="ir.actions.act_window">
+        <field name="name">My Tickets</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('create_uid', '=', uid)]</field>
+        <field name="context">{'default_state': 'new', 'group_by': 'state'}</field>
+        <field name="group_ids" eval="[(4, ref('group_helpdesk_ticket_creator'))]"/>
+    </record>
+
+    <!-- Action for Unassigned Tickets -->
+    <record id="action_helpdesk_ticket_unassigned" model="ir.actions.act_window">
+        <field name="name">Unassigned Tickets</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('user_id', '=', False), ('state', '!=', 'closed')]</field>
+        <field name="context">{'search_default_new': 1}</field>
+    </record>
+
+    <!-- Action for Overdue Tickets -->
+    <record id="action_helpdesk_ticket_overdue" model="ir.actions.act_window">
+        <field name="name">Overdue Tickets</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="domain">[('is_overdue', '=', True)]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

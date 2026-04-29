@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_square" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.square</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="15"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Square" string="Square" name="pos_square_terminal" data-key="pos_square_terminal">
+                    <block title="Square payments" name="square_payments">
+                        <setting string="Configure Square online payments and POS terminals"
+                                 help="Set up the Square payment provider for your website and Square Terminal for Point of Sale."
+                                 id="setting_square_configure">
+                            <button type="object" name="action_open_square_settings"
+                                    string="Open Square settings"
+                                    class="btn btn-link"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

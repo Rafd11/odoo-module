@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Team Tree View -->
+    <record id="view_helpdesk_team_tree" model="ir.ui.view">
+        <field name="name">helpdesk.team.tree</field>
+        <field name="model">helpdesk.team</field>
+        <field name="arch" type="xml">
+            <list string="Teams" decoration-muted="active == False">
+                <field name="name"/>
+                <field name="team_leader_id"/>
+                <field name="member_ids" widget="many2many_tags"/>
+                <field name="ticket_count"/>
+                <field name="open_ticket_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Team Form View -->
+    <record id="view_helpdesk_team_form" model="ir.ui.view">
+        <field name="name">helpdesk.team.form</field>
+        <field name="model">helpdesk.team</field>
+        <field name="arch" type="xml">
+            <form string="Team">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object" 
+                                class="oe_stat_button" icon="fa-ticket">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Tickets</span>
+                                <span class="o_stat_value">
+                                    <field name="ticket_count" widget="statinfo" string="Total"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_tickets" type="object" 
+                                class="oe_stat_button" icon="fa-clock-o">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Open</span>
+                                <span class="o_stat_value">
+                                    <field name="open_ticket_count" widget="statinfo" string="Open"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter team name..."/>
+                            <field name="team_leader_id" options="{'no_create': True}"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Enter team description..."/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Team Members" name="members">
+                            <field name="member_ids" widget="many2many_tags" nolabel="1"/>
+                        </page>
+                        
+                        <page string="Assignment Configuration" name="assignment">
+                            <group>
+                                <group>
+                                    <field name="auto_assign_enabled"/>
+                                    <field name="default_assignment_algorithm" 
+                                           invisible="not auto_assign_enabled"/>
+                                    <div class="alert alert-info" role="alert" 
+                                         invisible="not auto_assign_enabled">
+                                        <p>When auto-assignment is enabled, tickets assigned to this team will be automatically assigned to team members using the selected algorithm.</p>
+                                        <ul>
+                                            <li><strong>Round-Robin:</strong> Assigns tickets in rotation among team members</li>
+                                            <li><strong>Workload-Based:</strong> Assigns to the team member with the fewest open tickets</li>
+                                            <li><strong>Skill-Based:</strong> Assigns based on category experience and workload</li>
+                                        </ul>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Sequence Configuration" name="sequence">
+                            <group>
+                                <group>
+                                    <field name="sequence_id" options="{'no_create': True}"/>
+                                    <field name="sequence_code"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Email Configuration" name="email">
+                            <group>
+                                <group>
+                                    <field name="alias_id" options="{'no_create': True}"/>
+                                    <field name="alias_name" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Team Search View -->
+    <record id="view_helpdesk_team_search" model="ir.ui.view">
+        <field name="name">helpdesk.team.search</field>
+        <field name="model">helpdesk.team</field>
+        <field name="arch" type="xml">
+            <search string="Teams">
+                <field name="name"/>
+                <field name="team_leader_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Team Action -->
+    <record id="action_helpdesk_team" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="res_model">helpdesk.team</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_team_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first team!
+            </p>
+            <p>
+                Teams help organize ticket assignments.
+            </p>
+        </field>
+    </record>
+
+</odoo>

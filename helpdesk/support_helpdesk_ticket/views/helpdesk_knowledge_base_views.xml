@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Knowledge Article Tree View -->
+    <record id="view_helpdesk_knowledge_article_tree" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.article.tree</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <list string="Articles" decoration-muted="active == False or state == 'archived'"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'published'">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="state"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'published'"
+                       decoration-muted="state == 'archived'"/>
+                <field name="author_id"/>
+                <field name="view_count"/>
+                <field name="rating"/>
+                <field name="is_faq" widget="boolean_toggle"/>
+                <field name="version"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Knowledge Article Form View -->
+    <record id="view_helpdesk_knowledge_article_form" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.article.form</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <form string="Knowledge Article">
+                <header>
+                    <button name="action_publish" string="Publish" type="object" 
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_archive" string="Archive" type="object" 
+                            invisible="state != 'published'"/>
+                    <button name="action_draft" string="Set to Draft" type="object" 
+                            invisible="state != 'archived'"/>
+                    <button name="action_increment_version" string="New Version" type="object" 
+                            icon="fa-code-fork" invisible="state != 'published'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object" 
+                                class="oe_stat_button" icon="fa-ticket">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Linked</span>
+                                <span class="o_stat_value">
+                                    <field name="ticket_count" widget="statinfo" string="Tickets"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_feedback" type="object" 
+                                class="oe_stat_button" icon="fa-star">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Rating</span>
+                                <span class="o_stat_value">
+                                    <field name="rating" widget="statinfo" string="Rating"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="FAQ" bg_color="text-info" 
+                            invisible="is_faq == False"/>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter article title..."/>
+                            <field name="category_id"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="author_id"/>
+                            <field name="is_faq"/>
+                        </group>
+                        <group>
+                            <field name="state" readonly="1"/>
+                            <field name="version" readonly="1"/>
+                            <field name="view_count" readonly="1"/>
+                            <field name="rating" readonly="1" widget="float"/>
+                            <field name="rating_count" readonly="1"/>
+                            <field name="effectiveness_count" readonly="1"/>
+                            <field name="effectiveness_rate" readonly="1" string="Effectiveness %"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group colspan="2" class="oe_no_column">
+                        <field name="content" placeholder="Enter article content..." nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Related Articles" name="related_articles">
+                            <field name="related_article_ids" nolabel="1" domain="[('id', '!=', id)]">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                    <field name="state"/>
+                                    <field name="view_count"/>
+                                    <field name="rating"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Linked Tickets" name="linked_tickets" invisible="ticket_count == 0">
+                            <field name="ticket_ids" nolabel="1">
+                                <list>
+                                    <field name="ticket_number"/>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="state"/>
+                                    <field name="priority" widget="priority"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Feedback" name="feedback" invisible="rating_count == 0">
+                            <field name="feedback_ids" nolabel="1">
+                                <list>
+                                    <field name="partner_id"/>
+                                    <field name="rating"/>
+                                    <field name="helpful" widget="boolean_toggle"/>
+                                    <field name="feedback"/>
+                                    <field name="create_date" widget="datetime"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Knowledge Article Search View -->
+    <record id="view_helpdesk_knowledge_article_search" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.article.search</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <search string="Articles">
+                <field name="name"/>
+                <field name="content"/>
+                <field name="category_id"/>
+                <field name="tag_ids"/>
+                <field name="author_id"/>
+                
+                <!-- Filters -->
+                <filter string="Published" name="published" domain="[('state', '=', 'published')]"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Archived" name="archived" domain="[('state', '=', 'archived')]"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="FAQ" name="faq" domain="[('is_faq', '=', True)]"/>
+                
+                <!-- Separator -->
+                <separator/>
+                
+                <!-- Group By -->
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Author" name="group_author" context="{'group_by': 'author_id'}"/>
+                    <filter string="Tags" name="group_tags" context="{'group_by': 'tag_ids'}"/>
+                    <filter string="Creation Date" name="group_create_date" context="{'group_by': 'create_date:day'}"/>    
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Knowledge Article Action -->
+    <record id="action_helpdesk_knowledge_article" model="ir.actions.act_window">
+        <field name="name">Knowledge Base</field>
+        <field name="res_model">helpdesk.knowledge.article</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="search_view_id" ref="view_helpdesk_knowledge_article_search"/>
+        <field name="context">{'search_default_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first article!
+            </p>
+            <p>
+                Knowledge base articles help customers find answers.
+            </p>
+        </field>
+    </record>
+
+    <!-- Knowledge Article Kanban View -->
+    <record id="view_helpdesk_knowledge_article_kanban" model="ir.ui.view">
+        <field name="name">helpdesk.knowledge.article.kanban</field>
+        <field name="model">helpdesk.knowledge.article</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="state"/>
+                <field name="view_count"/>
+                <field name="rating"/>
+                <field name="is_faq"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click helpdesk_professional_card helpdesk_kb_card" t-att-class="record.is_faq.raw_value ? 'faq' : ''">
+                            <div class="helpdesk_card_header info">
+                                <div class="helpdesk_card_title">
+                                    <i class="fa fa-book" style="font-size: 14px;" title="Article"/>
+                                    <field name="name"/>
+                                    <span t-if="record.is_faq.raw_value" class="helpdesk_badge" style="background: #ffc107; color: #000; margin-left: auto; font-size: 10px;">FAQ</span>
+                                </div>
+                                <div class="helpdesk_card_subtitle">
+                                    <field name="category_id"/>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_body">
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-tag" title="Category"/>
+                                    <span class="helpdesk_info_label">Category:</span>
+                                    <span class="helpdesk_info_value"><field name="category_id"/></span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-check-circle" title="Status"/>
+                                    <span class="helpdesk_info_label">Status:</span>
+                                    <span class="helpdesk_info_value">
+                                        <field name="state" widget="badge"/>
+                                    </span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row">
+                                    <i class="fa fa-eye" title="Views"/>
+                                    <span class="helpdesk_info_label">Views:</span>
+                                    <span class="helpdesk_info_value helpdesk_kb_views">
+                                        <field name="view_count"/>
+                                    </span>
+                                </div>
+                                
+                                <div class="helpdesk_info_row" t-if="record.rating.raw_value">
+                                    <i class="fa fa-star" title="Rating"/>
+                                    <span class="helpdesk_info_label">Rating:</span>
+                                    <span class="helpdesk_info_value helpdesk_kb_rating">
+                                        <field name="rating"/>
+                                        <span>/ 5</span>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="helpdesk_card_footer">
+                                <div>
+                                    <i class="fa fa-file-text-o" style="margin-right: 6px;" title="Knowledge Article"/>
+                                    <span>Knowledge Article</span>
+                                </div>
+                                <div t-if="record.view_count.raw_value">
+                                    <i class="fa fa-eye" style="margin-right: 6px;" title="Views"/>
+                                    <span><field name="view_count"/> views</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+</odoo>

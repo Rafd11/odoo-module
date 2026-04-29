@@ -1,0 +1,98 @@
+{
+    'name': 'Advanced Helpdesk Support Ticket Management System — Staff & Customer Portal, Multi-Channel Support, SLA Tracking, Knowledge Base Integration & Automated Workflows',
+    'version': '19.0.1.0.0',
+    'category': 'Customer Relationship Management',
+    'summary': 'Advanced Helpdesk Support Ticket Management System with Staff & Customer Portal, Multi-Channel Support, SLA Tracking, Knowledge Base Integration & Automated Workflows',
+    'description': """
+Advanced Helpdesk Support Ticket Management System
+==================================================
+This comprehensive helpdesk solution provides:
+
+* Staff & Customer Portal
+* Multi-Channel Support
+* SLA Tracking
+* Knowledge Base Integration
+* Automated Workflows
+    """,
+    'author': 'Webbycrown Solutions',
+    'website': 'www.webbycrown.com',
+    'depends': [
+        'base',
+        'mail',
+        'portal',
+        'resource',
+    ],
+    'external_dependencies': {
+        'python': ['requests'],
+    },
+    'data': [
+        'security/security_groups.xml',
+        'security/ir.model.access.csv',
+        'security/ir.rule.xml',
+        'data/ticket_sequence_data.xml',
+        'data/ticket_types_data.xml',
+        'data/channels_data.xml',
+        'data/sla_policies_data.xml',
+        'data/email_templates.xml',
+        'data/social_media_cron_data.xml',
+        'data/sla_monitoring_cron_data.xml',
+        'data/notification_cron_data.xml',
+        'data/reminder_cron_data.xml',
+        'data/auto_close_cron_data.xml',
+        'views/helpdesk_ticket_type_views.xml',
+        'views/helpdesk_team_views.xml',
+        'views/helpdesk_sla_views.xml',
+        'views/helpdesk_knowledge_base_views.xml',
+        'views/helpdesk_category_views.xml',
+        'views/helpdesk_tag_views.xml',
+        'views/helpdesk_ticket_template_views.xml',
+        'views/helpdesk_ticket_status_history_views.xml',
+        'views/helpdesk_ticket_assignment_history_views.xml',
+        'views/helpdesk_ticket_status_change_wizard_views.xml',
+        'views/helpdesk_ticket_merge_wizard_views.xml',
+        'views/helpdesk_ticket_split_wizard_views.xml',
+        'views/helpdesk_staff_dashboard_views.xml',
+        'views/helpdesk_advanced_staff_views.xml',
+        'views/helpdesk_workflow_views.xml',
+        'views/helpdesk_escalation_views.xml',
+        'views/helpdesk_notification_views.xml',
+        'views/helpdesk_reminder_views.xml',
+        'views/helpdesk_ticket_model_link_views.xml',
+        'views/helpdesk_model_link_access_log_views.xml',
+        'views/helpdesk_auto_link_rule_views.xml',
+        'views/helpdesk_ticket_views.xml',
+        'views/helpdesk_channel_views.xml',
+        'views/helpdesk_ticket_volume_reporting_views.xml',
+        'views/helpdesk_team_performance_views.xml',
+        'views/helpdesk_customer_satisfaction_views.xml',
+        'views/helpdesk_report_builder_views.xml',
+        'views/helpdesk_portal_views.xml',
+        'views/helpdesk_public_views.xml',
+        'views/helpdesk_call_log_views.xml',
+        'views/helpdesk_social_media_views.xml',
+        'views/helpdesk_sla_reporting_views.xml',
+        'views/helpdesk_knowledge_analytics_views.xml',
+        'views/helpdesk_settings_views.xml',
+        'views/api_documentation_views.xml',
+        'views/menu_views.xml',
+    ],
+    'demo': [
+        'data/demo_data.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'support_helpdesk_ticket/static/src/css/helpdesk.css',
+            'support_helpdesk_ticket/static/src/js/helpdesk.js',
+            'support_helpdesk_ticket/static/src/js/helpdesk_ticket_kanban.js',
+            'support_helpdesk_ticket/static/src/js/helpdesk_model_reference_widget.js',
+            'support_helpdesk_ticket/static/src/js/helpdesk_dashboard.js',
+            'support_helpdesk_ticket/static/src/js/helpdesk_team_dashboard.js',
+        ],
+    },
+    'images': ['static/description/main_screenshot.png'],
+    'icon': 'profit_loss/static/description/icon.png',
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+    'license': 'LGPL-3',
+}

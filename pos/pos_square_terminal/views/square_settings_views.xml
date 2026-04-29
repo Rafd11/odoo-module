@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_square_payment_provider" model="ir.actions.act_window">
+        <field name="name">Square – Online payments</field>
+        <field name="res_model">payment.provider</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('code', '=', 'square')]</field>
+        <field name="context">{'default_code': 'square', 'search_default_code_square': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure Square for website and e‑commerce payments.
+            </p>
+            <p>
+                Set your <strong>Square Application ID</strong> and <strong>Access Token</strong> from the
+                <a href="https://developer.squareup.com/apps" target="_blank">Square Developer Dashboard</a>.
+                Use Test mode with sandbox credentials first.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_square_pos_payment_methods" model="ir.actions.act_window">
+        <field name="name">Square – POS terminals</field>
+        <field name="res_model">pos.payment.method</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('use_square_terminal', '=', True)]</field>
+        <field name="context">{'default_use_square_terminal': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Payment methods that use a Square Terminal device.
+            </p>
+            <p>
+                Add or edit a payment method in <strong>Point of Sale → Configuration → Payment Methods</strong>,
+                then enable <strong>Use Square Terminal</strong> and set the Square Access Token and Device ID.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_square_settings_root"
+              name="Square"
+              parent="base.menu_administration"
+              sequence="50"/>
+    <menuitem id="menu_square_payment_provider"
+              name="Online payments (website)"
+              parent="pos_square_terminal.menu_square_settings_root"
+              action="pos_square_terminal.action_square_payment_provider"
+              sequence="10"/>
+    <menuitem id="menu_square_pos_terminals"
+              name="POS Terminal payment methods"
+              parent="pos_square_terminal.menu_square_settings_root"
+              action="pos_square_terminal.action_square_pos_payment_methods"
+              sequence="20"/>
+</odoo>

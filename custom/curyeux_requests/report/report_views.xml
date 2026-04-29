@@ -1,0 +1,31 @@
+
+<odoo>
+  <record id="view_report_clinic_request" model="ir.ui.view">
+    <field name="name">clinic.request.report.tree</field>
+    <field name="model">clinic.request</field>
+    <field name="arch" type="xml">
+      <tree string="Rapport des demandes">
+        <field name="name"/>
+        <field name="user_id"/>
+        <field name="branch_id"/>
+        <field name="status"/>
+        <field name="date_commande"/>
+        <field name="total_price"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_report_clinic_request" model="ir.actions.act_window">
+    <field name="name">Rapport des Demandes</field>
+    <field name="res_model">clinic.request</field>
+    <field name="view_mode">tree</field>
+    <field name="search_view_id" eval="False"/>
+    <field name="context">{'search_default_group_by_branch':1, 'group_by':'branch_id'}</field>
+  </record>
+
+  <menuitem id="menu_report_request"
+            name="Rapports"
+            parent="menu_curyeux_root"
+            sequence="30"
+            action="action_report_clinic_request"/>
+</odoo>

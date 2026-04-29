@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="square_redirect_form" name="Square Redirect Form">
+        <form t-attf-action="#{checkout_url}" method="get" class="square_redirect_form">
+            <input type="hidden" name="reference" t-att-value="reference"/>
+            <input type="hidden" name="return_url" t-att-value="return_url"/>
+            <button type="submit" class="btn btn-primary">
+                Pay with Square
+            </button>
+        </form>
+    </template>
+
+    <template id="square_checkout_page" name="Square Checkout">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">Pay with Square</t>
+            <div id="square_checkout_wrapper" class="container mt-4"
+                 t-att-data-application-id="application_id"
+                 t-att-data-location-id="location_id"
+                 t-att-data-amount-minor="amount_minor"
+                 t-att-data-currency="currency"
+                 t-att-data-reference="reference">
+                <h3>Complete your payment</h3>
+                <p>Amount: <t t-esc="amount_display"/></p>
+                <div id="square-card-container" class="my-3"></div>
+                <form id="square-payment-form" action="/payment/square/create_payment" method="post">
+                    <input type="hidden" name="reference" t-att-value="reference"/>
+                    <input type="hidden" name="source_id" id="square_source_id"/>
+                    <button type="submit" id="square-submit-btn" class="btn btn-primary" disabled="disabled">
+                        Pay
+                    </button>
+                </form>
+                <div id="square-error" class="alert alert-danger d-none mt-2" role="alert"></div>
+            </div>
+            <script t-if="state == 'test' or not state" src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+            <script t-if="state == 'enabled'" src="https://web.squarecdn.com/v1/square.js"></script>
+        </t>
+    </template>
+</odoo>

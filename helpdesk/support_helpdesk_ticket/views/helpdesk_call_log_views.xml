@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Call Log Tree View -->
+    <record id="view_helpdesk_call_log_tree" model="ir.ui.view">
+        <field name="name">helpdesk.call.log.tree</field>
+        <field name="model">helpdesk.call.log</field>
+        <field name="arch" type="xml">
+            <list string="Call Logs" decoration-info="direction == 'inbound'"
+                  decoration-warning="direction == 'outbound'"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'completed'"
+                  default_order="call_date desc">
+                <field name="name" string="Reference"/>
+                <field name="call_date" string="Call Date" widget="datetime"/>
+                <field name="direction" widget="badge" 
+                       decoration-info="direction == 'inbound'"
+                       decoration-warning="direction == 'outbound'"/>
+                <field name="phone_number" string="Phone Number"/>
+                <field name="partner_id" string="Contact"/>
+                <field name="contact_name" string="Contact Name"/>
+                <field name="agent_id" string="Agent"/>
+                <field name="ticket_id" string="Ticket"/>
+                <field name="subject" string="Subject"/>
+                <field name="duration_display" string="Duration"/>
+                <field name="call_outcome" widget="badge"/>
+                <field name="state" widget="badge" 
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'completed'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Call Log Form View -->
+    <record id="view_helpdesk_call_log_form" model="ir.ui.view">
+        <field name="name">helpdesk.call.log.form</field>
+        <field name="model">helpdesk.call.log</field>
+        <field name="arch" type="xml">
+            <form string="Call Log">
+                <header>
+                    <button name="action_start_call" string="Start Call" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_end_call" string="End Call" type="object" 
+                            class="btn-primary" invisible="state != 'in_progress'"/>
+                    <button name="action_create_ticket" string="Create Ticket" type="object" 
+                            class="btn-primary" invisible="ticket_id"/>
+                    <button name="action_link_ticket" string="Link Ticket" type="object" 
+                            class="btn-secondary" invisible="ticket_id"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_ticket" type="object" class="oe_stat_button" 
+                                icon="fa-ticket" invisible="not ticket_id">
+                            <field name="ticket_id" widget="statinfo" string="Ticket"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="call_date" required="1"/>
+                            <field name="call_end_date"/>
+                            <field name="duration_display" readonly="1"/>
+                            <field name="is_long_call" widget="boolean_toggle" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="direction" required="1"/>
+                            <field name="phone_number" required="1"/>
+                            <field name="partner_id" options="{'no_create': False, 'no_open': False}"/>
+                            <field name="contact_name"/>
+                            <field name="agent_id" required="1"/>
+                            <field name="call_outcome"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Call Details">
+                            <group>
+                                <field name="subject" placeholder="Brief summary of the call..."/>
+                                <field name="description" placeholder="Detailed notes about the call..."/>
+                                <field name="resolution_summary" placeholder="Summary of resolution (if applicable)..."/>
+                            </group>
+                        </page>
+                        <page string="Ticket" invisible="not ticket_id">
+                            <field name="ticket_id" readonly="1">
+                                <list>
+                                    <field name="ticket_number"/>
+                                    <field name="name"/>
+                                    <field name="state"/>
+                                    <field name="priority" widget="priority"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Call Log Search View -->
+    <record id="view_helpdesk_call_log_search" model="ir.ui.view">
+        <field name="name">helpdesk.call.log.search</field>
+        <field name="model">helpdesk.call.log</field>
+        <field name="arch" type="xml">
+            <search string="Call Logs">
+                <field name="name" string="Reference"/>
+                <field name="phone_number" string="Phone Number"/>
+                <field name="partner_id" string="Contact"/>
+                <field name="agent_id" string="Agent"/>
+                <field name="ticket_id" string="Ticket"/>
+                <field name="subject" string="Subject"/>
+                <field name="description" string="Notes"/>
+                
+                <filter string="Inbound" name="inbound" domain="[('direction', '=', 'inbound')]"/>
+                <filter string="Outbound" name="outbound" domain="[('direction', '=', 'outbound')]"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                <filter string="With Ticket" name="with_ticket" domain="[('ticket_id', '!=', False)]"/>
+                <filter string="Without Ticket" name="without_ticket" domain="[('ticket_id', '=', False)]"/>
+                <filter string="Long Calls" name="long_calls" domain="[('duration', '>', 30.0)]"/>
+                <filter string="Today" name="today" domain="[('call_date', '>=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <filter string="This Week" name="this_week" domain="[('call_date', '>=', (datetime.datetime.now() - datetime.timedelta(days=7)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <separator/>
+                <filter string="My Calls" name="my_calls" domain="[('agent_id', '=', uid)]"/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Direction" name="group_direction" context="{'group_by': 'direction'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Agent" name="group_agent" context="{'group_by': 'agent_id'}"/>
+                    <filter string="Contact" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Call Date" name="group_call_date" context="{'group_by': 'call_date:day'}"/>
+                    <filter string="Call Outcome" name="group_outcome" context="{'group_by': 'call_outcome'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Call Log Action -->
+    <record id="action_helpdesk_call_log" model="ir.actions.act_window">
+        <field name="name">Call Logs</field>
+        <field name="res_model">helpdesk.call.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_call_log_search"/>
+        <field name="context">{'default_agent_id': uid, 'default_state': 'draft'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first call log!
+            </p>
+            <p>
+                Track phone calls and convert them to support tickets.
+            </p>
+        </field>
+    </record>
+
+    <!-- Call Log Create Ticket Wizard Form View -->
+    <record id="view_helpdesk_call_log_create_ticket_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.call.log.create.ticket.wizard.form</field>
+        <field name="model">helpdesk.call.log.create.ticket.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Ticket from Call">
+                <group>
+                    <group>
+                        <field name="call_log_id" readonly="1"/>
+                        <field name="phone_number" required="1"/>
+                        <field name="partner_id" options="{'no_create': True}"/>
+                        <field name="name" required="1" placeholder="Enter ticket subject..."/>
+                        <field name="description" placeholder="Enter ticket description..."/>
+                    </group>
+                    <group>
+                        <field name="category_id"/>
+                        <field name="priority" required="1"/>
+                        <field name="ticket_type_id"/>
+                        <field name="team_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Create Ticket" name="action_create_ticket" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

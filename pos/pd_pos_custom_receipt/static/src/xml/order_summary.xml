@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="point_of_sale.OrderSummary">
+      <t t-jquery="t" t-operation="replace">
+          <OrderWidget lines="currentOrder.getSortedOrderlines()" t-slot-scope="scope" class="'bg-light'"
+              taxTotals="currentOrder.taxTotals"
+              generalNote="currentOrder.general_note or ''">
+              <t t-set="line" t-value="scope.line" />
+              <t t-set="displayData" t-value="line.getDisplayData()" />
+              <!-- Try using scope.line_index first, fallback to _lineIndex -->
+              <Orderline
+                line="Object.assign(displayData, { default_code: line.get_product()?.default_code })"
+                index="scope.line_index !== undefined ? scope.line_index : (displayData._lineIndex !== undefined ? displayData._lineIndex : 0)"
+                t-on-click="(event) => this.clickLine(event, line)"
+                class="{ ...line.getDisplayClasses(), 'selected' : line.isSelected() }">
+                <t t-set-slot="product-name">
+                    <i t-if="line.get_product()?.isTracked()"
+                       t-on-click.stop="() => this.editPackLotLines(line)" role="img"
+                       t-attf-class="{{ line.has_valid_product_lot() ? 'text-success' : 'text-danger'}} fa fa-list line-lot-icon ms-1"
+                       t-attf-title="{{ line.has_valid_product_lot() ? 'Valid product lot' : 'Invalid product lot'}}" />
+                </t>
+              </Orderline>
+              <t t-set-slot="details" />
+          </OrderWidget>
+      </t>
+    </t>
+</templates>

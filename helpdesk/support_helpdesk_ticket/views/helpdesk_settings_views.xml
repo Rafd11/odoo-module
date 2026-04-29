@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Helpdesk Settings View -->
+    <record id="res_config_settings_view_form_inherit_helpdesk" model="ir.ui.view">
+        <field name="name">support_helpdesk_ticket.res.config.settings.view.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Helpdesk" string="Helpdesk" name="support_helpdesk_ticket">
+                    
+                    <!-- General Settings -->
+                    <block title="General Settings" name="general_settings">
+                        <group>
+                            <group string="Default Values">
+                                <field name="helpdesk_default_priority"/>
+                                <field name="helpdesk_default_state"/>
+                                <field name="helpdesk_default_channel_id" options="{'no_create': True}"/>
+                                <field name="helpdesk_default_team_id" options="{'no_create': True}"/>
+                                <field name="helpdesk_default_category_id" options="{'no_create': True}"/>
+                                <field name="helpdesk_default_ticket_type_id" options="{'no_create': True}"/>
+                            </group>
+                            <group string="Ticket Numbering">
+                                <field name="helpdesk_ticket_prefix"/>
+                                <field name="helpdesk_ticket_number_format"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- Auto-Assignment Settings -->
+                    <block title="Auto-Assignment" name="auto_assignment">
+                        <group>
+                            <group>
+                                <field name="helpdesk_auto_assign_tickets"/>
+                                <field name="helpdesk_auto_assignment_method" 
+                                       invisible="not helpdesk_auto_assign_tickets"/>
+                                <field name="helpdesk_max_tickets_per_agent" 
+                                       invisible="not helpdesk_auto_assign_tickets or helpdesk_auto_assignment_method != 'load_based'"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- SLA Settings -->
+                    <block title="SLA Configuration" name="sla_settings">
+                        <group>
+                            <group>
+                                <field name="helpdesk_enable_sla_tracking"/>
+                                <field name="helpdesk_default_response_time" 
+                                       invisible="not helpdesk_enable_sla_tracking"/>
+                                <field name="helpdesk_default_resolution_time" 
+                                       invisible="not helpdesk_enable_sla_tracking"/>
+                                <field name="helpdesk_default_sla_policy_id" 
+                                       options="{'no_create': True}"
+                                       invisible="not helpdesk_enable_sla_tracking"/>
+                                <field name="helpdesk_sla_working_hours" 
+                                       invisible="not helpdesk_enable_sla_tracking"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- Automation Settings -->
+                    <block title="Automation" name="automation_settings">
+                        <group>
+                            <group>
+                                <field name="helpdesk_enable_escalation"/>
+                                <field name="helpdesk_enable_reminders"/>
+                                <field name="helpdesk_enable_workflow"/>
+                            </group>
+                            <group>
+                                <field name="helpdesk_auto_close_resolved"/>
+                                <field name="helpdesk_auto_close_days" 
+                                       invisible="not helpdesk_auto_close_resolved"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- Notification Settings -->
+                    <block title="Notifications" name="notification_settings">
+                        <group>
+                            <group>
+                                <field name="helpdesk_notify_on_assignment"/>
+                                <field name="helpdesk_notify_on_status_change"/>
+                                <field name="helpdesk_notify_customer_on_update"/>
+                                <field name="helpdesk_notify_on_sla_breach"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- Field Requirements -->
+                    <block title="Field Requirements" name="field_requirements">
+                        <group>
+                            <group>
+                                <field name="helpdesk_require_category"/>
+                                <field name="helpdesk_require_priority"/>
+                                <field name="helpdesk_require_ticket_type"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- Integration Settings -->
+                    <block title="Integrations" name="integration_settings">
+                        <group>
+                            <group>
+                                <field name="helpdesk_enable_portal"/>
+                                <field name="helpdesk_enable_rating"/>
+                                <field name="helpdesk_enable_knowledge_base"/>
+                                <field name="helpdesk_enable_social_media"/>
+                                <field name="helpdesk_enable_call_logging"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- Support Contact Information -->
+                    <block title="Support Contact" name="support_contact">
+                        <group>
+                            <group>
+                                <field name="helpdesk_support_email"/>
+                                <field name="helpdesk_support_phone"/>
+                            </group>
+                        </group>
+                    </block>
+                    
+                    <!-- Sample Data Import Section -->
+                    <block title="Sample Data"
+                        name="sample_data">
+                        <button string="Import Sample Data from XML" name="action_import_sample_data" type="object"
+                            class="btn-primary btn-lg" icon="fa-download"
+                            help="Import sample data from demo_data.xml file. This will load all demo records defined in the XML file."/>
+                        <button string="Create Demo Records" name="action_create_demo_records" type="object"
+                            class="btn-secondary btn-lg" icon="fa-magic"
+                            help="Create demo records programmatically for all models. This is useful for testing and demonstration purposes."/>
+                        <div class="alert alert-info" role="alert" style="margin-top: 10px;">
+                            <h5><strong>Demo Data Includes:</strong></h5>
+                            <ul style="margin-bottom: 0;">
+                                <li><strong>Demo Tickets (24+):</strong> Various states, priorities, channels, and ticket types</li>
+                                <li><strong>Demo Call Logs (5+):</strong> Inbound and outbound calls with different outcomes</li>
+                                <li><strong>Demo Partners/Customers (3):</strong> Acme Corporation, TechStart Inc, Global Solutions Ltd</li>
+                                <li><strong>Demo Teams (3):</strong> Technical Support, Sales Support, Billing &amp; Accounts</li>
+                                <li><strong>Demo Categories (4):</strong> Hardware, Software, Network, Account &amp; Login</li>
+                                <li><strong>Demo Tags (4):</strong> Urgent, Bug Report, Feature Request, Training Needed</li>
+                                <li><strong>Demo Ticket Types (10):</strong> Incident, Request, Change, Product Inquiry, Order Support, Billing, Account Management, Feature Request, Bug Report, General Inquiry, Complaint, Feedback</li>
+                                <li><strong>Demo Knowledge Articles (2):</strong> Password reset guide, Printer troubleshooting</li>
+                                <li><strong>Demo Report Templates:</strong> Custom report configurations</li>
+                                <li><strong>Demo Social Media Posts (3+):</strong> Facebook and Twitter posts</li>
+                                <li><strong>Demo Social Media Platforms (2):</strong> Facebook and Twitter configurations</li>
+                                <li><strong>Demo Users (4):</strong> Agents and managers for testing</li>
+                            </ul>
+                            <hr style="margin: 10px 0;"/>
+                            <small class="text-muted">
+                                <strong>Quick Start:</strong> Click either button above to populate your system with realistic demo data.
+                                This will help you explore all Helpdesk features without manual data entry.
+                                <br/><strong>Note:</strong> "Import Sample Data from XML" loads from demo_data.xml file, while "Create Demo Records" creates records programmatically.
+                            </small>
+                        </div>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Helpdesk Settings Action -->
+    <record id="action_helpdesk_settings" model="ir.actions.act_window">
+        <field name="name">Helpdesk Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'support_helpdesk_ticket'}</field>
+    </record>
+
+</odoo>

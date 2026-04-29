@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- Add Print on Square Terminal and Refund on Square buttons to the receipt screen (append to root so they appear) -->
+    <t t-name="pos_square_terminal.ReceiptScreen" t-inherit="point_of_sale.ReceiptScreen" t-inherit-mode="extension">
+        <xpath expr="." position="inside">
+            <div t-if="squarePayments.length" class="d-flex flex-column gap-2 mt-3 mb-2">
+                <button type="button" class="btn btn-secondary"
+                    t-on-click="printReceiptOnSquareTerminal"
+                    title="Print receipt on the Square Terminal device">
+                    <i class="fa fa-print"/> Print on Square Terminal
+                </button>
+                <button type="button" class="btn btn-warning"
+                    t-on-click="openRefundSquare"
+                    title="Open refund form for this payment on Square">
+                    <i class="fa fa-undo"/> Refund on Square
+                </button>
+            </div>
+        </xpath>
+    </t>
+</templates>

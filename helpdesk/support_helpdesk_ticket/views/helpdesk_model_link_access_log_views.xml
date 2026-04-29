@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Access Log Tree View -->
+    <record id="view_helpdesk_model_link_access_log_tree" model="ir.ui.view">
+        <field name="name">helpdesk.model.link.access.log.tree</field>
+        <field name="model">helpdesk.model.link.access.log</field>
+        <field name="arch" type="xml">
+            <list string="Access Logs" 
+                  decoration-success="status == 'success'"
+                  decoration-danger="status == 'denied'"
+                  decoration-warning="status == 'error' or status == 'not_found'">
+                <field name="access_date" widget="datetime"/>
+                <field name="user_id"/>
+                <field name="access_type"/>
+                <field name="model_name"/>
+                <field name="res_id"/>
+                <field name="status"/>
+                <field name="ticket_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Access Log Form View -->
+    <record id="view_helpdesk_model_link_access_log_form" model="ir.ui.view">
+        <field name="name">helpdesk.model.link.access.log.form</field>
+        <field name="model">helpdesk.model.link.access.log</field>
+        <field name="arch" type="xml">
+            <form string="Access Log">
+                <header>
+                    <button name="action_view_link" string="View Link" type="object" 
+                            class="oe_highlight" icon="fa-link"/>
+                    <button name="action_view_ticket" string="View Ticket" type="object" 
+                            icon="fa-ticket"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="link_id"/>
+                            <field name="ticket_id" readonly="1"/>
+                            <field name="user_id"/>
+                            <field name="access_date" widget="datetime"/>
+                        </group>
+                        <group>
+                            <field name="access_type"/>
+                            <field name="status" widget="badge" 
+                                   decoration-success="status == 'success'"
+                                   decoration-danger="status == 'denied'"
+                                   decoration-warning="status == 'error' or status == 'not_found'"/>
+                            <field name="model_name"/>
+                            <field name="res_id"/>
+                            <field name="ip_address"/>
+                        </group>
+                    </group>
+                    <group string="Error Details" invisible="status == 'success'">
+                        <field name="error_message" nolabel="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Access Log Search View -->
+    <record id="view_helpdesk_model_link_access_log_search" model="ir.ui.view">
+        <field name="name">helpdesk.model.link.access.log.search</field>
+        <field name="model">helpdesk.model.link.access.log</field>
+        <field name="arch" type="xml">
+            <search string="Access Logs">
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <field name="ticket_id"/>
+                <field name="link_id"/>
+                
+                <filter string="Success" name="success" domain="[('status', '=', 'success')]"/>
+                <filter string="Denied" name="denied" domain="[('status', '=', 'denied')]"/>
+                <filter string="Errors" name="errors" domain="[('status', 'in', ['error', 'not_found'])]"/>
+                <filter string="Today" name="today" domain="[('access_date', '>=', context_today().strftime('%Y-%m-%d 00:00:00')), ('access_date', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter string="My Accesses" name="my_accesses" domain="[('user_id', '=', uid)]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Access Type" name="group_type" context="{'group_by': 'access_type'}"/>
+                    <filter string="Model" name="group_model" context="{'group_by': 'model_name'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'access_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Access Log Action -->
+    <record id="action_helpdesk_model_link_access_log" model="ir.actions.act_window">
+        <field name="name">Access Logs</field>
+        <field name="res_model">helpdesk.model.link.access.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_model_link_access_log_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No access logs yet!
+            </p>
+            <p>
+                Access logs track all attempts to access linked records.
+            </p>
+        </field>
+    </record>
+
+</odoo>

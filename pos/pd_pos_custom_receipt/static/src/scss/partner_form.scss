@@ -1,0 +1,15 @@
+/* Hide or make the Phone field readonly in the POS customer form dialog.
+   Target only when rendered inside the POS app to avoid affecting backend. */
+
+/* Hide the full phone field wrapper (Field wrapper has attribute name="phone"). */
+.pos .o_dialog [name="phone"] {
+    display: none !important;
+}
+
+/* As a fallback, if the browser still renders the input, make it readonly/disabled. */
+.pos .o_dialog [name="phone"] input,
+.pos .o_dialog input[name="phone"],
+.pos .o_dialog input.o_input[type="tel"][id*="phone" i] {
+    pointer-events: none !important;
+    opacity: 0.6;
+}

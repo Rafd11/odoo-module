@@ -1,0 +1,2455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ============================================ -->
+        <!-- DEMO USERS (Agents and Managers) -->
+        <!-- ============================================ -->
+
+        <!-- Demo Agents -->
+        <record id="demo_user_agent1" model="res.users">
+            <field name="name">John Smith</field>
+            <field name="login">john.smith</field>
+            <field name="email">john.smith@demo.com</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="demo_user_agent2" model="res.users">
+            <field name="name">Sarah Johnson</field>
+            <field name="login">sarah.johnson</field>
+            <field name="email">sarah.johnson@demo.com</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="demo_user_agent3" model="res.users">
+            <field name="name">Mike Wilson</field>
+            <field name="login">mike.wilson</field>
+            <field name="email">mike.wilson@demo.com</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Demo Manager -->
+        <record id="demo_user_manager" model="res.users">
+            <field name="name">Emily Davis</field>
+            <field name="login">emily.davis</field>
+            <field name="email">emily.davis@demo.com</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO CONTACTS (Customers) -->
+        <!-- ============================================ -->
+
+        <record id="demo_partner_customer1" model="res.partner">
+            <field name="name">Acme Corporation</field>
+            <field name="email">support@acme.com</field>
+            <field name="phone">+1-555-0101</field>
+        </record>
+
+        <record id="demo_partner_customer2" model="res.partner">
+            <field name="name">TechStart Inc</field>
+            <field name="email">help@techstart.com</field>
+            <field name="phone">+1-555-0102</field>
+        </record>
+
+        <record id="demo_partner_customer3" model="res.partner">
+            <field name="name">Global Solutions Ltd</field>
+            <field name="email">support@globalsolutions.com</field>
+            <field name="phone">+1-555-0103</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO HELPDESK TEAMS -->
+        <!-- ============================================ -->
+
+        <record id="demo_team_technical" model="helpdesk.team">
+            <field name="name">Technical Support</field>
+            <field name="description">Technical issues, bugs, and system problems</field>
+            <field name="member_ids" eval="[(4, ref('demo_user_agent1')), (4, ref('demo_user_agent2'))]"/>
+            <field name="team_leader_id" ref="demo_user_manager"/>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_team_sales" model="helpdesk.team">
+            <field name="name">Sales Support</field>
+            <field name="description">Sales inquiries and product information</field>
+            <field name="member_ids" eval="[(4, ref('demo_user_agent2')), (4, ref('demo_user_agent3'))]"/>
+            <field name="team_leader_id" ref="demo_user_manager"/>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_team_billing" model="helpdesk.team">
+            <field name="name">Billing &amp; Accounts</field>
+            <field name="description">Billing questions, invoices, and payment issues</field>
+            <field name="member_ids" eval="[(4, ref('demo_user_agent3'))]"/>
+            <field name="team_leader_id" ref="demo_user_manager"/>
+            <field name="active">True</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO TICKET CATEGORIES -->
+        <!-- ============================================ -->
+
+        <record id="demo_category_hardware" model="helpdesk.category">
+            <field name="name">Hardware Issues</field>
+            <field name="description">Computer, printer, and hardware problems</field>
+            <field name="color">1</field>
+            <field name="sequence">10</field>
+            <field name="default_priority">1</field>
+        </record>
+
+        <record id="demo_category_software" model="helpdesk.category">
+            <field name="name">Software Issues</field>
+            <field name="description">Application errors, bugs, and software problems</field>
+            <field name="color">2</field>
+            <field name="sequence">20</field>
+            <field name="default_priority">2</field>
+        </record>
+
+        <record id="demo_category_network" model="helpdesk.category">
+            <field name="name">Network &amp; Connectivity</field>
+            <field name="description">Internet, WiFi, and network connectivity issues</field>
+            <field name="color">3</field>
+            <field name="sequence">30</field>
+            <field name="default_priority">1</field>
+        </record>
+
+        <record id="demo_category_account" model="helpdesk.category">
+            <field name="name">Account &amp; Login</field>
+            <field name="description">Password resets, account access, and login issues</field>
+            <field name="color">4</field>
+            <field name="sequence">40</field>
+            <field name="default_priority">2</field>
+        </record>
+
+        <record id="demo_category_billing" model="helpdesk.category">
+            <field name="name">Billing &amp; Payment</field>
+            <field name="description">Billing questions, invoices, payments, and account charges</field>
+            <field name="color">5</field>
+            <field name="sequence">50</field>
+            <field name="default_priority">1</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO TAGS -->
+        <!-- ============================================ -->
+
+        <record id="demo_tag_urgent" model="helpdesk.tag">
+            <field name="name">Urgent</field>
+            <field name="color">1</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="demo_tag_bug" model="helpdesk.tag">
+            <field name="name">Bug Report</field>
+            <field name="color">2</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record id="demo_tag_feature" model="helpdesk.tag">
+            <field name="name">Feature Request</field>
+            <field name="color">3</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record id="demo_tag_training" model="helpdesk.tag">
+            <field name="name">Training Needed</field>
+            <field name="color">4</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO TICKET TYPES -->
+        <!-- ============================================ -->
+
+        <record id="demo_ticket_type_incident" model="helpdesk.ticket.type">
+            <field name="name">Technical Support</field>
+            <field name="description">Issues related to technical problems, system errors, and incidents.</field>
+            <field name="active">True</field>
+            <field name="default_priority">2</field>
+        </record>
+        
+        <record id="demo_ticket_type_request" model="helpdesk.ticket.type">
+            <field name="name">Service Request</field>
+            <field name="description">Standard request for information or service.</field>
+            <field name="active">True</field>
+            <field name="default_priority">1</field>
+        </record>
+        
+        <record id="demo_ticket_type_change" model="helpdesk.ticket.type">
+            <field name="name">Change Request</field>
+            <field name="description">Request for change to existing services.</field>
+            <field name="active">True</field>
+            <field name="default_priority">1</field>
+        </record>
+
+        <!-- Task 9.1: Predefined Types -->
+        <record id="demo_ticket_type_product_inquiry" model="helpdesk.ticket.type">
+            <field name="name">Product Inquiry</field>
+            <field name="description">Questions about products, features, or specifications.</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_ticket_type_order_support" model="helpdesk.ticket.type">
+            <field name="name">Order Support</field>
+            <field name="description">Support related to orders, shipping, and delivery.</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_ticket_type_billing_payment" model="helpdesk.ticket.type">
+            <field name="name">Billing &amp; Payment</field>
+            <field name="description">Issues related to invoices, payments, and billing.</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_ticket_type_account_management" model="helpdesk.ticket.type">
+            <field name="name">Account Management</field>
+            <field name="description">Requests related to account access, profile, and settings.</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_ticket_type_feature_request" model="helpdesk.ticket.type">
+            <field name="name">Feature Request</field>
+            <field name="description">Suggestions for new features or improvements.</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_ticket_type_bug_report" model="helpdesk.ticket.type">
+            <field name="name">Bug Report</field>
+            <field name="description">Reports of software bugs or defects.</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_ticket_type_general_inquiry" model="helpdesk.ticket.type">
+            <field name="name">General Inquiry</field>
+            <field name="description">General questions not covered by other types.</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_ticket_type_complaint" model="helpdesk.ticket.type">
+            <field name="name">Complaint</field>
+            <field name="description">Customer complaints or negative feedback.</field>
+            <field name="active">True</field>
+            <field name="default_priority">3</field>
+        </record>
+
+        <record id="demo_ticket_type_feedback" model="helpdesk.ticket.type">
+            <field name="name">Feedback</field>
+            <field name="description">General feedback and suggestions.</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <!-- ============================================ -->
+        <!-- DEMO TICKET TEMPLATES -->
+        <!-- ============================================ -->
+
+        <record id="demo_template_password_reset" model="helpdesk.ticket.template">
+            <field name="name">Password Reset Request</field>
+            <field name="description">Template for password reset requests</field>
+            <field name="subject">Password Reset for [Customer Name]</field>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_template_software_bug" model="helpdesk.ticket.template">
+            <field name="name">Software Bug Report</field>
+            <field name="description">Template for software bug reports</field>
+            <field name="subject">Bug Report: [Brief Description]</field>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_bug'))]"/>
+            <field name="active">True</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO KNOWLEDGE BASE ARTICLES -->
+        <!-- ============================================ -->
+
+        <record id="demo_kb_password_reset" model="helpdesk.knowledge.article">
+            <field name="name">How to Reset Your Password</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Password Reset Guide</h2>
+                <p>To reset your password, follow these steps:</p>
+                <ol>
+                    <li>Go to the login page</li>
+                    <li>Click "Forgot Password"</li>
+                    <li>Enter your email address</li>
+                    <li>Check your email for reset instructions</li>
+                    <li>Follow the link and create a new password</li>
+                </ol>
+                <p>If you don't receive the email within 5 minutes, check your spam folder.</p>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent1"/>
+            <field name="view_count" eval="156"/>
+            <field name="is_faq">True</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_printer_troubleshooting" model="helpdesk.knowledge.article">
+            <field name="name">Printer Troubleshooting Guide</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Common Printer Issues and Solutions</h2>
+
+                <h3>Printer Not Responding</h3>
+                <ul>
+                    <li>Check if the printer is powered on</li>
+                    <li>Verify USB/Network connection</li>
+                    <li>Restart the printer</li>
+                    <li>Check printer queue for stuck jobs</li>
+                </ul>
+
+                <h3>Poor Print Quality</h3>
+                <ul>
+                    <li>Check ink/toner levels</li>
+                    <li>Run cleaning cycle</li>
+                    <li>Align print heads</li>
+                    <li>Replace cartridges if necessary</li>
+                </ul>
+
+                <h3>Paper Jams</h3>
+                <ul>
+                    <li>Open all access panels</li>
+                    <li>Remove jammed paper carefully</li>
+                    <li>Check for torn pieces</li>
+                    <li>Close all panels before resuming</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_hardware"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent1"/>
+            <field name="view_count" eval="45"/>
+            <field name="is_faq">True</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_network_configuration" model="helpdesk.knowledge.article">
+            <field name="name">Network Configuration Guide</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Network Configuration Guide</h2>
+                <p>This guide will help you configure your network settings.</p>
+                
+                <h3>WiFi Connection</h3>
+                <ol>
+                    <li>Open Network Settings</li>
+                    <li>Select WiFi from the list</li>
+                    <li>Enter your network password</li>
+                    <li>Click Connect</li>
+                </ol>
+                
+                <h3>Ethernet Connection</h3>
+                <ol>
+                    <li>Connect Ethernet cable to your device</li>
+                    <li>Go to Network Settings</li>
+                    <li>Select Ethernet</li>
+                    <li>Configure IP settings if needed</li>
+                </ol>
+                
+                <h3>Troubleshooting</h3>
+                <p>If you experience connection issues:</p>
+                <ul>
+                    <li>Restart your router</li>
+                    <li>Check cable connections</li>
+                    <li>Verify network credentials</li>
+                    <li>Contact IT support if problems persist</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_network"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent2"/>
+            <field name="view_count" eval="32"/>
+            <field name="is_faq">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_email_setup" model="helpdesk.knowledge.article">
+            <field name="name">Email Account Setup Instructions</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Email Account Setup</h2>
+                <p>Follow these steps to set up your email account:</p>
+                
+                <h3>For Outlook</h3>
+                <ol>
+                    <li>Open Outlook</li>
+                    <li>Go to File > Add Account</li>
+                    <li>Enter your email address</li>
+                    <li>Enter your password</li>
+                    <li>Follow the setup wizard</li>
+                </ol>
+                
+                <h3>For Gmail</h3>
+                <ol>
+                    <li>Open Gmail app or website</li>
+                    <li>Click Settings</li>
+                    <li>Go to Accounts and Import</li>
+                    <li>Add your email account</li>
+                    <li>Verify your account</li>
+                </ol>
+                
+                <h3>Common Issues</h3>
+                <ul>
+                    <li>Check your internet connection</li>
+                    <li>Verify email credentials</li>
+                    <li>Check server settings</li>
+                    <li>Ensure two-factor authentication is configured</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent1"/>
+            <field name="view_count" eval="67"/>
+            <field name="is_faq">True</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_software_installation" model="helpdesk.knowledge.article">
+            <field name="name">Software Installation Guide</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Software Installation Guide</h2>
+                <p>This guide covers the general process for installing software on your system.</p>
+                
+                <h3>Windows Installation</h3>
+                <ol>
+                    <li>Download the installation file</li>
+                    <li>Right-click and select "Run as Administrator"</li>
+                    <li>Follow the installation wizard</li>
+                    <li>Accept the license agreement</li>
+                    <li>Choose installation location</li>
+                    <li>Complete the installation</li>
+                </ol>
+                
+                <h3>Mac Installation</h3>
+                <ol>
+                    <li>Download the .dmg file</li>
+                    <li>Open the downloaded file</li>
+                    <li>Drag the application to Applications folder</li>
+                    <li>Launch from Applications</li>
+                </ol>
+                
+                <h3>Linux Installation</h3>
+                <p>Use your package manager:</p>
+                <ul>
+                    <li>Ubuntu/Debian: sudo apt install package-name</li>
+                    <li>Red Hat/CentOS: sudo yum install package-name</li>
+                    <li>Arch: sudo pacman -S package-name</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent2"/>
+            <field name="view_count" eval="89"/>
+            <field name="is_faq">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_security_best_practices" model="helpdesk.knowledge.article">
+            <field name="name">Security Best Practices</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Security Best Practices</h2>
+                <p>Follow these guidelines to keep your account and data secure.</p>
+                
+                <h3>Password Security</h3>
+                <ul>
+                    <li>Use strong passwords (minimum 12 characters)</li>
+                    <li>Include uppercase, lowercase, numbers, and symbols</li>
+                    <li>Don't reuse passwords across accounts</li>
+                    <li>Change passwords regularly</li>
+                    <li>Use a password manager</li>
+                </ul>
+                
+                <h3>Two-Factor Authentication</h3>
+                <p>Enable 2FA for all important accounts:</p>
+                <ol>
+                    <li>Go to account security settings</li>
+                    <li>Enable two-factor authentication</li>
+                    <li>Scan QR code with authenticator app</li>
+                    <li>Save backup codes securely</li>
+                </ol>
+                
+                <h3>Phishing Prevention</h3>
+                <ul>
+                    <li>Never click suspicious links</li>
+                    <li>Verify sender email addresses</li>
+                    <li>Don't share credentials via email</li>
+                    <li>Report suspicious emails to IT</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_manager"/>
+            <field name="view_count" eval="124"/>
+            <field name="is_faq">True</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_backup_procedures" model="helpdesk.knowledge.article">
+            <field name="name">Data Backup Procedures</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Data Backup Procedures</h2>
+                <p>Regular backups are essential for data protection. Follow these procedures:</p>
+                
+                <h3>Automatic Backups</h3>
+                <p>Our system performs automatic backups daily. To verify:</p>
+                <ol>
+                    <li>Go to Settings > Backup</li>
+                    <li>Check backup schedule</li>
+                    <li>Verify last backup date</li>
+                    <li>Test restore procedure monthly</li>
+                </ol>
+                
+                <h3>Manual Backup</h3>
+                <ol>
+                    <li>Select files or folders to backup</li>
+                    <li>Right-click and select "Backup"</li>
+                    <li>Choose backup location</li>
+                    <li>Confirm backup completion</li>
+                </ol>
+                
+                <h3>Cloud Backup</h3>
+                <ul>
+                    <li>Use cloud storage services</li>
+                    <li>Enable automatic sync</li>
+                    <li>Verify cloud backup regularly</li>
+                    <li>Keep multiple backup copies</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent3"/>
+            <field name="view_count" eval="56"/>
+            <field name="is_faq">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_vpn_setup" model="helpdesk.knowledge.article">
+            <field name="name">VPN Setup and Configuration</field>
+            <field name="content">
+                <![CDATA[
+                <h2>VPN Setup Guide</h2>
+                <p>Connect to our secure VPN network using these instructions.</p>
+                
+                <h3>Windows VPN Setup</h3>
+                <ol>
+                    <li>Open Network & Internet settings</li>
+                    <li>Click VPN > Add VPN connection</li>
+                    <li>Enter VPN server address</li>
+                    <li>Enter your credentials</li>
+                    <li>Save and connect</li>
+                </ol>
+                
+                <h3>Mac VPN Setup</h3>
+                <ol>
+                    <li>Go to System Preferences > Network</li>
+                    <li>Click + to add new connection</li>
+                    <li>Select VPN from interface dropdown</li>
+                    <li>Enter server address and credentials</li>
+                    <li>Click Connect</li>
+                </ol>
+                
+                <h3>Troubleshooting</h3>
+                <ul>
+                    <li>Check internet connection</li>
+                    <li>Verify VPN credentials</li>
+                    <li>Check firewall settings</li>
+                    <li>Contact IT if connection fails</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_network"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent1"/>
+            <field name="view_count" eval="78"/>
+            <field name="is_faq">True</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_browser_troubleshooting" model="helpdesk.knowledge.article">
+            <field name="name">Browser Troubleshooting Guide</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Browser Troubleshooting</h2>
+                <p>Common browser issues and their solutions.</p>
+                
+                <h3>Slow Performance</h3>
+                <ul>
+                    <li>Clear browser cache</li>
+                    <li>Disable unnecessary extensions</li>
+                    <li>Close unused tabs</li>
+                    <li>Update browser to latest version</li>
+                    <li>Check available memory</li>
+                </ul>
+                
+                <h3>Pages Not Loading</h3>
+                <ul>
+                    <li>Check internet connection</li>
+                    <li>Clear DNS cache</li>
+                    <li>Try incognito/private mode</li>
+                    <li>Disable ad blockers temporarily</li>
+                    <li>Check firewall settings</li>
+                </ul>
+                
+                <h3>Security Warnings</h3>
+                <ul>
+                    <li>Verify website certificate</li>
+                    <li>Check system date/time</li>
+                    <li>Update browser security settings</li>
+                    <li>Contact IT if warnings persist</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent2"/>
+            <field name="view_count" eval="43"/>
+            <field name="is_faq">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="demo_kb_mobile_device_setup" model="helpdesk.knowledge.article">
+            <field name="name">Mobile Device Setup for Work</field>
+            <field name="content">
+                <![CDATA[
+                <h2>Mobile Device Setup</h2>
+                <p>Configure your mobile device to access work resources.</p>
+                
+                <h3>Email Setup</h3>
+                <ol>
+                    <li>Open Mail app</li>
+                    <li>Add new account</li>
+                    <li>Enter work email and password</li>
+                    <li>Configure server settings</li>
+                    <li>Enable security features</li>
+                </ol>
+                
+                <h3>VPN Configuration</h3>
+                <ol>
+                    <li>Download VPN app from app store</li>
+                    <li>Enter VPN server details</li>
+                    <li>Configure authentication</li>
+                    <li>Test connection</li>
+                </ol>
+                
+                <h3>Security Requirements</h3>
+                <ul>
+                    <li>Enable device passcode</li>
+                    <li>Enable remote wipe capability</li>
+                    <li>Install security apps</li>
+                    <li>Keep device updated</li>
+                </ul>
+                ]]>
+            </field>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="state">published</field>
+            <field name="author_id" ref="demo_user_agent3"/>
+            <field name="view_count" eval="91"/>
+            <field name="is_faq">True</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO KNOWLEDGE BASE ARTICLE FEEDBACK WITH RATINGS -->
+        <!-- ============================================ -->
+
+        <!-- Feedback for Password Reset Article -->
+        <record id="demo_kb_feedback_password_1" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_password_reset"/>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="rating">5</field>
+            <field name="feedback">Very helpful! Solved my problem quickly.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_password_2" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_password_reset"/>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="rating">5</field>
+            <field name="feedback">Clear instructions, worked perfectly.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_password_3" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_password_reset"/>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="rating">4</field>
+            <field name="feedback">Good article, but could use more screenshots.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <!-- Feedback for Printer Troubleshooting Article -->
+        <record id="demo_kb_feedback_printer_1" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_printer_troubleshooting"/>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="rating">5</field>
+            <field name="feedback">Fixed my printer issue immediately!</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_printer_2" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_printer_troubleshooting"/>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="rating">4</field>
+            <field name="feedback">Helpful troubleshooting steps.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_printer_3" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_printer_troubleshooting"/>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="rating">5</field>
+            <field name="feedback">Excellent guide, very comprehensive.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <!-- Feedback for Network Configuration Article -->
+        <record id="demo_kb_feedback_network_1" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_network_configuration"/>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="rating">4</field>
+            <field name="feedback">Good guide for network setup.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_network_2" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_network_configuration"/>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="rating">4</field>
+            <field name="feedback">Clear instructions, easy to follow.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <!-- Feedback for Email Setup Article -->
+        <record id="demo_kb_feedback_email_1" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_email_setup"/>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="rating">5</field>
+            <field name="feedback">Perfect step-by-step instructions.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_email_2" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_email_setup"/>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="rating">4</field>
+            <field name="feedback">Very helpful for email configuration.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <!-- Feedback for Software Installation Article -->
+        <record id="demo_kb_feedback_software_1" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_software_installation"/>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="rating">4</field>
+            <field name="feedback">Good installation guide.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_software_2" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_software_installation"/>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="rating">5</field>
+            <field name="feedback">Excellent guide, saved me time!</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <!-- Feedback for Security Best Practices Article -->
+        <record id="demo_kb_feedback_security_1" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_security_best_practices"/>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="rating">5</field>
+            <field name="feedback">Very important security information.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <!-- Feedback for Mobile Device Setup Article -->
+        <record id="demo_kb_feedback_mobile_1" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_mobile_device_setup"/>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="rating">4</field>
+            <field name="feedback">Helpful for mobile setup.</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <record id="demo_kb_feedback_mobile_2" model="helpdesk.knowledge.article.feedback">
+            <field name="article_id" ref="demo_kb_mobile_device_setup"/>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="rating">5</field>
+            <field name="feedback">Perfect guide for setting up my phone!</field>
+            <field name="helpful">True</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO SAMPLE TICKETS -->
+        <!-- ============================================ -->
+
+        <record id="demo_ticket_1" model="helpdesk.ticket">
+            <field name="name">Cannot access email after password change</field>
+            <field name="description">Customer reports they changed their password but now cannot log into their email. They receive an "invalid credentials" error message.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">2</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <record id="demo_ticket_2" model="helpdesk.ticket">
+            <field name="name">Printer not working in main office</field>
+            <field name="description">The main office printer is showing error code E-203 and won't print. Multiple users are affected. Please send technician immediately.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_hardware"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(minutes=30)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+            <field name="knowledge_article_ids" eval="[(4, ref('demo_kb_printer_troubleshooting'))]"/>
+        </record>
+
+        <record id="demo_ticket_3" model="helpdesk.ticket">
+            <field name="name">Request for new user account setup</field>
+            <field name="description">New employee John Doe needs a user account created for email, network access, and company software. Start date is next Monday.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="knowledge_article_ids" eval="[(4, ref('demo_kb_email_setup')), (4, ref('demo_kb_password_reset'))]"/>
+        </record>
+
+        <record id="demo_ticket_4" model="helpdesk.ticket">
+            <field name="name">Internet connection slow in conference room</field>
+            <field name="description">WiFi connection is very slow in the main conference room. Meetings are being affected. Speed test shows only 2 Mbps download.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_network"/>
+            <field name="priority">1</field>
+            <field name="state">resolved</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=1, hours=2)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="feedback">WiFi issue has been resolved. The connection is now stable and working properly. Appreciate the quick response and resolution.</field>
+            <field name="knowledge_article_ids" eval="[(4, ref('demo_kb_network_configuration'))]"/>
+        </record>
+
+        <record id="demo_ticket_5" model="helpdesk.ticket">
+            <field name="name">Invoice payment question</field>
+            <field name="description">Question about invoice #INV-2024-001. Customer wants to know why the amount is different from the quote provided last month.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="priority">0</field>
+            <field name="state">closed</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_billing"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=2, hours=1)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=2)"/>
+            <field name="closed_date" eval="datetime.now() - timedelta(days=2)"/>
+            <field name="rating">3</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=2)"/>
+            <field name="feedback">Invoice question was answered. The explanation was helpful, though it took a bit longer than expected to get a response.</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO TICKETS WITH SLA TRACKING -->
+        <!-- ============================================ -->
+
+        <!-- Ticket with Standard SLA (Medium Priority) - SLA Met -->
+        <record id="demo_ticket_sla_standard_met" model="helpdesk.ticket">
+            <field name="name">Software update request - Standard SLA</field>
+            <field name="description">Customer requests update to latest version of the software. Standard priority ticket with 24-hour response SLA.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">1</field>
+            <field name="state">resolved</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="feedback">Software update completed successfully. The process was straightforward and the new version is working well. Thanks for the support!</field>
+            <field name="knowledge_article_ids" eval="[(4, ref('demo_kb_software_installation'))]"/>
+        </record>
+
+        <!-- Ticket with Priority SLA (High Priority) - SLA At Risk -->
+        <record id="demo_ticket_sla_priority_at_risk" model="helpdesk.ticket">
+            <field name="name">Critical system outage - Priority SLA</field>
+            <field name="description">Production server is down. Multiple customers affected. High priority ticket with 4-hour response SLA. Currently at risk of breaching.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3, minutes=30)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <!-- Ticket with Urgent SLA (Urgent Priority) - SLA Breached -->
+        <record id="demo_ticket_sla_urgent_breached" model="helpdesk.ticket">
+            <field name="name">Security breach detected - Urgent SLA</field>
+            <field name="description">Unauthorized access detected in customer database. Immediate action required. Urgent priority ticket with 1-hour response SLA. SLA has been breached.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">3</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_manager"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_urgent"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <!-- Ticket explicitly overdue based on SLA -->
+        <record id="demo_ticket_overdue_sla" model="helpdesk.ticket">
+            <field name="name">Overdue ticket - SLA breached and still open</field>
+            <field name="description">This demo ticket represents an overdue case where the SLA resolution deadline has already passed but the ticket is still open.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">3</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_urgent"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=1, hours=2)"/>
+            <!-- SLA resolution deadline is in the past so the ticket is overdue -->
+            <field name="sla_resolution_deadline" eval="datetime.now() - timedelta(hours=4)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <!-- Ticket with Standard SLA - New, Not Yet Assigned -->
+        <record id="demo_ticket_sla_standard_new" model="helpdesk.ticket">
+            <field name="name">Password reset request - Standard SLA</field>
+            <field name="description">User forgot password and needs reset. Standard priority ticket with 24-hour response SLA. Created recently, not yet assigned.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+        </record>
+
+        <!-- Ticket with Universal SLA - Low Priority -->
+        <record id="demo_ticket_sla_universal" model="helpdesk.ticket">
+            <field name="name">General inquiry about features - Universal SLA</field>
+            <field name="description">Customer asking about available features and pricing. Low priority ticket using universal SLA policy.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="priority">0</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=12)"/>
+        </record>
+
+        <!-- Ticket with Priority SLA - Response Met, Resolution At Risk -->
+        <record id="demo_ticket_sla_mixed_status" model="helpdesk.ticket">
+            <field name="name">Database performance issue - Mixed SLA Status</field>
+            <field name="description">Database queries are running slowly. High priority ticket. Response SLA met (responded within 4 hours), but resolution SLA is at risk (24 hours).</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3)"/>
+        </record>
+
+        <!-- Additional Demo Tickets (More Variety) -->
+        <record id="demo_ticket_6" model="helpdesk.ticket">
+            <field name="name">Cannot connect to office WiFi</field>
+            <field name="description">Users in the second floor report frequent disconnects from WiFi. Issue started after router reboot.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_network"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+        </record>
+
+        <record id="demo_ticket_7" model="helpdesk.ticket">
+            <field name="name">Refund request for duplicate payment</field>
+            <field name="description">Customer paid invoice twice by mistake and requests a refund for the duplicate payment.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_billing"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=6)"/>
+        </record>
+
+        <record id="demo_ticket_8" model="helpdesk.ticket">
+            <field name="name">Request product demo and pricing details</field>
+            <field name="description">Prospect wants a 30-minute product demo and a pricing breakdown for 50 users.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="priority">0</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_training'))]"/>
+        </record>
+
+        <record id="demo_ticket_9" model="helpdesk.ticket">
+            <field name="name">App crash on login screen (iOS)</field>
+            <field name="description">Mobile app crashes immediately after tapping Login. Reported on iPhone 14, iOS 17.2.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">resolved</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(minutes=20)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_bug'))]"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(minutes=20)"/>
+            <field name="feedback">App crash issue has been fixed. The update resolved the problem and the app is now working smoothly on iOS. Great work!</field>
+        </record>
+
+        <record id="demo_ticket_10" model="helpdesk.ticket">
+            <field name="name">Urgent: Payment gateway down</field>
+            <field name="description">Checkout is failing for all customers due to payment gateway errors. Immediate investigation required.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">3</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_manager"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_urgent"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=1, minutes=40)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <record id="demo_ticket_11" model="helpdesk.ticket">
+            <field name="name">Cancelled: Duplicate ticket created by mistake</field>
+            <field name="description">Customer confirms issue was already reported; this duplicate ticket should be cancelled.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">0</field>
+            <field name="state">cancelled</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=1, hours=4)"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO SOCIAL MEDIA PLATFORMS -->
+        <!-- ============================================ -->
+
+        <record id="demo_social_platform_facebook" model="helpdesk.social.media.platform">
+            <field name="name">Acme Corp Facebook</field>
+            <field name="platform_type">facebook</field>
+            <field name="page_id">acmecorp</field>
+            <field name="active">True</field>
+            <field name="monitor_posts">True</field>
+            <field name="monitor_messages">True</field>
+            <field name="monitor_comments">True</field>
+            <field name="default_team_id" ref="demo_team_sales"/>
+            <field name="default_category_id" ref="demo_category_account"/>
+            <field name="default_priority">1</field>
+        </record>
+
+        <record id="demo_social_platform_twitter" model="helpdesk.social.media.platform">
+            <field name="name">Acme Corp Twitter</field>
+            <field name="platform_type">twitter</field>
+            <field name="page_id">@acmecorp</field>
+            <field name="active">True</field>
+            <field name="monitor_posts">True</field>
+            <field name="monitor_messages">False</field>
+            <field name="monitor_comments">True</field>
+            <field name="default_team_id" ref="demo_team_sales"/>
+            <field name="default_priority">0</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO SOCIAL MEDIA POSTS -->
+        <!-- ============================================ -->
+
+        <record id="demo_social_post_1" model="helpdesk.social.media.post">
+            <field name="name">FB-001</field>
+            <field name="platform_id" ref="demo_social_platform_facebook"/>
+            <field name="platform_type">facebook</field>
+            <field name="post_type">post</field>
+            <field name="post_id">fb_post_12345</field>
+            <field name="content">Having trouble accessing our online portal. Getting error messages when trying to log in. Can someone help?</field>
+            <field name="post_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="author_name">Jane Customer</field>
+            <field name="author_username">jane.customer</field>
+            <field name="state">new</field>
+        </record>
+
+        <record id="demo_social_post_2" model="helpdesk.social.media.post">
+            <field name="name">TW-001</field>
+            <field name="platform_id" ref="demo_social_platform_twitter"/>
+            <field name="platform_type">twitter</field>
+            <field name="post_type">post</field>
+            <field name="post_id">tw_post_67890</field>
+            <field name="content">@acmecorp When will the new feature be available? We've been waiting for months!</field>
+            <field name="post_date" eval="datetime.now() - timedelta(hours=4)"/>
+            <field name="author_name">Bob Client</field>
+            <field name="author_username">@bobclient</field>
+            <field name="state">ticket_created</field>
+            <field name="processed_date" eval="datetime.now() - timedelta(hours=3)"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO ENTRIES FOR USER ID=2 (ADMIN) -->
+        <!-- ============================================ -->
+
+        <!-- Demo Tickets for User ID=2 -->
+        <record id="demo_ticket_user2_1" model="helpdesk.ticket">
+            <field name="name">Critical: System security vulnerability detected</field>
+            <field name="description">Security scan detected a potential vulnerability in the authentication system. Immediate review required by administrator.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">3</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" eval="2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_urgent"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <record id="demo_ticket_user2_2" model="helpdesk.ticket">
+            <field name="name">Database backup verification request</field>
+            <field name="description">Customer requests verification that their database backups are running correctly and can be restored if needed.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">1</field>
+            <field name="state">assigned</field>
+            <field name="user_id" eval="2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=5)"/>
+        </record>
+
+        <record id="demo_ticket_user2_3" model="helpdesk.ticket">
+            <field name="name">API integration configuration review</field>
+            <field name="description">Customer needs assistance configuring API integration with third-party service. Admin review required for security compliance.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">resolved</field>
+            <field name="user_id" eval="2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=1, hours=3)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="feedback">API integration configuration was completed successfully. The security review process was thorough and the setup instructions were clear. Very satisfied with the support.</field>
+        </record>
+
+        <!-- Demo Call Logs for User ID=2 -->
+        <record id="demo_call_log_user2_1" model="helpdesk.call.log">
+            <field name="call_date" eval="datetime.now() - timedelta(hours=3)"/>
+            <field name="call_end_date" eval="datetime.now() - timedelta(hours=2, minutes=35)"/>
+            <field name="direction">inbound</field>
+            <field name="phone_number">+1-555-9999</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="contact_name">Security Team Lead</field>
+            <field name="subject">Security vulnerability discussion</field>
+            <field name="description">Discussed the detected security vulnerability and immediate action plan.</field>
+            <field name="call_outcome">escalated</field>
+            <field name="agent_id" eval="2"/>
+            <field name="state">completed</field>
+        </record>
+
+        <record id="demo_call_log_user2_2" model="helpdesk.call.log">
+            <field name="call_date" eval="datetime.now() - timedelta(days=1, hours=2)"/>
+            <field name="call_end_date" eval="datetime.now() - timedelta(days=1, hours=1, minutes=45)"/>
+            <field name="direction">outbound</field>
+            <field name="phone_number">+1-555-8888</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="contact_name">IT Manager</field>
+            <field name="subject">Follow-up on backup verification</field>
+            <field name="description">Follow-up call to confirm backup verification process and answer questions.</field>
+            <field name="call_outcome">resolved</field>
+            <field name="resolution_summary">Confirmed backup system is working correctly. Provided documentation for restore procedures.</field>
+            <field name="agent_id" eval="2"/>
+            <field name="state">completed</field>
+        </record>
+
+        <record id="demo_call_log_user2_3" model="helpdesk.call.log">
+            <field name="call_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="call_end_date" eval="datetime.now() - timedelta(minutes=50)"/>
+            <field name="direction">inbound</field>
+            <field name="phone_number">+1-555-7777</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="contact_name">Integration Specialist</field>
+            <field name="subject">API configuration support</field>
+            <field name="description">Provided guidance on API integration configuration and security best practices.</field>
+            <field name="call_outcome">resolved</field>
+            <field name="resolution_summary">Configured API integration with proper security settings. Documentation sent via email.</field>
+            <field name="agent_id" eval="2"/>
+            <field name="state">completed</field>
+        </record>
+
+        <!-- Demo Social Media Post for User ID=2 -->
+        <record id="demo_social_post_user2_1" model="helpdesk.social.media.post">
+            <field name="name">FB-ADMIN-001</field>
+            <field name="platform_id" ref="demo_social_platform_facebook"/>
+            <field name="platform_type">facebook</field>
+            <field name="post_type">message</field>
+            <field name="post_id">fb_msg_admin_001</field>
+            <field name="content">We need urgent assistance with our account security settings. Can an administrator help us immediately?</field>
+            <field name="post_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="author_name">VIP Customer</field>
+            <field name="author_username">vip.customer</field>
+            <field name="state">ticket_created</field>
+            <field name="processed_date" eval="datetime.now() - timedelta(minutes=45)"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ADDITIONAL DEMO TICKETS (More Variety) -->
+        <!-- ============================================ -->
+
+        <!-- Draft Tickets -->
+        <record id="demo_ticket_draft_1" model="helpdesk.ticket">
+            <field name="name">Draft: Feature request for dark mode</field>
+            <field name="description">Customer would like to request a dark mode feature for the application. This ticket is still being drafted.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_feature_request"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">1</field>
+            <field name="state">draft</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_feature'))]"/>
+        </record>
+
+        <!-- Social Media Channel Tickets -->
+        <record id="demo_ticket_social_media_1" model="helpdesk.ticket">
+            <field name="name">Twitter complaint about service quality</field>
+            <field name="description">Customer posted on Twitter complaining about slow response times and poor service quality. Need to address publicly.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_complaint"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_social_media"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+        </record>
+
+        <!-- Product Inquiry Tickets -->
+        <record id="demo_ticket_product_inquiry_1" model="helpdesk.ticket">
+            <field name="name">Product inquiry: Enterprise plan features</field>
+            <field name="description">Prospect wants detailed information about Enterprise plan features, pricing, and implementation timeline.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_product_inquiry"/>
+            <field name="priority">1</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=4)"/>
+        </record>
+
+        <!-- Order Support Tickets -->
+        <record id="demo_ticket_order_support_1" model="helpdesk.ticket">
+            <field name="name">Order #ORD-2024-1234 shipping delay</field>
+            <field name="description">Customer reports order #ORD-2024-1234 was supposed to arrive yesterday but hasn't been delivered. Tracking shows it's still in transit.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_order_support"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=1)"/>
+        </record>
+
+        <!-- Billing & Payment Tickets -->
+        <record id="demo_ticket_billing_1" model="helpdesk.ticket">
+            <field name="name">Invoice #INV-2024-0056 payment issue</field>
+            <field name="description">Customer tried to pay invoice #INV-2024-0056 but payment was declined. Card is valid and has sufficient funds.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_billing_payment"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">2</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_billing"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3)"/>
+        </record>
+
+        <!-- Account Management Tickets -->
+        <record id="demo_ticket_account_management_1" model="helpdesk.ticket">
+            <field name="name">Request to update company profile information</field>
+            <field name="description">Customer needs to update company name, address, and contact information in their account profile.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_account_management"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">0</field>
+            <field name="state">resolved</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=1, hours=5)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="feedback">Company profile information has been updated successfully. The process was quick and all changes were applied correctly. Thank you!</field>
+        </record>
+
+        <!-- Bug Report Tickets -->
+        <record id="demo_ticket_bug_report_1" model="helpdesk.ticket">
+            <field name="name">Bug: Data export fails for large datasets</field>
+            <field name="description">When exporting data with more than 10,000 records, the export fails with error "Memory limit exceeded". This happens consistently.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_bug_report"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=6)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_bug'))]"/>
+        </record>
+
+        <!-- General Inquiry Tickets -->
+        <record id="demo_ticket_general_inquiry_1" model="helpdesk.ticket">
+            <field name="name">General question about service availability</field>
+            <field name="description">Customer wants to know if services are available 24/7 or only during business hours.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_general_inquiry"/>
+            <field name="priority">0</field>
+            <field name="state">resolved</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=2, hours=3)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=2)"/>
+            <field name="rating">3</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=2)"/>
+            <field name="feedback">Service availability question was answered. The information provided was helpful, though I would have appreciated a faster initial response.</field>
+        </record>
+
+        <!-- Feedback Tickets -->
+        <record id="demo_ticket_feedback_1" model="helpdesk.ticket">
+            <field name="name">Positive feedback: Great support experience</field>
+            <field name="description">Customer wants to provide positive feedback about the excellent support they received from agent Sarah. Very satisfied with response time and solution quality.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_feedback"/>
+            <field name="priority">0</field>
+            <field name="state">closed</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=3)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=3)"/>
+            <field name="closed_date" eval="datetime.now() - timedelta(days=3)"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=3)"/>
+            <field name="feedback">Excellent support experience! Sarah was very responsive and helped resolve my issue quickly. The solution was clear and effective. Highly satisfied with the service quality.</field>
+        </record>
+
+        <!-- Change Request Tickets -->
+        <record id="demo_ticket_change_request_1" model="helpdesk.ticket">
+            <field name="name">Change request: Upgrade to higher plan</field>
+            <field name="description">Customer wants to upgrade from Basic plan to Professional plan. Need to process the change and update billing.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_change"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_billing"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+        </record>
+
+        <!-- Hardware Issues Tickets -->
+        <record id="demo_ticket_hardware_1" model="helpdesk.ticket">
+            <field name="name">Laptop screen flickering issue</field>
+            <field name="description">Employee reports laptop screen flickers intermittently, especially when opening applications. Started happening after recent Windows update.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_hardware"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+        </record>
+
+        <!-- Network Issues Tickets -->
+        <record id="demo_ticket_network_1" model="helpdesk.ticket">
+            <field name="name">VPN connection timeout errors</field>
+            <field name="description">Multiple users reporting VPN connection timeouts when trying to access remote servers. Connection drops after 5-10 minutes.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_network"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=4)"/>
+        </record>
+
+        <!-- Low Priority Tickets -->
+        <record id="demo_ticket_low_priority_1" model="helpdesk.ticket">
+            <field name="name">Question about documentation</field>
+            <field name="description">Customer has a question about the API documentation. Wants clarification on authentication method.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_general_inquiry"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">0</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+        </record>
+
+        <!-- Closed Tickets with Rating -->
+        <record id="demo_ticket_closed_rated_1" model="helpdesk.ticket">
+            <field name="name">Closed: Password reset completed</field>
+            <field name="description">Password reset request was successfully completed. Customer can now log in with new password.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">closed</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=5, hours=2)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=5)"/>
+            <field name="closed_date" eval="datetime.now() - timedelta(days=4)"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=4)"/>
+            <field name="feedback">Password reset was completed successfully. The process was smooth and I was able to log in without any issues. Thank you for the quick assistance!</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO TICKETS FOR DASHBOARD DISPLAY -->
+        <!-- ============================================ -->
+
+        <!-- Unassigned Tickets (for Dashboard) -->
+        <record id="demo_ticket_dashboard_unassigned_1" model="helpdesk.ticket">
+            <field name="name">New feature request - Dashboard demo</field>
+            <field name="description">Customer requesting new feature for dashboard analytics. Unassigned ticket for demo purposes.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_feature_request"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+        </record>
+
+        <record id="demo_ticket_dashboard_unassigned_2" model="helpdesk.ticket">
+            <field name="name">Account access issue - Dashboard demo</field>
+            <field name="description">User cannot access their account. Unassigned ticket waiting for assignment.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+        </record>
+
+        <record id="demo_ticket_dashboard_unassigned_3" model="helpdesk.ticket">
+            <field name="name">Billing inquiry - Dashboard demo</field>
+            <field name="description">Question about monthly billing charges. Unassigned ticket for demo.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_billing"/>
+            <field name="priority">0</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_billing"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+        </record>
+
+        <!-- Today's Tickets (created today for Dashboard) -->
+        <record id="demo_ticket_dashboard_today_1" model="helpdesk.ticket">
+            <field name="name">Password reset needed - Created today</field>
+            <field name="description">User needs password reset. Created today for dashboard demo.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="create_date" eval="datetime.now()"/>
+        </record>
+
+        <record id="demo_ticket_dashboard_today_2" model="helpdesk.ticket">
+            <field name="name">Software installation help - Created today</field>
+            <field name="description">Customer needs help installing software. Created today for dashboard demo.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">1</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="create_date" eval="datetime.now()"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+        </record>
+
+        <record id="demo_ticket_dashboard_today_3" model="helpdesk.ticket">
+            <field name="name">Network connectivity issue - Created today</field>
+            <field name="description">Network connection problems reported. Created today for dashboard demo.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_network"/>
+            <field name="priority">2</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="create_date" eval="datetime.now()"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=1)"/>
+        </record>
+
+        <!-- SLA At Risk Tickets (for Dashboard) -->
+        <!-- These tickets are created/assigned close to SLA deadline to trigger at_risk status -->
+        <record id="demo_ticket_dashboard_sla_at_risk_1" model="helpdesk.ticket">
+            <field name="name">Critical bug report - SLA at risk</field>
+            <field name="description">Critical bug affecting production. High priority ticket approaching SLA deadline.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_bug_report"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <!-- Assigned 3.5 hours ago, approaching 4-hour response SLA -->
+            <field name="create_date" eval="datetime.now() - timedelta(hours=3, minutes=50)"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3, minutes=30)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <record id="demo_ticket_dashboard_sla_at_risk_2" model="helpdesk.ticket">
+            <field name="name">Server performance degradation - SLA at risk</field>
+            <field name="description">Server response times are increasing. High priority ticket with SLA approaching deadline.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <!-- Created 3.8 hours ago, approaching 4-hour response SLA -->
+            <field name="create_date" eval="datetime.now() - timedelta(hours=3, minutes=48)"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3, minutes=45)"/>
+        </record>
+
+        <!-- SLA Breached Tickets (for Dashboard) -->
+        <record id="demo_ticket_dashboard_sla_breached_1" model="helpdesk.ticket">
+            <field name="name">Security vulnerability report - SLA breached</field>
+            <field name="description">Potential security vulnerability discovered. Urgent priority ticket that has breached SLA deadline.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">3</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_manager"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_phone"/>
+            <field name="sla_policy_id" ref="sla_policy_urgent"/>
+            <!-- Created 2 hours ago, breached 1-hour urgent SLA -->
+            <field name="create_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=1, minutes=45)"/>
+            <field name="tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <!-- Tickets Assigned to Demo Users (for "My Tickets" when logged in as demo users) -->
+        <record id="demo_ticket_dashboard_my_tickets_1" model="helpdesk.ticket">
+            <field name="name">Email configuration issue - My Tickets demo</field>
+            <field name="description">Email client configuration problem. Assigned to demo agent for dashboard.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=5)"/>
+        </record>
+
+        <record id="demo_ticket_dashboard_my_tickets_2" model="helpdesk.ticket">
+            <field name="name">Hardware replacement request - My Tickets demo</field>
+            <field name="description">Request for hardware replacement. Assigned to demo agent.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_hardware"/>
+            <field name="priority">1</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_web"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3)"/>
+        </record>
+
+        <record id="demo_ticket_dashboard_my_tickets_3" model="helpdesk.ticket">
+            <field name="name">Billing dispute - My Tickets demo</field>
+            <field name="description">Customer disputing billing charges. Assigned to demo agent.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_complaint"/>
+            <field name="category_id" ref="demo_category_billing"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_billing"/>
+            <field name="channel_id" ref="channel_email"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO NOTIFICATION TEMPLATES -->
+        <!-- ============================================ -->
+
+        <!-- Ticket Created Notification Template -->
+        <record id="demo_notification_template_ticket_created" model="helpdesk.notification.template">
+            <field name="name">Ticket Created - Customer Notification</field>
+            <field name="description">Sends email notification to customer when a new ticket is created</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_created</field>
+            <field name="notification_channel">both</field>
+            <field name="email_template_id" ref="email_template_ticket_created"/>
+            <field name="recipient_type">customer</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- Ticket Assigned Notification Template -->
+        <record id="demo_notification_template_ticket_assigned" model="helpdesk.notification.template">
+            <field name="name">Ticket Assigned - Agent Notification</field>
+            <field name="description">Notifies assigned agent when a ticket is assigned to them</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_assigned</field>
+            <field name="notification_channel">both</field>
+            <field name="email_template_id" ref="email_template_ticket_assigned"/>
+            <field name="recipient_type">assigned_user</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- Status Change Notification Template -->
+        <record id="demo_notification_template_status_change" model="helpdesk.notification.template">
+            <field name="name">Status Changed - Customer Notification</field>
+            <field name="description">Notifies customer when ticket status changes</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_status_change</field>
+            <field name="notification_channel">both</field>
+            <field name="email_template_id" ref="email_template_ticket_status_change"/>
+            <field name="recipient_type">customer</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- Ticket Comment Notification Template -->
+        <record id="demo_notification_template_comment" model="helpdesk.notification.template">
+            <field name="name">New Comment - Customer Notification</field>
+            <field name="description">Notifies customer when a new comment is added to their ticket</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_comment</field>
+            <field name="notification_channel">both</field>
+            <field name="email_template_id" ref="email_template_ticket_comment"/>
+            <field name="recipient_type">customer</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- Ticket Resolved Notification Template -->
+        <record id="demo_notification_template_resolved" model="helpdesk.notification.template">
+            <field name="name">Ticket Resolved - Customer Notification</field>
+            <field name="description">Notifies customer when ticket is resolved</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_resolved</field>
+            <field name="notification_channel">both</field>
+            <field name="subject">Ticket Resolved: ${object.ticket_number}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.partner_id.name or 'Customer'},</p>
+                    <p>Your ticket has been resolved!</p>
+                    <div style="margin: 16px 0px 16px 0px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Ticket Number:</td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">${object.ticket_number}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Subject:</td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">${object.name}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p>You can view the resolution details by clicking the link below:</p>
+                    <p style="margin: 16px 0px;">
+                        <a href="${object.get_portal_url()}" style="background-color: #28a745; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                    </p>
+                    <p>Best regards,<br/>${user.name}</p>
+                </div>
+            </field>
+            <field name="in_app_message">Ticket ${object.ticket_number} has been resolved</field>
+            <field name="recipient_type">customer</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- Ticket Closed Notification Template -->
+        <record id="demo_notification_template_closed" model="helpdesk.notification.template">
+            <field name="name">Ticket Closed - Customer Notification</field>
+            <field name="description">Notifies customer when ticket is closed</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_closed</field>
+            <field name="notification_channel">both</field>
+            <field name="subject">Ticket Closed: ${object.ticket_number}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear ${object.partner_id.name or 'Customer'},</p>
+                    <p>Your ticket has been closed.</p>
+                    <div style="margin: 16px 0px 16px 0px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Ticket Number:</td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">${object.ticket_number}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8f9fa; border: 1px solid #dee2e6; font-weight: bold;">Subject:</td>
+                                <td style="padding: 8px; border: 1px solid #dee2e6;">${object.name}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p>If you need to reopen this ticket or have any questions, please contact our support team.</p>
+                    <p style="margin: 16px 0px;">
+                        <a href="${object.get_portal_url()}" style="background-color: #6c757d; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                    </p>
+                    <p>Best regards,<br/>${user.name}</p>
+                </div>
+            </field>
+            <field name="in_app_message">Ticket ${object.ticket_number} has been closed</field>
+            <field name="recipient_type">customer</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- SLA Warning Notification Template -->
+        <record id="demo_notification_template_sla_warning" model="helpdesk.notification.template">
+            <field name="name">SLA Warning - Team Notification</field>
+            <field name="description">Notifies team when ticket is approaching SLA deadline</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_sla_warning</field>
+            <field name="notification_channel">both</field>
+            <field name="subject">SLA Warning: ${object.ticket_number}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Team,</p>
+                    <p style="color: #ffc107; font-weight: bold;">⚠️ SLA Warning: Ticket is approaching deadline</p>
+                    <div style="margin: 16px 0px 16px 0px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px; background-color: #fff3cd; border: 1px solid #ffc107; font-weight: bold;">Ticket Number:</td>
+                                <td style="padding: 8px; border: 1px solid #ffc107;">${object.ticket_number}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #fff3cd; border: 1px solid #ffc107; font-weight: bold;">Subject:</td>
+                                <td style="padding: 8px; border: 1px solid #ffc107;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #fff3cd; border: 1px solid #ffc107; font-weight: bold;">SLA Status:</td>
+                                <td style="padding: 8px; border: 1px solid #ffc107;">${dict(object._fields['sla_response_status'].selection)[object.sla_response_status] if object.sla_response_status else 'N/A'}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p>Please take action to ensure SLA compliance.</p>
+                    <p style="margin: 16px 0px;">
+                        <a href="${object.access_url}" style="background-color: #ffc107; color: #000000; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                    </p>
+                </div>
+            </field>
+            <field name="in_app_message">⚠️ SLA Warning: Ticket ${object.ticket_number} is approaching deadline</field>
+            <field name="recipient_type">team_members</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- SLA Breach Notification Template -->
+        <record id="demo_notification_template_sla_breach" model="helpdesk.notification.template">
+            <field name="name">SLA Breach - Management Notification</field>
+            <field name="description">Notifies team leader and management when SLA is breached</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_sla_breach</field>
+            <field name="notification_channel">both</field>
+            <field name="subject">🚨 SLA Breach: ${object.ticket_number}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Team Leader,</p>
+                    <p style="color: #dc3545; font-weight: bold;">🚨 SLA BREACH ALERT</p>
+                    <p>The SLA deadline has been breached for the following ticket:</p>
+                    <div style="margin: 16px 0px 16px 0px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">Ticket Number:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${object.ticket_number}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">Subject:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">Customer:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${object.partner_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">SLA Status:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${dict(object._fields['sla_response_status'].selection)[object.sla_response_status] if object.sla_response_status else 'N/A'}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p><strong>Immediate action required!</strong></p>
+                    <p style="margin: 16px 0px;">
+                        <a href="${object.access_url}" style="background-color: #dc3545; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                    </p>
+                </div>
+            </field>
+            <field name="in_app_message">🚨 SLA Breach: Ticket ${object.ticket_number} has exceeded SLA deadline</field>
+            <field name="recipient_type">team_leader</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- Priority Change Notification Template -->
+        <record id="demo_notification_template_priority_change" model="helpdesk.notification.template">
+            <field name="name">Priority Changed - Team Notification</field>
+            <field name="description">Notifies team when ticket priority changes</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_priority_change</field>
+            <field name="notification_channel">in_app</field>
+            <field name="in_app_message">Priority changed for ticket ${object.ticket_number}: ${dict(object._fields['priority'].selection)[object.priority]}</field>
+            <field name="recipient_type">team_members</field>
+            <field name="priority_filter">all</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- High Priority Ticket Created - Team Notification -->
+        <record id="demo_notification_template_high_priority_created" model="helpdesk.notification.template">
+            <field name="name">High Priority Ticket Created - Team Notification</field>
+            <field name="description">Notifies team immediately when a high or urgent priority ticket is created</field>
+            <field name="active">True</field>
+            <field name="notification_type">ticket_created</field>
+            <field name="notification_channel">both</field>
+            <field name="subject">🚨 High Priority Ticket: ${object.ticket_number}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear Team,</p>
+                    <p style="color: #dc3545; font-weight: bold;">🚨 High Priority Ticket Created</p>
+                    <div style="margin: 16px 0px 16px 0px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">Ticket Number:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${object.ticket_number}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">Subject:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">Priority:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${dict(object._fields['priority'].selection)[object.priority]}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; background-color: #f8d7da; border: 1px solid #dc3545; font-weight: bold;">Customer:</td>
+                                <td style="padding: 8px; border: 1px solid #dc3545;">${object.partner_id.name}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p style="margin: 16px 0px;">
+                        <a href="${object.access_url}" style="background-color: #dc3545; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">View Ticket</a>
+                    </p>
+                </div>
+            </field>
+            <field name="in_app_message">🚨 High Priority Ticket ${object.ticket_number} created: ${object.name}</field>
+            <field name="recipient_type">team_members</field>
+            <field name="priority_filter">2</field>
+            <field name="condition_domain">[('priority', 'in', ['2', '3'])]</field>
+            <field name="send_immediately">True</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO TICKETS WITH ADDITIONAL CHANNELS -->
+        <!-- ============================================ -->
+
+        <!-- Live Chat Channel Tickets -->
+        <record id="demo_ticket_chat_1" model="helpdesk.ticket">
+            <field name="name">Live chat inquiry about product features</field>
+            <field name="description">Customer inquired via live chat about advanced features and pricing. Needs follow-up call.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">1</field>
+            <field name="state">new</field>
+            <field name="team_id" ref="demo_team_sales"/>
+            <field name="channel_id" ref="channel_chat"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+        </record>
+
+        <record id="demo_ticket_chat_2" model="helpdesk.ticket">
+            <field name="name">Technical support via chat - password reset</field>
+            <field name="description">Customer requested password reset through live chat support. Account verified.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">1</field>
+            <field name="state">resolved</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_chat"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=2)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(hours=1)"/>
+        </record>
+
+        <!-- API Channel Tickets -->
+        <record id="demo_ticket_api_1" model="helpdesk.ticket">
+            <field name="name">API integration ticket - webhook failure</field>
+            <field name="description">Third-party system integration created ticket via API. Webhook endpoint returning 500 error.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_software"/>
+            <field name="priority">2</field>
+            <field name="state">in_progress</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_api"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=3)"/>
+        </record>
+
+        <record id="demo_ticket_api_2" model="helpdesk.ticket">
+            <field name="name">Automated ticket from monitoring system</field>
+            <field name="description">System monitoring tool created ticket via REST API when server CPU usage exceeded threshold.</field>
+            <field name="partner_id" ref="demo_partner_customer1"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_incident"/>
+            <field name="category_id" ref="demo_category_network"/>
+            <field name="priority">2</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_api"/>
+            <field name="sla_policy_id" ref="sla_policy_priority"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(minutes=45)"/>
+        </record>
+
+        <!-- Walk-in Channel Tickets -->
+        <record id="demo_ticket_walk_in_1" model="helpdesk.ticket">
+            <field name="name">In-person visit - hardware replacement request</field>
+            <field name="description">Customer visited office in person to request replacement of damaged laptop keyboard. Physical inspection completed.</field>
+            <field name="partner_id" ref="demo_partner_customer2"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_hardware"/>
+            <field name="priority">1</field>
+            <field name="state">assigned</field>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_walk_in"/>
+            <field name="sla_policy_id" ref="sla_policy_standard"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(hours=1)"/>
+        </record>
+
+        <record id="demo_ticket_walk_in_2" model="helpdesk.ticket">
+            <field name="name">Walk-in customer - account setup assistance</field>
+            <field name="description">Customer came to office for help setting up their new account. Provided in-person training session.</field>
+            <field name="partner_id" ref="demo_partner_customer3"/>
+            <field name="ticket_type_id" ref="demo_ticket_type_request"/>
+            <field name="category_id" ref="demo_category_account"/>
+            <field name="priority">0</field>
+            <field name="state">resolved</field>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="team_id" ref="demo_team_technical"/>
+            <field name="channel_id" ref="channel_walk_in"/>
+            <field name="sla_policy_id" ref="sla_policy_all_priorities"/>
+            <field name="assigned_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="resolved_date" eval="datetime.now() - timedelta(days=1, hours=-2)"/>
+            <field name="rating">4</field>
+            <field name="feedback_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="feedback">Excellent in-person support! The staff was very helpful and patient during the setup process.</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO WORKFLOW RULES -->
+        <!-- ============================================ -->
+
+        <!-- Rule 1: Auto-Assign Urgent Tickets to Technical Team (Round-Robin) -->
+        <record id="demo_workflow_rule_auto_assign_urgent" model="helpdesk.workflow.rule">
+            <field name="name">Auto-Assign Urgent Tickets to Technical Team</field>
+            <field name="description">Automatically assigns urgent priority tickets to Technical Support team using round-robin algorithm</field>
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="condition_domain">[('priority', '=', '3')]</field>
+            <field name="action_type">assign</field>
+            <field name="action_assign_team_id" ref="demo_team_technical"/>
+            <field name="action_assign_algorithm">round_robin</field>
+        </record>
+
+        <!-- Rule 2: Auto-Assign Billing Tickets to Billing Team (Workload-Based) -->
+        <record id="demo_workflow_rule_auto_assign_billing" model="helpdesk.workflow.rule">
+            <field name="name">Auto-Assign Billing Tickets</field>
+            <field name="description">Automatically assigns billing category tickets to Billing team using workload-based algorithm</field>
+            <field name="sequence">20</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="condition_domain">[('category_id.name', '=', 'Billing &amp; Payment')]</field>
+            <field name="action_type">assign</field>
+            <field name="action_assign_team_id" ref="demo_team_billing"/>
+            <field name="action_assign_algorithm">workload_based</field>
+        </record>
+
+        <!-- Rule 3: Auto-Assign Hardware Tickets (Skill-Based) -->
+        <record id="demo_workflow_rule_auto_assign_hardware" model="helpdesk.workflow.rule">
+            <field name="name">Auto-Assign Hardware Tickets</field>
+            <field name="description">Assigns hardware category tickets to Technical team using skill-based algorithm</field>
+            <field name="sequence">30</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="condition_domain">[('category_id.name', '=', 'Hardware Issues')]</field>
+            <field name="action_type">assign</field>
+            <field name="action_assign_team_id" ref="demo_team_technical"/>
+            <field name="action_assign_algorithm">skill_based</field>
+        </record>
+
+        <!-- Rule 4: Escalate High Priority Tickets -->
+        <record id="demo_workflow_rule_escalate_high_priority" model="helpdesk.workflow.rule">
+            <field name="name">Escalate High Priority Tickets</field>
+            <field name="description">Escalates high priority tickets to urgent and assigns to technical team</field>
+            <field name="sequence">40</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="condition_domain">[('priority', '=', '2')]</field>
+            <field name="action_type">escalate</field>
+            <field name="action_escalate_priority">3</field>
+            <field name="action_escalate_team_id" ref="demo_team_technical"/>
+        </record>
+
+        <!-- Rule 5: Auto-Tag Bug Reports -->
+        <record id="demo_workflow_rule_tag_bugs" model="helpdesk.workflow.rule">
+            <field name="name">Auto-Tag Bug Reports</field>
+            <field name="description">Automatically adds bug tag to tickets with bug-related keywords</field>
+            <field name="sequence">50</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="condition_domain">[('name', 'ilike', 'bug'), '|', ('name', 'ilike', 'error'), ('name', 'ilike', 'crash')]</field>
+            <field name="action_type">add_tag</field>
+            <field name="action_tag_ids" eval="[(4, ref('demo_tag_bug'))]"/>
+        </record>
+
+        <!-- Rule 6: Auto-Tag Urgent Tickets -->
+        <record id="demo_workflow_rule_tag_urgent" model="helpdesk.workflow.rule">
+            <field name="name">Auto-Tag Urgent Priority Tickets</field>
+            <field name="description">Automatically adds urgent tag to urgent priority tickets</field>
+            <field name="sequence">60</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="condition_domain">[('priority', '=', '3')]</field>
+            <field name="action_type">add_tag</field>
+            <field name="action_tag_ids" eval="[(4, ref('demo_tag_urgent'))]"/>
+        </record>
+
+        <!-- Rule 7: Notify Team on Status Change to Resolved -->
+        <record id="demo_workflow_rule_notify_resolved" model="helpdesk.workflow.rule">
+            <field name="name">Notify Team When Ticket Resolved</field>
+            <field name="description">Sends notification to team when ticket status changes to resolved</field>
+            <field name="sequence">70</field>
+            <field name="active">True</field>
+            <field name="trigger">on_status_change</field>
+            <field name="condition_domain">[('state', '=', 'resolved')]</field>
+            <field name="action_type">notify</field>
+            <field name="action_notify_message">Ticket has been resolved. Please review and close if appropriate.</field>
+        </record>
+
+        <!-- Rule 8: Change Priority Based on Category -->
+        <record id="demo_workflow_rule_set_priority_software" model="helpdesk.workflow.rule">
+            <field name="name">Set High Priority for Software Issues</field>
+            <field name="description">Sets high priority for software category tickets</field>
+            <field name="sequence">80</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="condition_domain">[('category_id.name', '=', 'Software Issues')]</field>
+            <field name="action_type">change_priority</field>
+            <field name="action_change_priority_value">2</field>
+        </record>
+
+        <!-- Rule 9: Post Message When Ticket Assigned (using on_update trigger) -->
+        <record id="demo_workflow_rule_post_assigned_message" model="helpdesk.workflow.rule">
+            <field name="name">Post Message on Assignment</field>
+            <field name="description">Posts a message when ticket is assigned to a user</field>
+            <field name="sequence">90</field>
+            <field name="active">True</field>
+            <field name="trigger">on_update</field>
+            <field name="condition_domain">[('user_id', '!=', False), ('state', '=', 'assigned')]</field>
+            <field name="action_type">post_message</field>
+            <field name="action_post_message_body">&lt;p&gt;This ticket has been assigned to you. Please review and start working on it.&lt;/p&gt;</field>
+            <field name="action_post_message_subtype">mail.mt_comment</field>
+        </record>
+
+        <!-- Rule 10: Auto-Assign Sales Inquiries -->
+        <record id="demo_workflow_rule_auto_assign_sales" model="helpdesk.workflow.rule">
+            <field name="name">Auto-Assign Sales Inquiries</field>
+            <field name="description">Automatically assigns product inquiry and order support tickets to Sales team</field>
+            <field name="sequence">100</field>
+            <field name="active">True</field>
+            <field name="trigger">on_create</field>
+            <field name="ticket_type_ids" eval="[(4, ref('demo_ticket_type_product_inquiry')), (4, ref('demo_ticket_type_order_support'))]"/>
+            <field name="action_type">assign</field>
+            <field name="action_assign_team_id" ref="demo_team_sales"/>
+            <field name="action_assign_algorithm">round_robin</field>
+        </record>
+
+        <!-- Rule 11: Escalate Unassigned Tickets After 24 Hours -->
+        <record id="demo_workflow_rule_escalate_unassigned" model="helpdesk.workflow.rule">
+            <field name="name">Escalate Unassigned High Priority Tickets</field>
+            <field name="description">Escalates high priority tickets that remain unassigned</field>
+            <field name="sequence">110</field>
+            <field name="active">True</field>
+            <field name="trigger">on_update</field>
+            <field name="condition_domain">[('priority', 'in', ['2', '3']), ('user_id', '=', False)]</field>
+            <field name="action_type">escalate</field>
+            <field name="action_escalate_priority">3</field>
+            <field name="action_escalate_team_id" ref="demo_team_technical"/>
+        </record>
+
+        <!-- Rule 12: Change State to Assigned When User Assigned (using on_update trigger) -->
+        <record id="demo_workflow_rule_auto_set_assigned" model="helpdesk.workflow.rule">
+            <field name="name">Auto-Set State to Assigned</field>
+            <field name="description">Automatically sets ticket state to assigned when a user is assigned</field>
+            <field name="sequence">120</field>
+            <field name="active">True</field>
+            <field name="trigger">on_update</field>
+            <field name="condition_domain">[('user_id', '!=', False), ('state', '=', 'new')]</field>
+            <field name="action_type">change_state</field>
+            <field name="action_change_state_value">assigned</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO MODEL LINKS -->
+        <!-- ============================================ -->
+
+        <!-- Link Ticket 1 to Partner -->
+        <record id="demo_model_link_1" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_1"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer1')"/>
+        </record>
+
+        <!-- Link Ticket 1 to Assigned User -->
+        <record id="demo_model_link_2" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_1"/>
+            <field name="res_ref" eval="'res.users,%s' % ref('demo_user_agent1')"/>
+        </record>
+
+        <!-- Link Ticket 2 to Partner -->
+        <record id="demo_model_link_3" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_2"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer2')"/>
+        </record>
+
+        <!-- Link Ticket 2 to Assigned User -->
+        <record id="demo_model_link_4" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_2"/>
+            <field name="res_ref" eval="'res.users,%s' % ref('demo_user_agent2')"/>
+        </record>
+
+        <!-- Link Ticket 3 to Partner -->
+        <record id="demo_model_link_5" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_3"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer3')"/>
+        </record>
+
+        <!-- Link Ticket 4 to Partner -->
+        <record id="demo_model_link_6" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_4"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer1')"/>
+        </record>
+
+        <!-- Link Ticket 4 to Assigned User -->
+        <record id="demo_model_link_7" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_4"/>
+            <field name="res_ref" eval="'res.users,%s' % ref('demo_user_agent1')"/>
+        </record>
+
+        <!-- Link Ticket 5 to Partner -->
+        <record id="demo_model_link_8" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_5"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer2')"/>
+        </record>
+
+        <!-- Link SLA Standard Met Ticket to Partner -->
+        <record id="demo_model_link_9" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_sla_standard_met"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer1')"/>
+        </record>
+
+        <!-- Link SLA Priority At Risk Ticket to Partner -->
+        <record id="demo_model_link_10" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_sla_priority_at_risk"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer2')"/>
+        </record>
+
+        <!-- Link SLA Priority At Risk Ticket to Assigned User -->
+        <record id="demo_model_link_11" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_sla_priority_at_risk"/>
+            <field name="res_ref" eval="'res.users,%s' % ref('demo_user_agent2')"/>
+        </record>
+
+        <!-- Link SLA Urgent Breached Ticket to Partner -->
+        <record id="demo_model_link_12" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_sla_urgent_breached"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer3')"/>
+        </record>
+
+        <!-- Link Bug Report Ticket to Partner -->
+        <record id="demo_model_link_13" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_bug_report_1"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer1')"/>
+        </record>
+
+        <!-- Link Bug Report Ticket to Assigned User -->
+        <record id="demo_model_link_14" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_bug_report_1"/>
+            <field name="res_ref" eval="'res.users,%s' % ref('demo_user_agent2')"/>
+        </record>
+
+        <!-- Link General Inquiry Ticket to Partner -->
+        <record id="demo_model_link_15" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_general_inquiry_1"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer2')"/>
+        </record>
+
+        <!-- Link Feedback Ticket to Partner -->
+        <record id="demo_model_link_16" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_feedback_1"/>
+            <field name="res_ref" eval="'res.partner,%s' % ref('demo_partner_customer1')"/>
+        </record>
+
+        <!-- Link Feedback Ticket to Assigned User (the agent who received the feedback) -->
+        <record id="demo_model_link_17" model="helpdesk.ticket.model.link">
+            <field name="ticket_id" ref="demo_ticket_feedback_1"/>
+            <field name="res_ref" eval="'res.users,%s' % ref('demo_user_agent2')"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- DEMO REMINDERS -->
+        <!-- ============================================ -->
+
+        <!-- Pending Manual Reminder for Ticket 1 -->
+        <record id="demo_reminder_1" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_1"/>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="reminder_type">manual</field>
+            <field name="reminder_date" eval="datetime.now() + timedelta(hours=2)"/>
+            <field name="reminder_message">Follow up with customer to confirm email access is working properly after password reset.</field>
+            <field name="status">pending</field>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+        <!-- Sent Manual Reminder for Ticket 2 -->
+        <record id="demo_reminder_2" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_2"/>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="reminder_type">manual</field>
+            <field name="reminder_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="reminder_message">Check if technician has been dispatched to fix the printer issue.</field>
+            <field name="status">sent</field>
+            <field name="sent_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+        <!-- Pending Auto Status-Based Reminder for Ticket 3 -->
+        <record id="demo_reminder_3" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_3"/>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="reminder_type">auto_status</field>
+            <field name="reminder_date" eval="datetime.now() + timedelta(hours=4)"/>
+            <field name="reminder_message">Ticket has been in 'New' status for 24 hours. Please assign and start working on this ticket.</field>
+            <field name="status">pending</field>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+        <!-- Pending Auto Time-Based Reminder for Ticket SLA At Risk -->
+        <record id="demo_reminder_4" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_sla_priority_at_risk"/>
+            <field name="user_id" ref="demo_user_agent2"/>
+            <field name="reminder_type">auto_time</field>
+            <field name="reminder_date" eval="datetime.now() + timedelta(minutes=30)"/>
+            <field name="reminder_message">Ticket is approaching SLA deadline. Response time SLA expires in 30 minutes. Please prioritize this ticket.</field>
+            <field name="status">pending</field>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+        <!-- Sent Auto SLA-Based Reminder for Ticket SLA Breached -->
+        <record id="demo_reminder_5" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_sla_urgent_breached"/>
+            <field name="user_id" ref="demo_user_manager"/>
+            <field name="reminder_type">auto_sla</field>
+            <field name="reminder_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="reminder_message">URGENT: SLA has been breached for this ticket. Response time SLA expired 1 hour ago. Immediate escalation required.</field>
+            <field name="status">sent</field>
+            <field name="sent_date" eval="datetime.now() - timedelta(hours=1)"/>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+        <!-- Dismissed Manual Reminder for Ticket 4 -->
+        <record id="demo_reminder_6" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_4"/>
+            <field name="user_id" ref="demo_user_agent3"/>
+            <field name="reminder_type">manual</field>
+            <field name="reminder_date" eval="datetime.now() - timedelta(days=1, hours=2)"/>
+            <field name="reminder_message">Follow up with customer to confirm WiFi issue is resolved.</field>
+            <field name="status">dismissed</field>
+            <field name="dismissed_date" eval="datetime.now() - timedelta(days=1)"/>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+        <!-- Pending Recurring Reminder for Ticket 1 -->
+        <record id="demo_reminder_7" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_1"/>
+            <field name="user_id" ref="demo_user_agent1"/>
+            <field name="reminder_type">manual</field>
+            <field name="reminder_date" eval="datetime.now() + timedelta(days=7)"/>
+            <field name="reminder_message">Weekly follow-up: Check if customer is still experiencing any email access issues.</field>
+            <field name="status">pending</field>
+            <field name="is_recurring">True</field>
+            <field name="recurrence_interval" eval="7"/>
+            <field name="max_recurrences" eval="4"/>
+            <field name="recurrence_count" eval="0"/>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+        <!-- Pending Reminder for Unassigned Ticket 3 -->
+        <record id="demo_reminder_8" model="helpdesk.reminder">
+            <field name="ticket_id" ref="demo_ticket_3"/>
+            <field name="user_id" ref="demo_user_manager"/>
+            <field name="reminder_type">auto_status</field>
+            <field name="reminder_date" eval="datetime.now() + timedelta(hours=6)"/>
+            <field name="reminder_message">Unassigned ticket requires attention. Please assign to an agent soon.</field>
+            <field name="status">pending</field>
+            <field name="notify_email">True</field>
+            <field name="notify_in_app">True</field>
+        </record>
+
+    </data>
+</odoo>

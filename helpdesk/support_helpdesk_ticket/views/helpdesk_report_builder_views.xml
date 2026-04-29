@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Custom Report Template Tree ==================== -->
+    <record id="view_helpdesk_report_template_tree" model="ir.ui.view">
+        <field name="name">helpdesk.report.template.tree</field>
+        <field name="model">helpdesk.report.template</field>
+        <field name="arch" type="xml">
+            <list string="Custom Helpdesk Reports">
+                <field name="name"/>
+                <field name="view_type"/>
+                <field name="graph_type"/>
+                <field name="group_by_field"/>
+                <field name="secondary_group_by_field"/>
+                <field name="measure_field"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== Custom Report Template Form ==================== -->
+    <record id="view_helpdesk_report_template_form" model="ir.ui.view">
+        <field name="name">helpdesk.report.template.form</field>
+        <field name="model">helpdesk.report.template</field>
+        <field name="arch" type="xml">
+            <form string="Custom Helpdesk Report">
+                <header>
+                    <button name="action_open_report" string="Open Report" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                            <field name="view_type"/>
+                            <field name="graph_type" invisible="view_type != 'graph'"/>
+                        </group>
+                        <group>
+                            <field name="group_by_field"/>
+                            <field name="secondary_group_by_field"/>
+                            <field name="measure_field"/>
+                        </group>
+                    </group>
+
+                    <group string="Filters" col="4">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="domain" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== Custom Report Builder Action ==================== -->
+    <record id="action_helpdesk_custom_report_builder" model="ir.actions.act_window">
+        <field name="name">Custom Report Builder</field>
+        <field name="res_model">helpdesk.report.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_helpdesk_report_template_tree"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No custom reports defined yet.
+            </p>
+            <p>
+                Use the Custom Report Builder to define reusable ticket analysis reports with your preferred
+                filters, groupings, and chart types.
+            </p>
+        </field>
+    </record>
+
+</odoo>
+

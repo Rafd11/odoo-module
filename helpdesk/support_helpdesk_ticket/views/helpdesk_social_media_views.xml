@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Social Media Platform Tree View -->
+    <record id="view_helpdesk_social_media_platform_tree" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.platform.tree</field>
+        <field name="model">helpdesk.social.media.platform</field>
+        <field name="arch" type="xml">
+            <list string="Social Media Platforms" decoration-muted="active == False">
+                <field name="name"/>
+                <field name="platform_type" widget="badge"/>
+                <field name="page_id" string="Page/Username"/>
+                <field name="post_count" string="Posts"/>
+                <field name="ticket_count" string="Tickets"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Social Media Platform Form View -->
+    <record id="view_helpdesk_social_media_platform_form" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.platform.form</field>
+        <field name="model">helpdesk.social.media.platform</field>
+        <field name="arch" type="xml">
+            <form string="Social Media Platform">
+                <header>
+                    <button name="action_test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                    <button name="action_refresh_token" string="Refresh Token" type="object" class="btn-secondary"/>
+                    <button name="action_fetch_posts" string="Fetch Posts" type="object" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_posts" type="object" class="oe_stat_button" icon="fa-comments">
+                            <field name="post_count" widget="statinfo" string="Posts"/>
+                        </button>
+                        <button name="action_view_tickets" type="object" class="oe_stat_button" icon="fa-ticket">
+                            <field name="ticket_count" widget="statinfo" string="Tickets"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="platform_type" required="1"/>
+                            <field name="page_id" placeholder="Page ID, Username, etc."/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="webhook_url" readonly="1"/>
+                            <field name="webhook_secret"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="API Configuration">
+                            <group>
+                                <group>
+                                    <field name="api_key" password="True" placeholder="API Key or App ID"/>
+                                    <field name="api_secret" password="True" placeholder="API Secret or App Secret"/>
+                                </group>
+                                <group>
+                                    <field name="access_token" password="True" placeholder="OAuth Access Token"/>
+                                    <field name="refresh_token" password="True" placeholder="OAuth Refresh Token"/>
+                                    <field name="token_expiry" widget="datetime"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Monitoring Settings">
+                            <group>
+                                <group>
+                                    <field name="monitor_posts" widget="boolean_toggle"/>
+                                    <field name="monitor_messages" widget="boolean_toggle"/>
+                                    <field name="monitor_comments" widget="boolean_toggle"/>
+                                    <field name="monitor_mentions" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Auto-Assignment">
+                            <group>
+                                <group>
+                                    <field name="default_team_id" options="{'no_create': True}"/>
+                                    <field name="default_user_id" options="{'no_create': True}"/>
+                                </group>
+                                <group>
+                                    <field name="default_category_id" options="{'no_create': True}"/>
+                                    <field name="default_priority" widget="priority"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Social Media Platform Search View -->
+    <record id="view_helpdesk_social_media_platform_search" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.platform.search</field>
+        <field name="model">helpdesk.social.media.platform</field>
+        <field name="arch" type="xml">
+            <search string="Social Media Platforms">
+                <field name="name"/>
+                <field name="platform_type"/>
+                <field name="page_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Platform Type" name="group_platform_type" context="{'group_by': 'platform_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Social Media Post Tree View -->
+    <record id="view_helpdesk_social_media_post_tree" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.post.tree</field>
+        <field name="model">helpdesk.social.media.post</field>
+        <field name="arch" type="xml">
+            <list string="Social Media Posts" decoration-info="state == 'new'"
+                  decoration-success="state == 'ticket_created'"
+                  decoration-muted="state == 'ignored'"
+                  default_order="post_date desc">
+                <field name="name" string="Reference"/>
+                <field name="platform_id"/>
+                <field name="post_type" widget="badge"/>
+                <field name="author_name" string="Author"/>
+                <field name="content" string="Content" widget="text"/>
+                <field name="post_date" widget="datetime"/>
+                <field name="ticket_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'new'"
+                       decoration-success="state == 'ticket_created'"
+                       decoration-muted="state == 'ignored'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Social Media Post Form View -->
+    <record id="view_helpdesk_social_media_post_form" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.post.form</field>
+        <field name="model">helpdesk.social.media.post</field>
+        <field name="arch" type="xml">
+            <form string="Social Media Post">
+                <header>
+                    <button name="action_create_ticket" string="Create Ticket" type="object" 
+                            class="btn-primary" invisible="ticket_id"/>
+                    <button name="action_link_ticket" string="Link Ticket" type="object" 
+                            class="btn-secondary" invisible="ticket_id"/>
+                    <button name="action_view_ticket" string="View Ticket" type="object" 
+                            class="btn-primary" invisible="not ticket_id"/>
+                    <button name="action_reply" string="Reply" type="object" 
+                            class="btn-primary" invisible="state == 'ignored'"/>
+                    <button name="action_ignore" string="Ignore" type="object" 
+                            class="btn-secondary" invisible="state == 'ignored'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,processing,ticket_created,linked,ignored"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_ticket" type="object" class="oe_stat_button" 
+                                icon="fa-ticket" invisible="not ticket_id">
+                            <field name="ticket_id" widget="statinfo" string="Ticket"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="is_thread_root" invisible="1"/>
+                            <field name="name" readonly="1"/>
+                            <field name="platform_id" required="1"/>
+                            <field name="platform_type" readonly="1"/>
+                            <field name="post_type" required="1"/>
+                            <field name="post_id" required="1"/>
+                            <field name="post_date" required="1"/>
+                            <field name="url" placeholder="https://..."/>
+                        </group>
+                        <group>
+                            <field name="author_id" options="{'no_create': False}"/>
+                            <field name="author_name"/>
+                            <field name="author_username"/>
+                            <field name="author_email"/>
+                            <field name="author_phone"/>
+                            <field name="author_social_id"/>
+                            <button name="action_find_or_create_partner" string="Find/Create Contact" type="object" 
+                                    class="btn-secondary" invisible="author_id"/>
+                        </group>
+                    </group>
+                    <group colspan="2" class="oe_no_column">
+                        <field name="content" nolabel="1" placeholder="Post content..."/>
+                    </group>
+                    <group string="Media" invisible="not has_media">
+                        <field name="has_media" invisible="1"/>
+                        <field name="media_urls" nolabel="1" placeholder="Media URLs (one per line)"/>
+                    </group>
+                    <notebook>
+                        <page string="Thread" invisible="not is_thread_root">
+                            <field name="child_post_ids" nolabel="1">
+                                <list>
+                                    <field name="post_type"/>
+                                    <field name="author_name"/>
+                                    <field name="content" widget="text"/>
+                                    <field name="post_date" widget="datetime"/>
+                                    <field name="ticket_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Social Media Post Search View -->
+    <record id="view_helpdesk_social_media_post_search" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.post.search</field>
+        <field name="model">helpdesk.social.media.post</field>
+        <field name="arch" type="xml">
+            <search string="Social Media Posts">
+                <field name="name" string="Reference"/>
+                <field name="post_id" string="Post ID"/>
+                <field name="platform_id"/>
+                <field name="author_name"/>
+                <field name="author_username"/>
+                <field name="content"/>
+                <field name="ticket_id"/>
+                
+                <filter string="New" name="new" domain="[('state', '=', 'new')]"/>
+                <filter string="Ticket Created" name="ticket_created" domain="[('state', '=', 'ticket_created')]"/>
+                <filter string="Ignored" name="ignored" domain="[('state', '=', 'ignored')]"/>
+                <filter string="With Ticket" name="with_ticket" domain="[('ticket_id', '!=', False)]"/>
+                <filter string="Without Ticket" name="without_ticket" domain="[('ticket_id', '=', False)]"/>
+                <filter string="Has Media" name="has_media" domain="[('media_urls', '!=', False), ('media_urls', '!=', '')]"/>
+                <filter string="Today" name="today" domain="[]" context="{'search_default_today': 1}"/>
+                
+                <separator/>
+                <filter string="Posts" name="posts" domain="[('post_type', '=', 'post')]"/>
+                <filter string="Messages" name="messages" domain="[('post_type', '=', 'message')]"/>
+                <filter string="Comments" name="comments" domain="[('post_type', '=', 'comment')]"/>
+                <filter string="Mentions" name="mentions" domain="[('post_type', '=', 'mention')]"/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Platform" name="group_platform" context="{'group_by': 'platform_id'}"/>
+                    <filter string="Post Type" name="group_post_type" context="{'group_by': 'post_type'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Author" name="group_author" context="{'group_by': 'author_id'}"/>
+                    <filter string="Post Date" name="group_post_date" context="{'group_by': 'post_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Social Media Platform Action -->
+    <record id="action_helpdesk_social_media_platform" model="ir.actions.act_window">
+        <field name="name">Social Media Platforms</field>
+        <field name="res_model">helpdesk.social.media.platform</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_social_media_platform_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your first social media platform!
+            </p>
+            <p>
+                Set up integrations with Facebook, Twitter, and other platforms to automatically create tickets from social media posts and messages.
+            </p>
+        </field>
+    </record>
+
+    <!-- Social Media Post Action -->
+    <record id="action_helpdesk_social_media_post" model="ir.actions.act_window">
+        <field name="name">Social Media Posts</field>
+        <field name="res_model">helpdesk.social.media.post</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_social_media_post_search"/>
+        <field name="context">{'search_default_new': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No social media posts yet!
+            </p>
+            <p>
+                Posts and messages from configured social media platforms will appear here.
+            </p>
+        </field>
+    </record>
+
+    <!-- Social Media Post Create Ticket Wizard Form View -->
+    <record id="view_helpdesk_social_media_post_create_ticket_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.post.create.ticket.wizard.form</field>
+        <field name="model">helpdesk.social.media.post.create.ticket.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Ticket from Social Media Post">
+                <group>
+                    <group>
+                        <field name="post_id" readonly="1"/>
+                        <field name="platform_id" readonly="1"/>
+                        <field name="author_id" options="{'no_create': True}"/>
+                        <field name="name" required="1" placeholder="Enter ticket subject..."/>
+                        <field name="description" required="1" placeholder="Enter ticket description..."/>
+                    </group>
+                    <group>
+                        <field name="category_id"/>
+                        <field name="priority" required="1"/>
+                        <field name="ticket_type_id"/>
+                        <field name="team_id"/>
+                        <field name="user_id"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Create Ticket" name="action_create_ticket" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Social Media Post Reply Wizard Form View -->
+    <record id="view_helpdesk_social_media_post_reply_wizard_form" model="ir.ui.view">
+        <field name="name">helpdesk.social.media.post.reply.wizard.form</field>
+        <field name="model">helpdesk.social.media.post.reply.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reply to Social Media Post">
+                <group>
+                    <group>
+                        <field name="post_id" readonly="1"/>
+                        <field name="platform_id" readonly="1"/>
+                        <field name="ticket_id" readonly="1"/>
+                        <field name="reply_type" required="1"/>
+                        <field name="message" required="1" placeholder="Enter your reply message..."/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Send Reply" name="action_send_reply" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

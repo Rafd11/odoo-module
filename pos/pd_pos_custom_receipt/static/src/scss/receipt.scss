@@ -1,0 +1,305 @@
+/**
+ * SSM POS Receipt styles
+ * Goal: keep the printed ticket identical to the on‑screen preview.
+ */
+
+/* Base: what you see on screen */
+.pos-receipt {
+  font-size: 12px; /* preview size */
+  line-height: 1.2;
+}
+
+/* Match core POS print page settings */
+@page {
+  padding: 15px;
+}
+
+@media print {
+  html, body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Match the core POS receipt print styles exactly */
+  .render-container .pos-receipt {
+    margin: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border: none !important;
+    font-size: 13px !important;
+    width: 400px !important;
+    line-height: 1.2;
+  }
+
+  .render-container .pos-receipt * {
+    background-color: transparent !important;
+    color: black !important;
+    letter-spacing: normal;
+    word-spacing: normal;
+  }
+
+  .pos-receipt {
+    contain: paint;
+    background-color: transparent;
+  }
+
+  .pos, .pos * {
+    position: static !important;
+  }
+
+  .render-container {
+    position: absolute !important;
+    top: 10px;
+    left: 10px;
+  }
+
+  .o-main-components-container {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+  }
+
+  body > *:not(.o-main-components-container),
+  .o-main-components-container > *:not(.render-container-parent),
+  .render-container-parent > *:not(.render-container) {
+    display: none !important;
+  }
+}
+
+.pos-receipt .d-flex > div {
+  /* keep labels from wrapping like in preview */
+  white-space: nowrap;
+}
+
+/* The Orderline template uses .text-truncate for the item column. Keep that behavior. */
+.pos-receipt .orderline .text-truncate,
+.pos-receipt .orderline .product-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pos-receipt .price,
+.pos-receipt .price-per-unit,
+.pos-receipt .unit-price,
+.pos-receipt .price-difference {
+  font-variant-numeric: tabular-nums; /* better column alignment */
+}
+
+.pos-receipt .text-center {
+  text-align: center !important;
+  /* Reduce default paragraph/element spacing when centered to tighten footer area */
+  margin: 0 0 4px 0 !important;
+  padding: 0 !important;
+  line-height: 1.1 !important;
+}
+
+.pos-receipt .pos-receipt-left-align {
+  margin-left: 0.25rem;
+}
+
+.pos-receipt .pos-receipt-right-align {
+  margin-right: 0.25rem;
+}
+
+/* Tighten column spacing in the header and rows for print-like layout */
+@media print {
+  /* Column widths optimized for 400px receipt width - Net column fully visible */
+  .pos-receipt li.orderline > .d-flex > div:nth-child(1) { /* No */
+    width: 20px !important;
+    min-width: 20px !important;
+    max-width: 20px !important;
+    text-align: left !important;
+    font-size: 13px !important;
+  }
+  .pos-receipt li.orderline > .d-flex > div:nth-child(2) { /* Item */
+    width: 130px !important;
+    min-width: 130px !important;
+    flex: 1 1 auto !important;
+    font-size: 13px !important;
+  }
+  .pos-receipt li.orderline > .d-flex > div:nth-child(3) { /* Qty */
+    width: 32px !important;
+    min-width: 32px !important;
+    text-align: center !important;
+    font-size: 13px !important;
+  }
+  .pos-receipt li.orderline > .d-flex > div:nth-child(4) { /* MRP */
+    width: 50px !important;
+    min-width: 50px !important;
+    text-align: center !important;
+    font-size: 13px !important;
+  }
+  .pos-receipt li.orderline > .d-flex > div:nth-child(5) { /* Disc */
+    width: 28px !important;
+    min-width: 28px !important;
+    text-align: right !important;
+    font-size: 13px !important;
+  }
+  .pos-receipt li.orderline > .d-flex > div:nth-child(6) { /* Net */
+    width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    display: block !important;
+    visibility: visible !important;
+    overflow: visible !important;
+    position: relative;
+    right: 25px;
+    
+  }
+
+  /* Also support semantic class selectors used in the custom orderline template */
+  .pos-receipt li.orderline > .d-flex > .col-no { width: 20px !important; min-width: 20px !important; max-width: 20px !important; text-align: left !important; font-size: 13px !important; }
+  .pos-receipt li.orderline > .d-flex > .col-item { width: 130px !important; min-width: 130px !important; flex: 1 1 auto !important; font-size: 13px !important; overflow: hidden !important; }
+  .pos-receipt li.orderline > .d-flex > .col-qty { width: 32px !important; min-width: 32px !important; text-align: center !important; font-size: 13px !important; }
+  .pos-receipt li.orderline > .d-flex > .col-mrp { width: 50px !important; min-width: 50px !important; text-align: right !important; font-size: 13px !important; }
+  .pos-receipt li.orderline > .d-flex > .col-disc { width: 28px !important; min-width: 28px !important; text-align: right !important; font-size: 13px !important; position: static !important; left: 0 !important; }
+  .pos-receipt li.orderline > .d-flex > .col-net { width: 100px !important; min-width: 100px !important; max-width: 100px !important; text-align: right !important; font-size: 13px !important; display: block !important; visibility: visible !important; overflow: visible !important; position: relative; right: 25px;}
+
+  /* Match header row column widths to the lines */
+  .pos-receipt .d-flex.fw-bolder > div:nth-child(1) { width: 20px !important; min-width: 20px !important; text-align: left !important; font-size: 13px !important; font-weight: bold !important; }
+  .pos-receipt .d-flex.fw-bolder > div:nth-child(2) { width: 130px !important; min-width: 130px !important; flex: 1 1 auto !important; font-size: 13px !important; font-weight: bold !important; }
+  .pos-receipt .d-flex.fw-bolder > div:nth-child(3) { width: 32px !important; min-width: 32px !important; text-align: right !important; font-size: 13px !important; font-weight: bold !important; }
+  .pos-receipt .d-flex.fw-bolder > div:nth-child(4) { width: 50px !important; min-width: 50px !important; text-align: right !important; font-size: 13px !important; font-weight: bold !important; margin-right: 8px !important; }
+  .pos-receipt .d-flex.fw-bolder > div:nth-child(5) { width: 28px !important; min-width: 28px !important; text-align: right !important; font-size: 13px !important; font-weight: bold !important; position: static !important; left: 0 !important; }
+  .pos-receipt .d-flex.fw-bolder > div:nth-child(6) { width: 110px !important; min-width: 100px !important; max-width: 100px !important; text-align: center !important; font-size: 13px !important; font-weight: bold !important; display: block !important; visibility: visible !important; overflow: visible !important; position: relative; right: 25px;}
+
+  /* Reduce gaps for tighter print layout */
+  .pos-receipt .d-flex { gap: 2px !important; }
+
+  .pos-receipt li.orderline { padding: 2px 4px !important; }
+
+  /* Make line items more compact */
+  .pos-receipt li.orderline .d-flex {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Hide any overlay scrollbars or scroll controls in print */
+  .pos-receipt { scrollbar-width: none; }
+  .pos-receipt::-webkit-scrollbar { display: none; }
+  .pos-receipt .os-scrollbar,
+  .pos-receipt .os-scrollbar-corner,
+  .pos-receipt .os-content-glue { display: none !important; }
+}
+
+/* POS customer form: hide Phone field inside the dialog (keep Mobile visible) */
+.o_dialog .o_form_view [name="phone"],
+.o_dialog .o_form_view input[name="phone"],
+.o_dialog .o_form_view .o_field_widget[name="phone"],
+.o_dialog .o_form_view label[for="phone"] {
+  display: none !important;
+}
+
+/* --- Custom: force white receipt background and remove any visible scroller --- */
+/* Apply on-screen and in print to ensure preview and printed ticket match */
+.pos-receipt {
+  background-color: #ffffff !important; /* white background for the receipt */
+  color: black !important;
+  /* hide native scrollbars */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.pos-receipt::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/WebKit */
+}
+
+/* Hide overlay/third-party scrollbar elements (like OverlayScrollbars used by Odoo pos) */
+.pos-receipt .os-scrollbar,
+.pos-receipt .os-scrollbar-corner,
+.pos-receipt .os-content-glue,
+.pos-receipt .os-viewport {
+  display: none !important;
+}
+
+/* Prevent children from showing overflow scrollbars */
+.pos-receipt * {
+  overflow: visible !important;
+}
+
+@media print {
+  /* Ensure printed ticket keeps white background too */
+  .pos-receipt, .render-container .pos-receipt, .render-container .pos-receipt * {
+    background-color: #ffffff !important;
+    color: black !important;
+  }
+}
+
+/* Ensure header lines (like Served by) are not clipped and can wrap when needed */
+.pos-receipt .receipt-header,
+.pos-receipt .receipt-header * {
+  white-space: normal !important;
+  overflow: visible !important;
+}
+.pos-receipt .receipt-header .served-by {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+}
+
+/* Hide big/small tracking number shown by core ReceiptHeader (e.g., the large centered number) */
+.pos-receipt .tracking-number { display: none !important; }
+
+
+/* Restore on-screen orderline column widths so the product list (left pane) stays aligned.
+   Print-specific rules above (inside @media print) will override these when printing. */
+.pos .orderline > .d-flex > .col-no { width: 20px; min-width: 20px; max-width: 20px; }
+.pos .orderline > .d-flex > .col-item { width: 150px; min-width: 150px; flex: 0 0 150px; overflow: hidden; }
+.pos .orderline > .d-flex > .col-qty { width: 32px; min-width: 32px; text-align: center; }
+.pos .orderline > .d-flex > .col-mrp { width: 70px; min-width: 70px; text-align: right; }
+.pos .orderline > .d-flex > .col-disc { width: 20px; min-width: 20px; text-align: right; position: relative; left: 40px; }
+.pos .orderline > .d-flex > .col-net { width: 110px; min-width: 110px; text-align: right; position: relative; right: 20px;}
+
+/* --- Make the whole render area white (preview + print) to remove grey surround --- */
+html, body,
+.o-main-components-container,
+.render-container-parent,
+.render-container,
+.pos {
+  background-color: #ffffff !important;
+}
+
+/* Also ensure parent containers are white when printing */
+@media print {
+  html, body, .o-main-components-container, .render-container-parent, .render-container {
+    background-color: #ffffff !important;
+  }
+}
+
+/* --- POS Order list (left pane) scrolling behavior --- */
+/* Ensure there is never a horizontal scrollbar; allow only vertical scrolling and keep it thin */
+.pos .order-container {
+  overflow-x: hidden !important; /* hide horizontal overflow regardless of zoom */
+  overflow-y: auto !important;
+  width: 100%;
+  box-sizing: border-box;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(0,0,0,0.35) transparent;
+}
+
+/* Native WebKit scrollbars */
+.pos .order-container::-webkit-scrollbar {
+  width: 6px;           /* thin vertical bar */
+  height: 0 !important; /* hide horizontal bar if any */
+}
+.pos .order-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.35);
+  border-radius: 4px;
+}
+.pos .order-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* OverlayScrollbars (used by Odoo) styling within the order list */
+.pos .order-container .os-scrollbar-horizontal { display: none !important; height: 0 !important; }
+.pos .order-container .os-scrollbar-vertical { width: 6px !important; right: 2px !important; }
+.pos .order-container .os-scrollbar-vertical .os-scrollbar-handle { width: 6px !important; border-radius: 4px; background: rgba(0,0,0,0.35) !important; }
+
+/* Prevent flex children from forcing horizontal growth */
+.pos .orderline > .d-flex { min-width: 0; }
+.pos .orderline > .d-flex > .col-item { min-width: 0; }
+

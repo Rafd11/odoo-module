@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Workflow Rule Tree View -->
+    <record id="view_helpdesk_workflow_rule_tree" model="ir.ui.view">
+        <field name="name">helpdesk.workflow.rule.tree</field>
+        <field name="model">helpdesk.workflow.rule</field>
+        <field name="arch" type="xml">
+            <list string="Workflow Rules" decoration-muted="active == False" default_order="sequence, id">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="trigger"/>
+                <field name="action_type"/>
+                <field name="execution_count"/>
+                <field name="last_execution_date" widget="datetime"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Workflow Rule Form View -->
+    <record id="view_helpdesk_workflow_rule_form" model="ir.ui.view">
+        <field name="name">helpdesk.workflow.rule.form</field>
+        <field name="model">helpdesk.workflow.rule</field>
+        <field name="arch" type="xml">
+            <form string="Workflow Rule">
+                <header>
+                    <button name="action_test_rule" string="Test Rule" type="object" 
+                            class="oe_highlight" icon="fa-flask"/>
+                    <button name="action_debug_rule" string="Debug Rule" type="object" 
+                            icon="fa-bug"/>
+                    <button name="action_view_execution_logs" string="Execution Logs" type="object" 
+                            icon="fa-list"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <!-- Ensure assign fields are loaded for validation -->
+                    <field name="action_assign_user_id" invisible="1"/>
+                    <field name="action_assign_team_id" invisible="1"/>
+                    <field name="action_assign_algorithm" invisible="1"/>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter rule name..."/>
+                            <field name="sequence"/>
+                            <field name="trigger"/>
+                            <field name="trigger_field_ids" widget="many2many_tags" 
+                                   invisible="trigger != 'on_field_change'"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="action_type"/>
+                            <field name="execution_count" readonly="1"/>
+                            <field name="last_execution_date" readonly="1" widget="datetime"/>
+                        </group>
+                    </group>
+                    
+                    <group class="oe_no_column" colspan="2">
+                        <field name="description" placeholder="Enter rule description..." nolabel="1"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Conditions" name="conditions">
+                            <group>
+                                <group string="Domain Condition">
+                                    <field name="condition_domain" widget="text" 
+                                           placeholder="[('priority', '=', '3'), ('category_id', '!=', False)]"
+                                           help="Domain expression to match tickets. Leave empty to match all tickets."/>
+                                </group>
+                                <group string="Ticket Types">
+                                    <field name="ticket_type_ids" widget="many2many_tags"
+                                           options="{'no_create': True}"
+                                           help="If set, this rule only applies to these ticket types. Leave empty for all types."/>
+                                </group>
+                                <group string="Working Hours">
+                                    <field name="condition_use_working_hours"/>
+                                    <field name="condition_working_hours_id" 
+                                           invisible="not condition_use_working_hours"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Action Configuration" name="action_config">
+                            <!-- Assign Action -->
+                            <group string="Assign to User/Team" invisible="action_type != 'assign'">
+                                <group>
+                                    <field name="action_assign_team_id"/>
+                                    <field name="action_assign_algorithm" widget="radio" options="{'horizontal': true}"/>
+                                    <field name="action_assign_user_id"
+                                           required="action_assign_algorithm == 'manual'"
+                                           options="{'no_create': True}"
+                                           placeholder="Select a user (only used when algorithm is 'Manual')..."/>
+                                    
+                                </group>
+                                <group class="oe_no_column" colspan="2">
+                                        <div class="alert alert-info" role="alert" 
+                                         invisible="action_assign_algorithm == 'manual'">
+                                        <p><strong>Note:</strong> The user field above is only used when "Manual" algorithm is selected. For other algorithms, the system will automatically select a user from the specified team.</p>
+                                    </div>
+                                    <div class="alert alert-info" role="alert" 
+                                         invisible="action_assign_algorithm == 'manual' or action_assign_user_id">
+                                        <p>When using assignment algorithms, the system will automatically select a user from the specified team based on the selected algorithm:</p>
+                                        <ul>
+                                            <li><strong>Round-Robin:</strong> Assigns tickets in rotation among team members</li>
+                                            <li><strong>Workload-Based:</strong> Assigns to the team member with the fewest open tickets</li>
+                                            <li><strong>Skill-Based:</strong> Assigns based on category experience and workload</li>
+                                        </ul>
+                                    </div>
+                                </group>
+                            </group>
+                            
+                            <!-- Escalate Action -->
+                            <group string="Escalate" invisible="action_type != 'escalate'">
+                                <group>
+                                    <field name="action_escalate_priority"/>
+                                    <field name="action_escalate_team_id"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Notify Action -->
+                            <group string="Notification" invisible="action_type != 'notify'">
+                                <group>
+                                    <field name="action_notify_user_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="action_notify_team_id"/>
+                                    <field name="action_notify_template_id"/>
+                                </group>
+                                <group>
+                                    <field name="action_notify_message" widget="text" nolabel="1"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Set Field Action -->
+                            <group string="Set Field Value" invisible="action_type != 'set_field'">
+                                <group>
+                                    <field name="action_set_field_name" 
+                                           placeholder="e.g., priority, state, category_id"/>
+                                    <field name="action_set_field_value" 
+                                           placeholder="e.g., '3' (for priority), 'in_progress' (for state)"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Change Priority Action -->
+                            <group string="Change Priority" invisible="action_type != 'change_priority'">
+                                <group>
+                                    <field name="action_change_priority_value"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Change State Action -->
+                            <group string="Change State" invisible="action_type != 'change_state'">
+                                <group>
+                                    <field name="action_change_state_value"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Add/Remove Tag Actions -->
+                            <group string="Tags" invisible="action_type not in ['add_tag', 'remove_tag']">
+                                <group>
+                                    <field name="action_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Post Message Action -->
+                            <group string="Post Message" invisible="action_type != 'post_message'">
+                                <group>
+                                    <field name="action_post_message_subtype"/>
+                                </group>
+                                <group>
+                                    <field name="action_post_message_body" nolabel="1"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Create Task Action -->
+                            <group string="Create Task" invisible="action_type != 'create_task'">
+                                <group>
+                                    <field name="action_create_task_user_id"/>
+                                    <field name="action_create_task_date_deadline"/>
+                                </group>
+                                <group>
+                                    <field name="action_create_task_summary"/>
+                                </group>
+                                <group>
+                                    <field name="action_create_task_note" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workflow Rule Search View -->
+    <record id="view_helpdesk_workflow_rule_search" model="ir.ui.view">
+        <field name="name">helpdesk.workflow.rule.search</field>
+        <field name="model">helpdesk.workflow.rule</field>
+        <field name="arch" type="xml">
+            <search string="Workflow Rules">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="trigger"/>
+                <field name="action_type"/>
+                <field name="ticket_type_ids"/>
+                
+                <!-- Filters -->
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <filter string="On Creation" name="on_create" domain="[('trigger', '=', 'on_create')]"/>
+                <filter string="On Update" name="on_update" domain="[('trigger', '=', 'on_update')]"/>
+                <filter string="On Status Change" name="on_status_change" domain="[('trigger', '=', 'on_status_change')]"/>
+                <filter string="Type-Specific" name="type_specific" domain="[('ticket_type_ids', '!=', False)]"/>
+                
+                <!-- Separator -->
+                <separator/>
+                
+                <!-- Group By -->
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Trigger" name="group_trigger" context="{'group_by': 'trigger'}"/>
+                    <filter string="Action Type" name="group_action_type" context="{'group_by': 'action_type'}"/>
+                    <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                    <filter string="Ticket Type" name="group_ticket_type" context="{'group_by': 'ticket_type_ids'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Workflow Rule Action -->
+    <record id="action_helpdesk_workflow_rule" model="ir.actions.act_window">
+        <field name="name">Workflow Rules</field>
+        <field name="res_model">helpdesk.workflow.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_workflow_rule_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first workflow rule!
+            </p>
+            <p>
+                Workflow rules automate ticket processing based on conditions and triggers.
+            </p>
+        </field>
+    </record>
+
+    <!-- Workflow Execution Log Tree View -->
+    <record id="view_helpdesk_workflow_execution_log_tree" model="ir.ui.view">
+        <field name="name">helpdesk.workflow.execution.log.tree</field>
+        <field name="model">helpdesk.workflow.execution.log</field>
+        <field name="arch" type="xml">
+            <list string="Execution Logs" decoration-success="status == 'success'" 
+                  decoration-danger="status == 'error'" decoration-muted="status == 'skipped'">
+                <field name="execution_date" widget="datetime"/>
+                <field name="rule_id"/>
+                <field name="ticket_id"/>
+                <field name="trigger_type"/>
+                <field name="status"/>
+                <field name="execution_time"/>
+                <field name="error_message" invisible="status != 'error'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Workflow Execution Log Form View -->
+    <record id="view_helpdesk_workflow_execution_log_form" model="ir.ui.view">
+        <field name="name">helpdesk.workflow.execution.log.form</field>
+        <field name="model">helpdesk.workflow.execution.log</field>
+        <field name="arch" type="xml">
+            <form string="Execution Log">
+                <header>
+                    <button name="action_view_ticket" string="View Ticket" type="object" 
+                            class="oe_highlight" icon="fa-ticket"/>
+                    <button name="action_view_rule" string="View Rule" type="object" 
+                            icon="fa-cog"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="rule_id"/>
+                            <field name="ticket_id"/>
+                            <field name="trigger_type"/>
+                            <field name="status"/>
+                        </group>
+                        <group>
+                            <field name="execution_date" widget="datetime"/>
+                            <field name="execution_time"/>
+                        </group>
+                    </group>
+                    <group string="Error Details" invisible="status != 'error'">
+                        <field name="error_message" nolabel="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workflow Execution Log Search View -->
+    <record id="view_helpdesk_workflow_execution_log_search" model="ir.ui.view">
+        <field name="name">helpdesk.workflow.execution.log.search</field>
+        <field name="model">helpdesk.workflow.execution.log</field>
+        <field name="arch" type="xml">
+            <search string="Execution Logs">
+                <field name="rule_id"/>
+                <field name="ticket_id"/>
+                <field name="trigger_type"/>
+                <field name="status"/>
+                
+                <filter string="Success" name="success" domain="[('status', '=', 'success')]"/>
+                <filter string="Errors" name="errors" domain="[('status', '=', 'error')]"/>
+                <filter string="Today" name="today" domain="[('execution_date', '>=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Rule" name="group_rule" context="{'group_by': 'rule_id'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Trigger Type" name="group_trigger" context="{'group_by': 'trigger_type'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'execution_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Workflow Execution Log Action -->
+    <record id="action_helpdesk_workflow_execution_log" model="ir.actions.act_window">
+        <field name="name">Workflow Execution Logs</field>
+        <field name="res_model">helpdesk.workflow.execution.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_workflow_execution_log_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No execution logs yet!
+            </p>
+            <p>
+                Execution logs track when workflow rules are executed on tickets.
+            </p>
+        </field>
+    </record>
+
+</odoo>

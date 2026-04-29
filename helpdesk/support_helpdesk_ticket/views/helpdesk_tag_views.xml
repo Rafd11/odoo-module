@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tag Tree View -->
+    <record id="view_helpdesk_tag_tree" model="ir.ui.view">
+        <field name="name">helpdesk.tag.tree</field>
+        <field name="model">helpdesk.tag</field>
+        <field name="arch" type="xml">
+            <list string="Tags" decoration-muted="active == False">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+                <field name="ticket_count"/>
+                <field name="open_ticket_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Tag Form View -->
+    <record id="view_helpdesk_tag_form" model="ir.ui.view">
+        <field name="name">helpdesk.tag.form</field>
+        <field name="model">helpdesk.tag</field>
+        <field name="arch" type="xml">
+            <form string="Tag">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tickets" type="object" 
+                                class="oe_stat_button" icon="fa-ticket">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Tickets</span>
+                                <span class="o_stat_value">
+                                    <field name="ticket_count" widget="statinfo" string="Total"/>
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_view_tickets" type="object" 
+                                class="oe_stat_button" icon="fa-clock-o">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Open</span>
+                                <span class="o_stat_value">
+                                    <field name="open_ticket_count" widget="statinfo" string="Open"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter tag name..."/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Enter tag description..."/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tag Search View -->
+    <record id="view_helpdesk_tag_search" model="ir.ui.view">
+        <field name="name">helpdesk.tag.search</field>
+        <field name="model">helpdesk.tag</field>
+        <field name="arch" type="xml">
+            <search string="Tags">
+                <field name="name"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Tag Action -->
+    <record id="action_helpdesk_tag" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">helpdesk.tag</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_tag_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first tag!
+            </p>
+            <p>
+                Tags help categorize and filter tickets.
+            </p>
+        </field>
+    </record>
+
+</odoo>

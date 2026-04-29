@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Reminder Tree View -->
+    <record id="view_helpdesk_reminder_tree" model="ir.ui.view">
+        <field name="name">helpdesk.reminder.tree</field>
+        <field name="model">helpdesk.reminder</field>
+        <field name="arch" type="xml">
+            <list string="Reminders" decoration-success="status == 'sent'" 
+                  decoration-danger="status == 'cancelled'" decoration-muted="status == 'dismissed'">
+                <field name="reminder_date" widget="datetime"/>
+                <field name="ticket_id"/>
+                <field name="user_id"/>
+                <field name="reminder_type"/>
+                <field name="status"/>
+                <field name="sent_date" widget="datetime" invisible="status != 'sent'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Reminder Form View -->
+    <record id="view_helpdesk_reminder_form" model="ir.ui.view">
+        <field name="name">helpdesk.reminder.form</field>
+        <field name="model">helpdesk.reminder</field>
+        <field name="arch" type="xml">
+            <form string="Reminder">
+                <header>
+                    <button name="action_send_now" string="Send Now" type="object" 
+                            class="oe_highlight" icon="fa-paper-plane" invisible="status != 'pending'"/>
+                    <button name="action_dismiss" string="Dismiss" type="object" 
+                            icon="fa-check" invisible="status != 'pending'"/>
+                    <button name="action_cancel" string="Cancel" type="object" 
+                            icon="fa-times" invisible="status != 'pending'"/>
+                    <button name="action_view_ticket" string="View Ticket" type="object" 
+                            class="oe_highlight" icon="fa-ticket"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="ticket_id"/>
+                            <field name="user_id"/>
+                            <field name="reminder_type"/>
+                            <field name="status"/>
+                        </group>
+                        <group>
+                            <field name="reminder_date" widget="datetime"/>
+                            <field name="sent_date" widget="datetime" invisible="status != 'sent'"/>
+                            <field name="dismissed_date" widget="datetime" invisible="status != 'dismissed'"/>
+                            <field name="reminder_rule_id" invisible="reminder_type == 'manual'"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Recurrence" invisible="not is_recurring">
+                        <group>
+                            <field name="is_recurring"/>
+                            <field name="recurrence_interval"/>
+                            <field name="max_recurrences"/>
+                            <field name="recurrence_count" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Notification Settings">
+                        <group>
+                            <field name="notify_email"/>
+                            <field name="notify_in_app"/>
+                            <field name="email_template_id"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Reminder Message">
+                        <field name="reminder_message" nolabel="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reminder Search View -->
+    <record id="view_helpdesk_reminder_search" model="ir.ui.view">
+        <field name="name">helpdesk.reminder.search</field>
+        <field name="model">helpdesk.reminder</field>
+        <field name="arch" type="xml">
+            <search string="Reminders">
+                <field name="ticket_id"/>
+                <field name="user_id"/>
+                <field name="reminder_type"/>
+                <field name="status"/>
+                
+                <filter string="Pending" name="pending" domain="[('status', '=', 'pending')]"/>
+                <filter string="Sent" name="sent" domain="[('status', '=', 'sent')]"/>
+                <filter string="My Reminders" name="my_reminders" domain="[('user_id', '=', uid)]"/>
+                <filter string="Due" name="due" domain="[('status', '=', 'pending'), ('reminder_date', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter string="Today" name="today" domain="[('reminder_date', '>=', context_today().strftime('%Y-%m-%d 00:00:00')), ('reminder_date', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Reminder Type" name="group_type" context="{'group_by': 'reminder_type'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'reminder_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Reminder Action -->
+    <record id="action_helpdesk_reminder" model="ir.actions.act_window">
+        <field name="name">Reminders</field>
+        <field name="res_model">helpdesk.reminder</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_reminder_search"/>
+        <field name="context">{'search_default_pending': 1, 'search_default_my_reminders': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No reminders yet!
+            </p>
+            <p>
+                Reminders help you follow up on tickets that need attention.
+            </p>
+        </field>
+    </record>
+
+    <!-- Reminder Rule Tree View -->
+    <record id="view_helpdesk_reminder_rule_tree" model="ir.ui.view">
+        <field name="name">helpdesk.reminder.rule.tree</field>
+        <field name="model">helpdesk.reminder.rule</field>
+        <field name="arch" type="xml">
+            <list string="Reminder Rules" decoration-muted="active == False" default_order="sequence, id">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="trigger_type"/>
+                <field name="reminder_user_type"/>
+                <field name="execution_count"/>
+                <field name="last_execution_date" widget="datetime"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Reminder Rule Form View -->
+    <record id="view_helpdesk_reminder_rule_form" model="ir.ui.view">
+        <field name="name">helpdesk.reminder.rule.form</field>
+        <field name="model">helpdesk.reminder.rule</field>
+        <field name="arch" type="xml">
+            <form string="Reminder Rule">
+                <header>
+                    <button name="action_test_rule" string="Test Rule" type="object" 
+                            class="oe_highlight" icon="fa-flask"/>
+                    <button name="action_view_reminders" string="View Reminders" type="object" 
+                            icon="fa-list"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" icon="fa-list" name="action_view_reminders">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Reminders</span>
+                                <span class="o_stat_value">
+                                    <field name="execution_count" widget="statinfo"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter rule name..."/>
+                            <field name="sequence"/>
+                            <field name="trigger_type"/>
+                        </group>
+                        <group>
+                            <field name="reminder_user_type"/>
+                            <field name="execution_count" readonly="1"/>
+                            <field name="last_execution_date" readonly="1" widget="datetime"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="description" placeholder="Enter rule description..." nolabel="1"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Trigger Configuration" name="trigger">
+                            <!-- Status-Based Trigger -->
+                            <group string="Status-Based Trigger" invisible="trigger_type != 'status_based'">
+                                <group>
+                                    <field name="status_trigger_states"/>
+                                    <field name="status_trigger_hours"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Time-Based Trigger -->
+                            <group string="Time-Based Trigger" invisible="trigger_type != 'time_based'">
+                                <group>
+                                    <field name="time_trigger_type"/>
+                                    <field name="time_trigger_hours"/>
+                                </group>
+                            </group>
+                            
+                            <!-- SLA-Based Trigger -->
+                            <group string="SLA-Based Trigger" invisible="trigger_type != 'sla_based'">
+                                <group>
+                                    <field name="sla_trigger_type"/>
+                                    <field name="sla_trigger_percentage"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Conditions" name="conditions">
+                            <group>
+                                <group string="Domain Condition">
+                                    <field name="condition_domain" widget="text" 
+                                           placeholder="[('priority', '=', '3'), ('category_id', '!=', False)]"
+                                           help="Domain expression to match tickets. Leave empty to match all tickets."/>
+                                </group>
+                                <group string="Filters">
+                                    <field name="priority_filter"/>
+                                    <field name="category_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="team_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Reminder Configuration" name="reminder_config">
+                            <group>
+                                <group>
+                                    <field name="reminder_user_ids" widget="many2many_tags" 
+                                           invisible="reminder_user_type != 'custom_users'"
+                                           options="{'no_create': True}"/>
+                                    <field name="email_template_id"/>
+                                </group>
+                                <group>
+                                    <field name="is_recurring"/>
+                                    <field name="recurrence_interval" invisible="not is_recurring"/>
+                                    <field name="max_recurrences" invisible="not is_recurring"/>
+                                </group>
+                            </group>
+                            <group string="Reminder Message">
+                                <field name="reminder_message" nolabel="1" widget="text"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reminder Rule Search View -->
+    <record id="view_helpdesk_reminder_rule_search" model="ir.ui.view">
+        <field name="name">helpdesk.reminder.rule.search</field>
+        <field name="model">helpdesk.reminder.rule</field>
+        <field name="arch" type="xml">
+            <search string="Reminder Rules">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="trigger_type"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <filter string="Status-Based" name="status_based" domain="[('trigger_type', '=', 'status_based')]"/>
+                <filter string="Time-Based" name="time_based" domain="[('trigger_type', '=', 'time_based')]"/>
+                <filter string="SLA-Based" name="sla_based" domain="[('trigger_type', '=', 'sla_based')]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Trigger Type" name="group_trigger" context="{'group_by': 'trigger_type'}"/>
+                    <filter string="Reminder User Type" name="group_user" context="{'group_by': 'reminder_user_type'}"/>
+                    <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Reminder Rule Action -->
+    <record id="action_helpdesk_reminder_rule" model="ir.actions.act_window">
+        <field name="name">Reminder Rules</field>
+        <field name="res_model">helpdesk.reminder.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_reminder_rule_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first reminder rule!
+            </p>
+            <p>
+                Reminder rules automatically create reminders for tickets based on conditions.
+            </p>
+        </field>
+    </record>
+
+</odoo>

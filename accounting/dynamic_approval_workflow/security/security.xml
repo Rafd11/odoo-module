@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2026 Abdalrahman Shahrour
+     License LGPL-3.0 or later (https://www.linkedin.com/in/shahrour) -->
+<odoo noupdate="1">
+
+    <!-- ================================================================
+         Security Categories
+         ================================================================ -->
+    <record id="module_category_approval" model="ir.module.category">
+        <field name="name">Dynamic Approvals</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="res_groups_privilege_approval" model="res.groups.privilege">
+        <field name="name">Approvals</field>
+        <field name="category_id" ref="module_category_approval"/>
+    </record>
+
+    <!-- ================================================================
+         Security Groups
+         ================================================================ -->
+
+    <!-- Base user: can submit documents and view their own requests -->
+    <record id="group_approval_user" model="res.groups">
+        <field name="name">Approval User</field>
+        <field name="privilege_id" ref="res_groups_privilege_approval"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Manager: full access to configs and all requests -->
+    <record id="group_approval_manager" model="res.groups">
+        <field name="name">Approval Manager</field>
+        <field name="privilege_id" ref="res_groups_privilege_approval"/>
+        <field name="implied_ids" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')),
+                                      (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- ================================================================
+         Record Rules
+         ================================================================ -->
+
+    <!-- Approval requests: users see only their own requests OR requests
+         where they are a current approver. Managers see everything. -->
+    <record id="rule_approval_request_user" model="ir.rule">
+        <field name="name">Approval Request: User Access</field>
+        <field name="model_id" ref="model_approval_request"/>
+        <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
+        <field name="domain_force">
+            ['|',
+             ('requester_id', '=', user.id),
+             ('current_approver_ids', 'in', [user.id])]
+        </field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Managers bypass the domain restriction -->
+    <record id="rule_approval_request_manager" model="ir.rule">
+        <field name="name">Approval Request: Manager Full Access</field>
+        <field name="model_id" ref="model_approval_request"/>
+        <field name="groups" eval="[(4, ref('group_approval_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- History lines follow the same visibility as the parent request via
+         cascade delete rules; no separate domain rule is needed. -->
+
+</odoo>

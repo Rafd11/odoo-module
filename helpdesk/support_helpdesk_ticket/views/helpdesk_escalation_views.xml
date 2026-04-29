@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Escalation Rule Tree View -->
+    <record id="view_helpdesk_escalation_rule_tree" model="ir.ui.view">
+        <field name="name">helpdesk.escalation.rule.tree</field>
+        <field name="model">helpdesk.escalation.rule</field>
+        <field name="arch" type="xml">
+            <list string="Escalation Rules" decoration-muted="active == False" default_order="sequence, escalation_level, id">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="trigger_type"/>
+                <field name="escalation_level"/>
+                <field name="action_type"/>
+                <field name="execution_count"/>
+                <field name="last_execution_date" widget="datetime"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Escalation Rule Form View -->
+    <record id="view_helpdesk_escalation_rule_form" model="ir.ui.view">
+        <field name="name">helpdesk.escalation.rule.form</field>
+        <field name="model">helpdesk.escalation.rule</field>
+        <field name="arch" type="xml">
+            <form string="Escalation Rule">
+                <header>
+                    <button name="action_test_rule" string="Test Rule" type="object" 
+                            class="oe_highlight" icon="fa-flask"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" icon="fa-list" name="action_view_execution_logs">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Executions</span>
+                                <span class="o_stat_value">
+                                    <field name="execution_count" widget="statinfo"/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Enter rule name..."/>
+                            <field name="sequence"/>
+                            <field name="escalation_level"/>
+                            <field name="parent_rule_id" invisible="escalation_level == 1"/>
+                        </group>
+                        <group>
+                            <field name="trigger_type"/>
+                            <field name="action_type"/>
+                            <field name="execution_count" readonly="1"/>
+                            <field name="last_execution_date" readonly="1" widget="datetime"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="description" placeholder="Enter rule description..." nolabel="1"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Trigger Configuration" name="trigger">
+                            <!-- SLA-Based Trigger -->
+                            <group string="SLA-Based Trigger" invisible="trigger_type != 'sla_based'">
+                                <group>
+                                    <field name="sla_trigger_type"/>
+                                    <field name="sla_trigger_percentage"/>
+                                    <field name="sla_policy_ids" widget="many2many_tags" 
+                                           options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Time-Based Trigger -->
+                            <group string="Time-Based Trigger" invisible="trigger_type != 'time_based'">
+                                <group>
+                                    <field name="time_trigger_type"/>
+                                    <field name="time_trigger_hours"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Status-Based Trigger -->
+                            <group string="Status-Based Trigger" invisible="trigger_type != 'status_based'">
+                                <group>
+                                    <field name="status_trigger_states"/>
+                                    <field name="status_trigger_hours"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Conditions" name="conditions">
+                            <group>
+                                <group string="Domain Condition">
+                                    <field name="condition_domain" widget="text" 
+                                           placeholder="[('priority', '=', '3'), ('category_id', '!=', False)]"
+                                           help="Domain expression to match tickets. Leave empty to match all tickets."/>
+                                </group>
+                                <group string="Filters">
+                                    <field name="priority_filter"/>
+                                    <field name="category_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="team_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Action Configuration" name="action_config">
+                            <!-- Notify Action -->
+                            <group string="Notify Users/Team" invisible="action_type != 'notify'">
+                                <group>
+                                    <field name="action_notify_user_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="action_notify_team_id"/>
+                                    <field name="action_notify_template_id"/>
+                                </group>
+                                <group>
+                                    <field name="action_notify_message" widget="text" nolabel="1"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Assign Action -->
+                            <group string="Reassign Ticket" invisible="action_type != 'assign'">
+                                <group>
+                                    <field name="action_assign_user_id"/>
+                                    <field name="action_assign_team_id"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Priority Upgrade Action -->
+                            <group string="Upgrade Priority" invisible="action_type != 'priority_upgrade'">
+                                <group>
+                                    <field name="action_priority_upgrade_to"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Team Escalate Action -->
+                            <group string="Escalate to Team" invisible="action_type != 'team_escalate'">
+                                <group>
+                                    <field name="action_escalate_to_team_id"/>
+                                </group>
+                            </group>
+                            
+                            <!-- State Change Action -->
+                            <group string="Change Status" invisible="action_type != 'state_change'">
+                                <group>
+                                    <field name="action_change_state_to"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Post Message Action -->
+                            <group string="Post Message" invisible="action_type != 'post_message'">
+                                <group>
+                                    <field name="action_post_message_body" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Escalation Path" name="escalation_path">
+                            <group>
+                                <group>
+                                    <field name="child_rule_ids" nolabel="1"/>
+                                </group>
+                                <group>
+                                    <div class="alert alert-info" role="alert">
+                                        <p>Escalation paths allow multi-level escalations. Configure child rules to create escalation chains.</p>
+                                        <p>When this rule executes, child rules become eligible for execution.</p>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Repeat Settings" name="repeat">
+                            <group>
+                                <group>
+                                    <field name="repeat_escalation"/>
+                                    <field name="repeat_interval_hours" invisible="not repeat_escalation"/>
+                                    <field name="max_repeats" invisible="not repeat_escalation"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Escalation Rule Search View -->
+    <record id="view_helpdesk_escalation_rule_search" model="ir.ui.view">
+        <field name="name">helpdesk.escalation.rule.search</field>
+        <field name="model">helpdesk.escalation.rule</field>
+        <field name="arch" type="xml">
+            <search string="Escalation Rules">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="trigger_type"/>
+                <field name="action_type"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <filter string="SLA-Based" name="sla_based" domain="[('trigger_type', '=', 'sla_based')]"/>
+                <filter string="Time-Based" name="time_based" domain="[('trigger_type', '=', 'time_based')]"/>
+                <filter string="Status-Based" name="status_based" domain="[('trigger_type', '=', 'status_based')]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Trigger Type" name="group_trigger" context="{'group_by': 'trigger_type'}"/>
+                    <filter string="Action Type" name="group_action" context="{'group_by': 'action_type'}"/>
+                    <filter string="Escalation Level" name="group_level" context="{'group_by': 'escalation_level'}"/>
+                    <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Escalation Rule Action -->
+    <record id="action_helpdesk_escalation_rule" model="ir.actions.act_window">
+        <field name="name">Escalation Rules</field>
+        <field name="res_model">helpdesk.escalation.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_escalation_rule_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first escalation rule!
+            </p>
+            <p>
+                Escalation rules automatically escalate tickets based on SLA, time, or status conditions.
+            </p>
+        </field>
+    </record>
+
+    <!-- Escalation Log Tree View -->
+    <record id="view_helpdesk_escalation_log_tree" model="ir.ui.view">
+        <field name="name">helpdesk.escalation.log.tree</field>
+        <field name="model">helpdesk.escalation.log</field>
+        <field name="arch" type="xml">
+            <list string="Escalation Logs">
+                <field name="escalation_date" widget="datetime"/>
+                <field name="rule_id"/>
+                <field name="ticket_id"/>
+                <field name="escalation_level"/>
+                <field name="trigger_type"/>
+                <field name="action_type"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Escalation Log Form View -->
+    <record id="view_helpdesk_escalation_log_form" model="ir.ui.view">
+        <field name="name">helpdesk.escalation.log.form</field>
+        <field name="model">helpdesk.escalation.log</field>
+        <field name="arch" type="xml">
+            <form string="Escalation Log">
+                <header>
+                    <button name="action_view_ticket" string="View Ticket" type="object" 
+                            class="oe_highlight" icon="fa-ticket"/>
+                    <button name="action_view_rule" string="View Rule" type="object" 
+                            icon="fa-cog"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="rule_id"/>
+                            <field name="ticket_id"/>
+                            <field name="escalation_level"/>
+                        </group>
+                        <group>
+                            <field name="escalation_date" widget="datetime"/>
+                            <field name="trigger_type"/>
+                            <field name="action_type"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Escalation Log Search View -->
+    <record id="view_helpdesk_escalation_log_search" model="ir.ui.view">
+        <field name="name">helpdesk.escalation.log.search</field>
+        <field name="model">helpdesk.escalation.log</field>
+        <field name="arch" type="xml">
+            <search string="Escalation Logs">
+                <field name="rule_id"/>
+                <field name="ticket_id"/>
+                <field name="trigger_type"/>
+                <field name="action_type"/>
+                
+                <filter string="Today" name="today" domain="[('escalation_date', '>=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                
+                <separator/>
+                
+                <separator string="Group By"/>
+                <group>
+                    <filter string="Rule" name="group_rule" context="{'group_by': 'rule_id'}"/>
+                    <filter string="Trigger Type" name="group_trigger" context="{'group_by': 'trigger_type'}"/>
+                    <filter string="Action Type" name="group_action" context="{'group_by': 'action_type'}"/>
+                    <filter string="Escalation Level" name="group_level" context="{'group_by': 'escalation_level'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'escalation_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Escalation Log Action -->
+    <record id="action_helpdesk_escalation_log" model="ir.actions.act_window">
+        <field name="name">Escalation Logs</field>
+        <field name="res_model">helpdesk.escalation.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_helpdesk_escalation_log_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No escalation logs yet!
+            </p>
+            <p>
+                Escalation logs track when escalation rules are executed on tickets.
+            </p>
+        </field>
+    </record>
+
+</odoo>

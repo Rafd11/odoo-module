@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Team Performance Dashboard Form ==================== -->
+    <record id="view_helpdesk_team_performance_form" model="ir.ui.view">
+        <field name="name">helpdesk.team.performance.form</field>
+        <field name="model">helpdesk.team.performance</field>
+        <field name="arch" type="xml">
+            <form string="Team Performance Dashboard" create="0" edit="0">
+                <sheet>
+                    <group string="Filters" col="4">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="team_id" options="{'no_create': True}"/>
+                    </group>
+
+                    <group string="Key Metrics" col="4">
+                        <group>
+                            <field name="tickets_handled" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="avg_resolution_time" readonly="1" widget="float_time"/>
+                        </group>
+                        <group>
+                            <field name="sla_compliance_rate" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="customer_satisfaction" readonly="1"/>
+                        </group>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== Team Performance Dashboard Action ==================== -->
+    <record id="action_helpdesk_team_performance_dashboard" model="ir.actions.act_window">
+        <field name="name">Team Performance Dashboard</field>
+        <field name="res_model">helpdesk.ticket</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="context">
+            {
+                'search_default_group_team': 1,
+                'search_default_group_sla_resolution_status': 1
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Team Performance Dashboard
+            </p>
+            <p>
+                Analyze team performance using ticket volumes, SLA resolution status, resolution time trends, and customer satisfaction metrics.
+            </p>
+        </field>
+    </record>
+
+</odoo>
+
