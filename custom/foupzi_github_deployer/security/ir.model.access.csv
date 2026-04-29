@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_foupzi_github_module,foupzi.github.module,model_foupzi_github_module,base.group_system,1,1,1,1
+access_foupzi_github_repo,foupzi.github.repo,model_foupzi_github_repo,base.group_system,1,1,1,1
 access_foupzi_shell_wizard,foupzi.shell.wizard,model_foupzi_shell_wizard,base.group_system,1,1,1,1
+access_foupzi_zip_upload,foupzi.zip.upload,model_foupzi_zip_upload,base.group_system,1,1,1,1

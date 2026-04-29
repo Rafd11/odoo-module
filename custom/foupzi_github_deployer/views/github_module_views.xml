@@ -1,73 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- List view -->
+    <!-- ================================================================
+         MODULE KANBAN (marketplace view)
+    ================================================================ -->
+    <record id="view_foupzi_github_module_kanban" model="ir.ui.view">
+        <field name="name">foupzi.github.module.kanban</field>
+        <field name="model">foupzi.github.module</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="category">
+                <field name="name"/>
+                <field name="display_name_custom"/>
+                <field name="category"/>
+                <field name="category_icon"/>
+                <field name="state"/>
+                <field name="repo_label"/>
+                <field name="is_odoo_installed"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click p-3"
+                             style="min-height:120px; display:flex; flex-direction:column; justify-content:space-between;">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <strong style="font-size:13px;" t-esc="record.display_name_custom.value"/>
+                                    <span t-if="record.state.value === 'installed'"
+                                          class="badge rounded-pill text-bg-success" style="font-size:10px;">Installed</span>
+                                    <span t-elif="record.state.value === 'deployed'"
+                                          class="badge rounded-pill text-bg-info" style="font-size:10px;">Deployed</span>
+                                    <span t-else=""
+                                          class="badge rounded-pill text-bg-secondary" style="font-size:10px;">Available</span>
+                                </div>
+                                <div class="text-muted mt-1" style="font-size:11px;">
+                                    <i t-attf-class="fa #{record.category_icon.value} me-1"/>
+                                    <t t-esc="record.category.value"/>
+                                    <span t-if="record.repo_label.value" class="ms-2 text-muted">
+                                        · <t t-esc="record.repo_label.value"/>
+                                    </span>
+                                </div>
+                                <div class="text-muted mt-1" style="font-size:10px; font-family:monospace;"
+                                     t-esc="record.name.value"/>
+                            </div>
+                            <div class="mt-2 d-flex gap-1 flex-wrap">
+                                <button t-if="record.state.value === 'available'"
+                                        name="action_deploy_and_install" type="object"
+                                        class="btn btn-primary btn-sm">Install</button>
+                                <button t-elif="record.state.value === 'deployed'"
+                                        name="action_deploy_and_install" type="object"
+                                        class="btn btn-primary btn-sm">Install</button>
+                                <button t-if="record.state.value === 'installed'"
+                                        name="action_upgrade" type="object"
+                                        class="btn btn-warning btn-sm">Upgrade</button>
+                                <button t-if="record.state.value !== 'available'"
+                                        name="action_deploy" type="object"
+                                        class="btn btn-outline-secondary btn-sm">Re-deploy</button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         MODULE LIST VIEW
+    ================================================================ -->
     <record id="view_foupzi_github_module_list" model="ir.ui.view">
         <field name="name">foupzi.github.module.list</field>
         <field name="model">foupzi.github.module</field>
         <field name="arch" type="xml">
-            <list string="GitHub Modules" decoration-success="state == 'installed'"
-                  decoration-info="state == 'deployed'" default_order="category,name">
-                <field name="name"/>
+            <list string="GitHub Modules"
+                  decoration-success="state == 'installed'"
+                  decoration-info="state == 'deployed'">
+                <field name="display_name_custom" string="Module"/>
+                <field name="name" string="Technical Name" optional="show"/>
                 <field name="category"/>
+                <field name="repo_label" string="Repository" optional="show"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'installed'"
                        decoration-info="state == 'deployed'"
                        decoration-muted="state == 'available'"/>
-                <field name="is_odoo_installed" invisible="1"/>
-                <button name="action_deploy" string="Deploy" type="object"
-                        class="btn-secondary btn-sm"
-                        invisible="state != 'available'"/>
-                <button name="action_deploy_and_install" string="Deploy &amp; Install" type="object"
-                        class="btn-primary btn-sm"
-                        invisible="state == 'installed'"/>
+                <button name="action_deploy_and_install" string="Install" type="object"
+                        class="btn-primary btn-sm" invisible="state == 'installed'"/>
                 <button name="action_upgrade" string="Upgrade" type="object"
-                        class="btn-warning btn-sm"
-                        invisible="state != 'installed'"/>
+                        class="btn-warning btn-sm" invisible="state != 'installed'"/>
+                <button name="action_deploy" string="Re-deploy" type="object"
+                        class="btn-secondary btn-sm" invisible="state == 'available'"/>
             </list>
         </field>
     </record>
 
-    <!-- Form view -->
-    <record id="view_foupzi_github_module_form" model="ir.ui.view">
-        <field name="name">foupzi.github.module.form</field>
-        <field name="model">foupzi.github.module</field>
-        <field name="arch" type="xml">
-            <form string="GitHub Module">
-                <header>
-                    <button name="action_deploy" string="Deploy" type="object"
-                            class="btn-secondary" invisible="state != 'available'"/>
-                    <button name="action_deploy_and_install" string="Deploy &amp; Install"
-                            type="object" class="btn-primary"
-                            invisible="state == 'installed'"/>
-                    <button name="action_upgrade" string="Pull &amp; Upgrade"
-                            type="object" class="btn-warning"
-                            invisible="state != 'installed'"/>
-                    <field name="state" widget="statusbar"
-                           statusbar_visible="available,deployed,installed"/>
-                </header>
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="category"/>
-                            <field name="github_path"/>
-                        </group>
-                        <group>
-                            <field name="state"/>
-                            <field name="odoo_module_id"/>
-                            <field name="is_odoo_installed"/>
-                        </group>
-                    </group>
-                    <group string="Last Deploy Log" invisible="not deploy_log">
-                        <field name="deploy_log" nolabel="1" widget="text"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <!-- Search view -->
+    <!-- ================================================================
+         MODULE SEARCH VIEW
+    ================================================================ -->
     <record id="view_foupzi_github_module_search" model="ir.ui.view">
         <field name="name">foupzi.github.module.search</field>
         <field name="model">foupzi.github.module</field>
@@ -75,41 +99,114 @@
             <search>
                 <field name="name" string="Module"/>
                 <field name="category"/>
+                <field name="repo_id" string="Repository"/>
                 <separator/>
                 <filter string="Available" name="available" domain="[('state','=','available')]"/>
                 <filter string="Deployed" name="deployed" domain="[('state','=','deployed')]"/>
                 <filter string="Installed" name="installed" domain="[('state','=','installed')]"/>
                 <group>
                     <filter string="Category" name="group_category" domain="[]" context="{'group_by': 'category'}"/>
+                    <filter string="Repository" name="group_repo" domain="[]" context="{'group_by': 'repo_id'}"/>
                     <filter string="State" name="group_state" domain="[]" context="{'group_by': 'state'}"/>
                 </group>
             </search>
         </field>
     </record>
 
-    <!-- Action -->
+    <!-- ================================================================
+         MODULE ACTION
+    ================================================================ -->
     <record id="action_foupzi_github_module" model="ir.actions.act_window">
-        <field name="name">GitHub Modules</field>
+        <field name="name">Module Marketplace</field>
         <field name="res_model">foupzi.github.module</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list</field>
         <field name="search_view_id" ref="view_foupzi_github_module_search"/>
         <field name="context">{'search_default_group_category': 1}</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No modules synced yet.
-            </p>
-            <p>Click <b>Sync from GitHub</b> to fetch your modules.</p>
+            <p class="o_view_nocontent_smiling_face">No modules yet.</p>
+            <p>Click <b>Sync from GitHub</b> in the Action menu to import modules from your repos.</p>
         </field>
     </record>
 
-    <!-- Shell wizard view -->
+    <!-- ================================================================
+         REPO VIEWS
+    ================================================================ -->
+    <record id="view_foupzi_github_repo_list" model="ir.ui.view">
+        <field name="name">foupzi.github.repo.list</field>
+        <field name="model">foupzi.github.repo</field>
+        <field name="arch" type="xml">
+            <list string="Repositories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="owner"/>
+                <field name="repo_name"/>
+                <field name="branch"/>
+                <field name="token" password="True" optional="show"/>
+                <field name="module_count" string="Modules" readonly="1"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_foupzi_github_repo_form" model="ir.ui.view">
+        <field name="name">foupzi.github.repo.form</field>
+        <field name="model">foupzi.github.repo</field>
+        <field name="arch" type="xml">
+            <form string="Repository">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="owner"/>
+                            <field name="repo_name"/>
+                            <field name="branch"/>
+                            <field name="token" password="True"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="module_count" string="Synced Modules" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Modules">
+                            <field name="module_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="category"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'installed'"
+                                           decoration-info="state == 'deployed'"
+                                           decoration-muted="state == 'available'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_foupzi_github_repo" model="ir.actions.act_window">
+        <field name="name">Repositories</field>
+        <field name="res_model">foupzi.github.repo</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No repositories yet.</p>
+            <p>Add GitHub repositories to sync modules from.</p>
+        </field>
+    </record>
+
+    <!-- ================================================================
+         SHELL WIZARD VIEW
+    ================================================================ -->
     <record id="view_foupzi_shell_wizard_form" model="ir.ui.view">
         <field name="name">foupzi.shell.wizard.form</field>
         <field name="model">foupzi.shell.wizard</field>
         <field name="arch" type="xml">
             <form string="Run Server Command">
                 <group>
-                    <field name="command" placeholder="e.g. git pull, odoo-bin -u my_module"/>
+                    <field name="command" placeholder="e.g. git pull, odoo-bin -u my_module, pip3 install ..."/>
                     <field name="working_dir"/>
                 </group>
                 <footer>
@@ -118,7 +215,7 @@
                 </footer>
                 <group string="Output" invisible="not output">
                     <field name="output" nolabel="1" widget="text"
-                           style="font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 12px;"/>
+                           style="font-family:monospace;background:#1e1e1e;color:#d4d4d4;padding:12px;border-radius:4px;"/>
                 </group>
             </form>
         </field>
@@ -129,6 +226,51 @@
         <field name="res_model">foupzi.shell.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+    </record>
+
+    <!-- ================================================================
+         ZIP UPLOAD WIZARD VIEW
+    ================================================================ -->
+    <record id="view_foupzi_zip_upload_form" model="ir.ui.view">
+        <field name="name">foupzi.zip.upload.form</field>
+        <field name="model">foupzi.zip.upload</field>
+        <field name="arch" type="xml">
+            <form string="Upload Module ZIP">
+                <group>
+                    <field name="zip_file" filename="zip_filename" widget="binary"
+                           string="ZIP File" required="1"/>
+                    <field name="zip_filename" invisible="1"/>
+                    <field name="module_name"
+                           placeholder="Leave blank to auto-detect"
+                           help="Technical folder name inside the ZIP. Auto-detected if blank."/>
+                </group>
+                <footer>
+                    <button name="action_upload" string="Upload &amp; Deploy" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+                <group string="Result" invisible="not result">
+                    <field name="result" nolabel="1" widget="text"
+                           style="font-family:monospace;background:#f8f9fa;padding:10px;border-radius:4px;"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_foupzi_zip_upload" model="ir.actions.act_window">
+        <field name="name">Upload Module ZIP</field>
+        <field name="res_model">foupzi.zip.upload</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Server actions bound to module list -->
+    <record id="action_sync_github_modules" model="ir.actions.server">
+        <field name="name">Sync from GitHub</field>
+        <field name="model_id" ref="model_foupzi_github_module"/>
+        <field name="binding_model_id" ref="model_foupzi_github_module"/>
+        <field name="binding_view_types">list,kanban</field>
+        <field name="state">code</field>
+        <field name="code">action = model.action_sync_all_repos()</field>
     </record>
 
 </odoo>

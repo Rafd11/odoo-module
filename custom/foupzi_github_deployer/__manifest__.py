@@ -1,8 +1,7 @@
 {
-    'name': 'GitHub Module Deployer',
-    'version': '19.0.1.0.0',
-    'summary': 'Browse and deploy Odoo modules directly from GitHub',
-    'description': 'Browse your GitHub repository, install and update Odoo modules with one click.',
+    'name': 'Module Marketplace',
+    'version': '19.0.2.0.0',
+    'summary': 'Browse, install and upload Odoo modules from GitHub or ZIP files',
     'category': 'Technical',
     'author': 'Rafd11',
     'depends': ['base', 'mail'],
