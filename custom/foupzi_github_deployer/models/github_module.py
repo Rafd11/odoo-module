@@ -53,7 +53,7 @@ class FoupziGithubModule(models.Model):
     @api.depends('name')
     def _compute_display_name_custom(self):
         for rec in self:
-            rec.display_name_custom = rec.name.replace('_', ' ').title()
+            rec.display_name_custom = (rec.name or '').replace('_', ' ').title()
 
     @api.depends('category')
     def _compute_category_icon(self):

@@ -135,7 +135,7 @@
         <field name="name">foupzi.github.repo.list</field>
         <field name="model">foupzi.github.repo</field>
         <field name="arch" type="xml">
-            <list string="Repositories" editable="bottom">
+            <list string="Repositories">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="owner"/>
@@ -144,6 +144,13 @@
                 <field name="token" password="True" optional="show"/>
                 <field name="module_count" string="Modules" readonly="1"/>
                 <field name="active" widget="boolean_toggle"/>
+                <button name="action_sync" string="Sync" type="object"
+                        icon="fa-refresh" class="btn-secondary btn-sm"
+                        title="Sync modules from this repo"/>
+                <button name="action_view_modules" string="View Modules" type="object"
+                        icon="fa-eye" class="btn-primary btn-sm"
+                        title="Browse modules from this repo"
+                        invisible="module_count == 0"/>
             </list>
         </field>
     </record>
@@ -153,6 +160,13 @@
         <field name="model">foupzi.github.repo</field>
         <field name="arch" type="xml">
             <form string="Repository">
+                <header>
+                    <button name="action_sync" string="Sync Modules" type="object"
+                            class="btn-primary" icon="fa-refresh"/>
+                    <button name="action_view_modules" string="Browse Modules" type="object"
+                            class="btn-secondary" icon="fa-eye"
+                            invisible="module_count == 0"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
