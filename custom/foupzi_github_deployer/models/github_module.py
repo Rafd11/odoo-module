@@ -42,40 +42,58 @@ class FoupziGithubModule(models.Model):
     github_path = fields.Char('GitHub Path', readonly=True)
     repo_id = fields.Many2one('foupzi.github.repo', string='Repository', readonly=True, ondelete='cascade')
     repo_label = fields.Char(related='repo_id.name', string='Repo', store=False)
+    # state is computed live — never stale, no manual refresh needed
     state = fields.Selection([
         ('available', 'Available'),
         ('deployed', 'Deployed'),
         ('installed', 'Installed'),
-    ], default='available', readonly=True)
+    ], compute='_compute_state', store=False)
     deploy_log = fields.Text('Last Deploy Log', readonly=True)
 
-    # Boolean helpers used in kanban t-if (more reliable than comparing selection values in OWL)
-    is_available = fields.Boolean(compute='_compute_state_bools', store=False)
-    is_deployed = fields.Boolean(compute='_compute_state_bools', store=False)
-    is_installed = fields.Boolean(compute='_compute_state_bools', store=False)
+    # Boolean helpers for reliable OWL kanban t-if conditions
+    is_available = fields.Boolean(compute='_compute_state', store=False)
+    is_deployed  = fields.Boolean(compute='_compute_state', store=False)
+    is_installed = fields.Boolean(compute='_compute_state', store=False)
 
     @api.depends('name')
     def _compute_display_name_custom(self):
         for rec in self:
             rec.display_name_custom = (rec.name or '').replace('_', ' ').title()
 
-    @api.depends('state')
-    def _compute_state_bools(self):
+    @api.depends('name')
+    def _compute_state(self):
+        """Always read live from ir.module.module + filesystem."""
+        addons_path = self.env['ir.config_parameter'].sudo().get_param(
+            'foupzi_github_deployer.addons_path', ''
+        )
+        # Fetch installed module names in one query for performance
+        installed_names = set(
+            self.env['ir.module.module'].search([
+                ('name', 'in', self.mapped('name')),
+                ('state', 'in', ('installed', 'to upgrade')),
+            ]).mapped('name')
+        )
         for rec in self:
-            rec.is_available = rec.state == 'available'
-            rec.is_deployed = rec.state == 'deployed'
-            rec.is_installed = rec.state == 'installed'
+            if rec.name in installed_names:
+                rec.state = 'installed'
+                rec.is_installed = True
+                rec.is_deployed = False
+                rec.is_available = False
+            elif addons_path and os.path.isdir(os.path.join(addons_path, rec.name)):
+                rec.state = 'deployed'
+                rec.is_installed = False
+                rec.is_deployed = True
+                rec.is_available = False
+            else:
+                rec.state = 'available'
+                rec.is_installed = False
+                rec.is_deployed = False
+                rec.is_available = True
 
     @api.depends('category')
     def _compute_category_icon(self):
         for rec in self:
             rec.category_icon = CATEGORY_ICONS.get(rec.category, 'fa-puzzle-piece')
-
-    @api.depends('name')
-    def _compute_odoo_state(self):
-        for rec in self:
-            mod = self.env['ir.module.module'].search([('name', '=', rec.name)], limit=1)
-            rec.is_odoo_installed = mod.state in ('installed', 'to upgrade') if mod else False
 
     # ------------------------------------------------------------------
     # Helpers
@@ -181,33 +199,7 @@ class FoupziGithubModule(models.Model):
                     self.create(vals)
                 synced += 1
 
-        self._refresh_deploy_states()
         return synced
-
-    def _refresh_deploy_states(self):
-        addons_path = self.env['ir.config_parameter'].sudo().get_param(
-            'foupzi_github_deployer.addons_path', ''
-        )
-        # Build a map of all odoo module states once for performance
-        odoo_states = {
-            m.name: m.state
-            for m in self.env['ir.module.module'].search([])
-        }
-        for rec in self:
-            odoo_state = odoo_states.get(rec.name, '')
-            if odoo_state in ('installed', 'to upgrade', 'to remove'):
-                rec.state = 'installed'
-            elif addons_path and os.path.isdir(os.path.join(addons_path, rec.name)):
-                rec.state = 'deployed'
-            else:
-                rec.state = 'available'
-
-    @api.model
-    def action_refresh_all_states(self):
-        """Refresh states for all tracked modules."""
-        all_modules = self.search([])
-        all_modules._refresh_deploy_states()
-        return self._notify('States refreshed for %d modules.' % len(all_modules))
 
     # ------------------------------------------------------------------
     # Deploy
@@ -276,8 +268,8 @@ class FoupziGithubModule(models.Model):
 
         self.env['ir.module.module'].sudo().update_list()
         log.append('Module list updated.')
-        self.write({'state': 'deployed', 'deploy_log': '\n'.join(log)})
-        return self._notify(_('"%s" deployed successfully.') % self.name, 'success')
+        self.write({'deploy_log': '\n'.join(log)})
+        return self._notify(_('"%s" deployed. Refresh the page to see updated state.') % self.name, 'success')
 
     def action_deploy_and_install(self):
         self.ensure_one()
@@ -289,8 +281,7 @@ class FoupziGithubModule(models.Model):
             mod.button_immediate_install()
         elif mod.state in ('installed', 'to upgrade'):
             mod.button_immediate_upgrade()
-        self.state = 'installed'
-        return self._notify(_('"%s" installed.') % self.name, 'success')
+        return self._notify(_('"%s" installed successfully.') % self.name, 'success')
 
     def action_upgrade(self):
         self.ensure_one()
@@ -299,8 +290,7 @@ class FoupziGithubModule(models.Model):
             raise UserError(_('Install the module first.'))
         self.action_deploy()
         mod.button_immediate_upgrade()
-        self.state = 'installed'
-        return self._notify(_('"%s" upgraded.') % self.name, 'success')
+        return self._notify(_('"%s" upgraded successfully.') % self.name, 'success')
 
     # ------------------------------------------------------------------
     # Shell runner

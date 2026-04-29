@@ -107,14 +107,9 @@
                 <field name="name" string="Module"/>
                 <field name="category"/>
                 <field name="repo_id" string="Repository"/>
-                <separator/>
-                <filter string="Available" name="available" domain="[('state','=','available')]"/>
-                <filter string="Deployed" name="deployed" domain="[('state','=','deployed')]"/>
-                <filter string="Installed" name="installed" domain="[('state','=','installed')]"/>
                 <group>
                     <filter string="Category" name="group_category" domain="[]" context="{'group_by': 'category'}"/>
                     <filter string="Repository" name="group_repo" domain="[]" context="{'group_by': 'repo_id'}"/>
-                    <filter string="State" name="group_state" domain="[]" context="{'group_by': 'state'}"/>
                 </group>
             </search>
         </field>
@@ -294,13 +289,5 @@
         <field name="code">action = model.action_sync_all_repos()</field>
     </record>
 
-    <record id="action_refresh_states" model="ir.actions.server">
-        <field name="name">Refresh Install States</field>
-        <field name="model_id" ref="model_foupzi_github_module"/>
-        <field name="binding_model_id" ref="model_foupzi_github_module"/>
-        <field name="binding_view_types">list,kanban</field>
-        <field name="state">code</field>
-        <field name="code">action = model.action_refresh_all_states()</field>
-    </record>
 
 </odoo>
